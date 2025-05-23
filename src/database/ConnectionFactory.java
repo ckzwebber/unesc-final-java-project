@@ -6,9 +6,9 @@ import java.sql.SQLException;
 
 public class ConnectionFactory {
 
-	public static Connection getConnection(String ipAddress, String port, String database, String user, String password)
+	public static Connection getConnection(String connectionString)
 			throws SQLException {
-		return DriverManager.getConnection("jdbc:postgresql://" + ipAddress + ":" + port + "/" + database, user, password);
+		return DriverManager.getConnection(connectionString);
 
 	}
 }
