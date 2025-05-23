@@ -25,4 +25,4 @@ replay_pid*
 
 # env
 .env
-git-filter-repo.txt
+git-filter-repo
