@@ -13,7 +13,7 @@ public class Test {
 		
 		 Dotenv dotenv = Dotenv.load();
 		 String connectionString = dotenv.get("DB_CONNECTION_STRING");
-		
+
 		try {
 			Connection conn = ConnectionFactory.getConnection(connectionString);
 			if (conn != null) {
