@@ -10,7 +10,7 @@ import database.model.User;
 
 public class UserDAO {
 
-	private String selectAll = "SELECT * FROM users";
+	private String selectAll = "SELECT * FROM tb_users";
 	private String selectWhere = "SELECT * FROM users WHERE username = ?";
 	private String insert = "INSERT INTO users(username, password) VALUES (?, ?)";
 	private String update = "UPDATE users SET password = ? WHERE username = ?";
