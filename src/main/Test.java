@@ -1,4 +1,6 @@
-package database;
+package main;
+
+import view.ImportScreen;
 
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -14,14 +16,20 @@ public class Test {
 
 		Dotenv dotenv = Dotenv.load();
 		String connectionString = dotenv.get("DB_CONNECTION_STRING");
+		
+		new ImportScreen();
 
-		CourseInfo test = ImportService.readImportFile();
-		System.out.println(test.courseInfoToString());
+		
 	}
 }
 
 
-/*	try {
+/*	
+
+CourseInfo test = ImportService.readImportFile();
+System.out.println(test.courseInfoToString());
+
+try {
 			Connection conn = ConnectionFactory.getConnection(connectionString);
 			if (conn != null) {
 				System.out.println("Conectou!!!!");

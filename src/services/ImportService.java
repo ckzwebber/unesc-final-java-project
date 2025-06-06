@@ -33,8 +33,9 @@ public class ImportService {
 				    lastPeriod.append(line, 66, 73);
 				    sequence.append(line, 73, 80);
 				    layout.append(line, 80, 83);
-
 				}
+
+				//continuar linhas do arquivo
 			}
 
 			buffer.close();

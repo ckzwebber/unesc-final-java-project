@@ -15,78 +15,67 @@ public class UserDAO {
 	private String insert = "INSERT INTO users(username, password) VALUES (?, ?)";
 	private String update = "UPDATE users SET password = ? WHERE username = ?";
 	private String delete = "DELETE FROM users WHERE username = ?";
-	
+
 	private PreparedStatement pstSelectAll;
 	private PreparedStatement pstSelectWhere;
 	private PreparedStatement pstInsert;
 	private PreparedStatement pstUpdate;
 	private PreparedStatement pstDelete;
-	
-	public UserDAO( Connection conn) throws SQLException {
+
+	public UserDAO(Connection conn) throws SQLException {
 		pstSelectAll = conn.prepareStatement(selectAll);
 		pstSelectWhere = conn.prepareStatement(selectWhere);
 		pstInsert = conn.prepareStatement(insert);
 		pstUpdate = conn.prepareStatement(update);
 		pstDelete = conn.prepareStatement(delete);
 	}
-	
+
 	public void insert(String username, String password) throws SQLException {
 		pstInsert.setString(1, username);
 		pstInsert.setString(2, password);
 		pstInsert.execute();
 	}
-	
+
 	public void delete(String username) throws SQLException {
 		pstDelete.setString(1, username);
 		pstDelete.execute();
 	}
-	
+
 	public void update(String username, String password) throws SQLException {
 		pstUpdate.setString(1, username);
 		pstUpdate.setString(2, password);
 		pstUpdate.execute();
 	}
-	
+
 	public ArrayList<User> selectAll() throws SQLException {
-		
+
 		ArrayList<User> local = new ArrayList<User>();
-		
+
 		ResultSet result = pstSelectAll.executeQuery();
-		while ( result.next() ) {
+		while (result.next()) {
 			User u = new User();
-			u.setId( result.getInt("id") );
-			u.setUser( result.getString("username") );
-			u.setPassword( result.getString("password") );
+			u.setId(result.getInt("id"));
+			u.setUsername(result.getString("username"));
+			u.setPassword(result.getString("password"));
 			local.add(u);
 		}
-		
+
 		return local;
 	}
-	
-public User selectWhere(String username) throws SQLException {
-		
+
+	public User selectWhere(String username) throws SQLException {
+
 		User local = null;
 		pstSelectWhere.setString(1, username);
-		
+
 		ResultSet result = pstSelectWhere.executeQuery();
-		if ( result.next() ) {
+		if (result.next()) {
 			local = new User();
-			local.setId( result.getInt("id") );
-			local.setUser( result.getString("username") );
-			local.setPassword( result.getString("password") );
+			local.setId(result.getInt("id"));
+			local.setUsername(result.getString("username"));
+			local.setPassword(result.getString("password"));
 		}
-		
+
 		return local;
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
