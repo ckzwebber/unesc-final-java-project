@@ -1,5 +1,9 @@
 package view;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
@@ -13,7 +17,7 @@ public class UsersScreen extends JFrame{
 	private JTable table;
 	private DefaultTableModel model;
 	private JScrollPane scroll;
-	private JButton add;
+	private JButton btnAdd;
 	
 	public UsersScreen() {
 			setSize(450,300);
@@ -34,16 +38,18 @@ public class UsersScreen extends JFrame{
 			scroll.setBounds(10, 10, 300, 150);
 			getContentPane().add(scroll);
 			
-			/*add = new JButton(new AbstractAction("Adicionar") {
+			btnAdd = new JButton("Add"); 
+			btnAdd.setBounds(320, 250, 100, 100);
+			getContentPane().add(btnAdd);
+	        btnAdd.addActionListener(new ActionListener() {
+	            @Override
+	            public void actionPerformed(ActionEvent e) {
+	                model.addRow(new String[]{"1", "Cako"});
+	            }
+	        });
+	    }
 				
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					modelo.addRow(new String[] {"1", "Computação", "Fase 1", "Fase 9"});
-			adicionar.setBounds(320, 10, 100, 25);
-			getContentPane().add(adicionar);
-		}		}
-			});
+				
+				
+			};
 
-	}*/
-}
-}

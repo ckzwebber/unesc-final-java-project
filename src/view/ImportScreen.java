@@ -21,6 +21,7 @@ public class ImportScreen extends JFrame{
 	private JMenuBar menuBar;
 	private JMenu helpMenu;
 	private JPanel pnlVoid;
+	DefaultTableModel model = new DefaultTableModel();
 	
 	
 public ImportScreen() {
@@ -31,7 +32,7 @@ public ImportScreen() {
 		setResizable(false);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		createComponent();
-		setVisible(true);			
+		setVisible(true);		
 		setLocationRelativeTo(null);
 	}
 
@@ -54,14 +55,12 @@ public ImportScreen() {
 		btnView.addActionListener( new ActionListener() {
 			
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				
-				
-				
+			public void actionPerformed(ActionEvent e) {	
 
-				/*JTable table = new JTable();
-				DefaultTableModel model = new DefaultTableModel();
+				JTable table = new JTable();
+				
 				JScrollPane scroll = new JScrollPane();
+				JButton btnAdd = new JButton("Add");
 				JPanel pnlUsers = new JPanel();
 				
 				pnlUsers.setBounds(250, 120, 400, 280);
@@ -74,10 +73,28 @@ public ImportScreen() {
 				
 				table = new JTable(model);
 				scroll = new JScrollPane(table);
-				scroll.setBounds(10, 10, 300, 150);
+				scroll.setBounds(30, 30, 300, 150);
 				pnlUsers.add(scroll);
 				
-				getContentPane().add(pnlUsers);*/
+				btnAdd = new JButton("Add"); 
+				btnAdd.setBounds(280, 180, 100, 30);
+				pnlUsers.add(btnAdd);
+		        btnAdd.addActionListener(new ActionListener() {
+		            @Override
+		            public void actionPerformed(ActionEvent e) {
+		            	
+		            	/*String name;
+		            	Integer id = 1;
+		            	String idd = Integer.parseInt()
+		                model.addRow(new String[]{, name});*/
+		            }
+		        });
+				
+		        getContentPane().remove(pnlVoid);
+		        getContentPane().add(pnlUsers);
+		        repaint();
+		        revalidate();
+
 			}
 		});
 		
