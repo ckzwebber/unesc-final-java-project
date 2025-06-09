@@ -10,7 +10,7 @@ import database.model.User;
 
 public class UserDAO {
 
-	private String selectAll = "SELECT * FROM tb_users";
+	private String selectAll = "SELECT username FROM tb_users";
 	private String selectWhere = "SELECT * FROM users WHERE username = ?";
 	private String insert = "INSERT INTO users(username, password) VALUES (?, ?)";
 	private String update = "UPDATE users SET password = ? WHERE username = ?";
@@ -56,7 +56,7 @@ public class UserDAO {
 			User user = new User();
 			user.setId(result.getInt("id"));
 			user.setUsername(result.getString("username"));
-			user.setPassword(result.getString("password"));
+			user.setPassword("");
 			users.add(user);
 		}
 
