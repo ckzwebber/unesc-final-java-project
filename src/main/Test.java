@@ -1,24 +1,17 @@
 package main;
 
+import database.ConnectionFactory;
 import view.ImportScreen;
-
-import java.sql.Connection;
-import java.util.ArrayList;
-import database.dao.UserDAO;
-import database.model.User;
-import io.github.cdimascio.dotenv.Dotenv;
-import services.ImportService;
-import utils.CourseInfo;
 
 public class Test {
 
 	public static void main(String[] args) {
-
-		Dotenv dotenv = Dotenv.load();
-		String connectionString = dotenv.get("DB_CONNECTION_STRING");
 		
-		new ImportScreen();
+ 	Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            ConnectionFactory.closeConnection();
+    }));
 
+	new ImportScreen();
 		
 	}
 }

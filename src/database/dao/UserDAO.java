@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import database.ConnectionFactory;
 import database.model.User;
 
 public class UserDAO {
@@ -22,7 +23,8 @@ public class UserDAO {
 	private PreparedStatement pstUpdate;
 	private PreparedStatement pstDelete;
 
-	public UserDAO(Connection conn) throws SQLException {
+	public UserDAO() throws SQLException {
+		Connection conn = ConnectionFactory.getConnection();
 		pstSelectAll = conn.prepareStatement(selectAll);
 		pstSelectWhere = conn.prepareStatement(selectWhere);
 		pstInsert = conn.prepareStatement(insert);
