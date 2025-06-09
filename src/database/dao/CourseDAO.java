@@ -22,6 +22,7 @@ public class CourseDAO {
 	private PreparedStatement pstInsert;
 	private PreparedStatement pstUpdate;
 	private PreparedStatement pstDelete;
+	private PreparedStatement pstSelectWhereName;
 
 	public CourseDAO(Connection conn) throws SQLException {
 		pstSelectAll = conn.prepareStatement(selectAll);
@@ -29,6 +30,7 @@ public class CourseDAO {
 		pstInsert = conn.prepareStatement(insert);
 		pstUpdate = conn.prepareStatement(update);
 		pstDelete = conn.prepareStatement(delete);
+		pstSelectWhereName = conn.prepareStatement(selectWhereName);
 	}
 
 	public void insert(String name) throws SQLException {
@@ -50,10 +52,10 @@ public class CourseDAO {
 		ArrayList<Course> list = new ArrayList<>();
 		ResultSet rs = pstSelectAll.executeQuery();
 		while (rs.next()) {
-			Course c = new Course();
-			c.setId(rs.getInt("id"));
-			c.setName(rs.getString("name"));
-			list.add(c);
+			Course course = new Course();
+			course.setId(rs.getInt("id"));
+			course.setName(rs.getString("name"));
+			list.add(course);
 		}
 		return list;
 	}
@@ -62,6 +64,19 @@ public class CourseDAO {
 		Course course = null;
 		pstSelectWhere.setInt(1, id);
 		ResultSet rs = pstSelectWhere.executeQuery();
+		if (rs.next()) {
+			course = new Course();
+			course.setId(rs.getInt("id"));
+			course.setName(rs.getString("name"));
+		}
+		
+		return course;
+	}
+
+	public Course selectWhereName(String name) throws SQLException {
+		Course course = null;
+		pstSelectWhereName.setString(1, name);
+		ResultSet rs = pstSelectWhereName.executeQuery();
 		if (rs.next()) {
 			course = new Course();
 			course.setId(rs.getInt("id"));
