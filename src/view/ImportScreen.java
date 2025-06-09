@@ -2,6 +2,9 @@ package view;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Properties;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -9,10 +12,18 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+
+import org.postgresql.core.ConnectionFactory;
+import org.postgresql.core.QueryExecutor;
+import org.postgresql.util.HostSpec;
+
+import database.dao.UserDAO;
+import database.model.User;
 
 public class ImportScreen extends JFrame{
 	
@@ -22,6 +33,8 @@ public class ImportScreen extends JFrame{
 	private JMenu helpMenu;
 	private JPanel pnlVoid;
 	DefaultTableModel model = new DefaultTableModel();
+	UserDAO userDAO = new UserDAO(ConnectionFactory.getConnection());
+	Integer id = -1;
 	
 	
 public ImportScreen() {
@@ -79,14 +92,22 @@ public ImportScreen() {
 				btnAdd = new JButton("Add"); 
 				btnAdd.setBounds(280, 180, 100, 30);
 				pnlUsers.add(btnAdd);
+				
+				ArrayList<User> userList = 
+				
+				/*model.addRow( new String[] { });*/
+				
 		        btnAdd.addActionListener(new ActionListener() {
 		            @Override
 		            public void actionPerformed(ActionEvent e) {
 		            	
-		            	/*String name;
-		            	Integer id = 1;
-		            	String idd = Integer.parseInt()
-		                model.addRow(new String[]{, name});*/
+		            	id = id + 1;
+		            	
+		            	String name = JOptionPane.showInputDialog("Name to be added: ");
+		 
+		            	String SId = Integer.toString(id);
+		            	
+		                model.addRow(new String[]{ SId, name});
 		            }
 		        });
 				

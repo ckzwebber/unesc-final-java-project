@@ -39,7 +39,7 @@ public class UsersScreen extends JFrame{
 			getContentPane().add(scroll);
 			
 			btnAdd = new JButton("Add"); 
-			btnAdd.setBounds(320, 250, 100, 100);
+			btnAdd.setBounds(320, 200, 100, 100);
 			getContentPane().add(btnAdd);
 	        btnAdd.addActionListener(new ActionListener() {
 	            @Override
