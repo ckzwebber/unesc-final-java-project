@@ -2,30 +2,30 @@ package database.model;
 
 public class DisciplineTeacher {
 
-	private Discipline discipline;
-	private Teacher teacher;
+	private int disciplineId;
+	private int teacherId;
 
 	public DisciplineTeacher() {
 	}
 
-	public DisciplineTeacher(Discipline discipline, Teacher teacher) {
-		this.discipline = discipline;
-		this.teacher = teacher;
+	public DisciplineTeacher(int disciplineId, int teacherId) {
+		this.disciplineId = disciplineId;
+		this.teacherId = teacherId;
 	}
 
-	public Discipline getDiscipline() {
-		return discipline;
+	public int getDisciplineId() {
+		return disciplineId;
 	}
 
-	public void setDiscipline(Discipline discipline) {
-		this.discipline = discipline;
+	public void setDisciplineId(int disciplineId) {
+		this.disciplineId = disciplineId;
 	}
 
-	public Teacher getTeacher() {
-		return teacher;
+	public int getTeacherId() {
+		return teacherId;
 	}
 
-	public void setTeacher(Teacher teacher) {
-		this.teacher = teacher;
+	public void setTeacherId(int teacherId) {
+		this.teacherId = teacherId;
 	}
 }

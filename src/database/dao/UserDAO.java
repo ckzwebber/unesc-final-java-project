@@ -14,7 +14,7 @@ public class UserDAO {
 	private String selectWhere = "SELECT * FROM users WHERE username = ?";
 	private String insert = "INSERT INTO users(username, password) VALUES (?, ?)";
 	private String update = "UPDATE users SET password = ? WHERE username = ?";
-	private String delete = "DELETE FROM users WHERE username = ?";
+	private String delete = "DELETE FROM users WHERE id = ?";
 
 	private PreparedStatement pstSelectAll;
 	private PreparedStatement pstSelectWhere;
@@ -36,8 +36,8 @@ public class UserDAO {
 		pstInsert.execute();
 	}
 
-	public void delete(String username) throws SQLException {
-		pstDelete.setString(1, username);
+	public void delete(int id) throws SQLException {
+		pstDelete.setInt(1, id);
 		pstDelete.execute();
 	}
 
@@ -49,33 +49,33 @@ public class UserDAO {
 
 	public ArrayList<User> selectAll() throws SQLException {
 
-		ArrayList<User> local = new ArrayList<User>();
+		ArrayList<User> users = new ArrayList<User>();
 
 		ResultSet result = pstSelectAll.executeQuery();
 		while (result.next()) {
-			User u = new User();
-			u.setId(result.getInt("id"));
-			u.setUsername(result.getString("username"));
-			u.setPassword(result.getString("password"));
-			local.add(u);
+			User user = new User();
+			user.setId(result.getInt("id"));
+			user.setUsername(result.getString("username"));
+			user.setPassword(result.getString("password"));
+			users.add(user);
 		}
 
-		return local;
+		return users;
 	}
 
 	public User selectWhere(String username) throws SQLException {
 
-		User local = null;
+		User user = null;
 		pstSelectWhere.setString(1, username);
 
 		ResultSet result = pstSelectWhere.executeQuery();
 		if (result.next()) {
-			local = new User();
-			local.setId(result.getInt("id"));
-			local.setUsername(result.getString("username"));
-			local.setPassword(result.getString("password"));
-		}
+			user = new User();
+			user.setId(result.getInt("id"));
+			user.setUsername(result.getString("username"));
+			user.setPassword(result.getString("password"));
+		}	
 
-		return local;
+		return user;
 	}
 }

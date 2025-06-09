@@ -13,6 +13,7 @@ public class DisciplineDAO {
 
 	private String selectAll = "SELECT * FROM tb_disciplines";
 	private String selectWhere = "SELECT * FROM tb_disciplines WHERE id = ?";
+	private String selectWhereName = "SELECT * FROM tb_disciplines WHERE name = ?";
 	private String insert = "INSERT INTO tb_disciplines(code, name, week_day, id_phase) VALUES (?, ?, ?, ?)";
 	private String update = "UPDATE tb_disciplines SET code = ?, name = ?, week_day = ?, id_phase = ? WHERE id = ?";
 	private String delete = "DELETE FROM tb_disciplines WHERE id = ?";
@@ -22,6 +23,7 @@ public class DisciplineDAO {
 	private PreparedStatement pstInsert;
 	private PreparedStatement pstUpdate;
 	private PreparedStatement pstDelete;
+	private PreparedStatement pstSelectWhereName;
 
 	public DisciplineDAO(Connection conn) throws SQLException {
 		pstSelectAll = conn.prepareStatement(selectAll);
@@ -29,21 +31,22 @@ public class DisciplineDAO {
 		pstInsert = conn.prepareStatement(insert);
 		pstUpdate = conn.prepareStatement(update);
 		pstDelete = conn.prepareStatement(delete);
+		pstSelectWhereName = conn.prepareStatement(selectWhereName);
 	}
 
 	public void insert(String code, String name, int weekDay, int phaseId) throws SQLException {
-		pstInsert.setString(1, code);
-		pstInsert.setString(2, name);
-		pstInsert.setInt(3, weekDay);
-		pstInsert.setInt(4, phaseId);
+		pstInsert.setString(2, code);
+		pstInsert.setString(3, name);
+		pstInsert.setInt(4, weekDay);
+		pstInsert.setInt(5, phaseId);
 		pstInsert.execute();
 	}
 
 	public void update(String code, String name, int weekDay, int phaseId) throws SQLException {
-		pstUpdate.setString(1, code);
-		pstUpdate.setString(2, name);
-		pstUpdate.setInt(3, weekDay);
-		pstUpdate.setInt(4, phaseId);
+		pstUpdate.setString(2, code);
+		pstUpdate.setString(3, name);
+		pstUpdate.setInt(4, weekDay);
+		pstUpdate.setInt(5, phaseId);
 		pstUpdate.execute();
 	}
 	
@@ -58,17 +61,17 @@ public class DisciplineDAO {
 		ResultSet result = pstSelectAll.executeQuery();
 
 		while (result.next()) {
-			Discipline d = new Discipline();
-			d.setId(result.getInt("id"));
-			d.setCode(result.getString("code"));
-			d.setName(result.getString("name"));
-			d.setWeekDay(result.getInt("week_day"));
+			Discipline discipline = new Discipline();
+			discipline.setId(result.getInt("id"));
+			discipline.setCode(result.getString("code"));
+			discipline.setName(result.getString("name"));
+			discipline.setWeekDay(result.getInt("week_day"));
 
-			Phase p = new Phase();
-			p.setId(result.getInt("id_phase"));
-			d.setPhase(p);
+			Phase phase = new Phase();
+			phase.setId(result.getInt("id_phase"));
+			discipline.setPhase(phase);
 
-			list.add(d);
+			list.add(discipline);
 		}
 
 		return list;
@@ -86,9 +89,29 @@ public class DisciplineDAO {
 			discipline.setName(result.getString("name"));
 			discipline.setWeekDay(result.getInt("week_day"));
 
-			Phase p = new Phase();
-			p.setId(result.getInt("id_phase"));
-			discipline.setPhase(p);
+			Phase phase = new Phase();
+			phase.setId(result.getInt("id_phase"));
+			discipline.setPhase(phase);
+		}
+
+		return discipline;
+	}
+
+	public Discipline selectWhereName(String name) throws SQLException {
+		Discipline discipline = null;
+		pstSelectWhereName.setString(1, name);
+		ResultSet result = pstSelectWhereName.executeQuery();
+
+		if (result.next()) {
+			discipline = new Discipline();
+			discipline.setId(result.getInt("id"));
+			discipline.setCode(result.getString("code"));
+			discipline.setName(result.getString("name"));
+			discipline.setWeekDay(result.getInt("week_day"));
+
+			Phase phase = new Phase();
+			phase.setId(result.getInt("id_phase"));
+			discipline.setPhase(phase);
 		}
 
 		return discipline;
