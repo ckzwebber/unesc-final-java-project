@@ -33,7 +33,6 @@ public class ImportScreen extends JFrame{
 	private JMenu helpMenu;
 	private JPanel pnlVoid;
 	DefaultTableModel model = new DefaultTableModel();
-	UserDAO userDAO = new UserDAO(ConnectionFactory.getConnection());
 	Integer id = -1;
 	
 	
@@ -93,9 +92,21 @@ public ImportScreen() {
 				btnAdd.setBounds(280, 180, 100, 30);
 				pnlUsers.add(btnAdd);
 				
-				ArrayList<User> userList = 
+				try {
+					UserDAO userDAO = new UserDAO();
+					ArrayList<User> userList = userDAO.selectAll();
+					for(int i=0; i < userList.size(); i++) {
+						User user = userList.get(i);
+						Integer id = user.getId();
+						String strID = Integer.toString(id);
+						model.addRow( new String[] {strID, user.getUsername()});
+					}
+					
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
 				
-				/*model.addRow( new String[] { });*/
+				
 				
 		        btnAdd.addActionListener(new ActionListener() {
 		            @Override
