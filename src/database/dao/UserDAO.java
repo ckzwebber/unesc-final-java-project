@@ -44,8 +44,8 @@ public class UserDAO {
 		updateStatement.executeUpdate();
 	}
 
-	public void delete(User user) throws SQLException {
-		deleteStatement.setInt(1, user.getId());
+	public void delete(int id) throws SQLException {
+		deleteStatement.setInt(1, id);
 		deleteStatement.executeUpdate();
 	}
 

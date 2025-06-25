@@ -46,8 +46,8 @@ public class PhaseDAO {
 		updateStatement.executeUpdate();
 	}
 
-	public void delete(Phase phase) throws SQLException {
-		deleteStatement.setInt(1, phase.getId());
+	public void delete(int id) throws SQLException {
+		deleteStatement.setInt(1, id);
 		deleteStatement.executeUpdate();
 	}
 

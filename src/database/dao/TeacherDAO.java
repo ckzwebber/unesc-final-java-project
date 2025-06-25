@@ -48,8 +48,8 @@ public class TeacherDAO {
         updateStatement.executeUpdate();
     }
 
-    public void delete(Teacher teacher) throws SQLException {
-        deleteStatement.setInt(1, teacher.getId());
+    public void delete(int id) throws SQLException {
+        deleteStatement.setInt(1, id);
         deleteStatement.executeUpdate();
     }
 
