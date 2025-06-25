@@ -6,74 +6,78 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import database.ConnectionFactory;
 import database.model.DisciplineTeacher;
 
 public class DisciplineTeacherDAO {
-    
-    private String selectAll = "SELECT * FROM tb_disciplines_teachers";
-    private String selectWhere = "SELECT * FROM tb_disciplines_teachers WHERE discipline_id = ?";
-    private String insert = "INSERT INTO tb_disciplines_teachers(discipline_id, teacher_id) VALUES (?, ?)";
-    private String delete = "DELETE FROM tb_disciplines_teachers WHERE discipline_id = ? AND teacher_id = ?";
-    private String update = "UPDATE tb_disciplines_teachers SET teacher_id = ? WHERE discipline_id = ?";
 
-    private PreparedStatement pstSelectAll;
-    private PreparedStatement pstSelectWhere;
-    private PreparedStatement pstInsert;
-    private PreparedStatement pstDelete;
-    private PreparedStatement pstUpdate;
+    private static final String SELECT_ALL_QUERY = "SELECT discipline_id, teacher_id FROM tb_disciplines_teachers";
+    private static final String SELECT_BY_DISCIPLINE_QUERY = "SELECT discipline_id, teacher_id FROM tb_disciplines_teachers WHERE discipline_id = ?";
+    private static final String INSERT_QUERY = "INSERT INTO tb_disciplines_teachers(discipline_id, teacher_id) VALUES (?, ?)";
+    private static final String UPDATE_QUERY = "UPDATE tb_disciplines_teachers SET teacher_id = ? WHERE discipline_id = ?";
+    private static final String DELETE_QUERY = "DELETE FROM tb_disciplines_teachers WHERE discipline_id = ? AND teacher_id = ?";
 
-    public DisciplineTeacherDAO(Connection conn) throws SQLException {
-        pstSelectAll = conn.prepareStatement(selectAll);
-        pstSelectWhere = conn.prepareStatement(selectWhere);
-        pstInsert = conn.prepareStatement(insert);
-        pstDelete = conn.prepareStatement(delete);
-        pstUpdate = conn.prepareStatement(update);
+    private final PreparedStatement selectAllStatement;
+    private final PreparedStatement selectByDisciplineStatement;
+    private final PreparedStatement insertStatement;
+    private final PreparedStatement updateStatement;
+    private final PreparedStatement deleteStatement;
+
+    public DisciplineTeacherDAO() throws SQLException {
+        Connection connection = ConnectionFactory.getConnection();
+        selectAllStatement = connection.prepareStatement(SELECT_ALL_QUERY);
+        selectByDisciplineStatement = connection.prepareStatement(SELECT_BY_DISCIPLINE_QUERY);
+        insertStatement = connection.prepareStatement(INSERT_QUERY);
+        updateStatement = connection.prepareStatement(UPDATE_QUERY);
+        deleteStatement = connection.prepareStatement(DELETE_QUERY);
     }
 
-    public void insert(int disciplineId, int teacherId) throws SQLException {
-        pstInsert.setInt(1, disciplineId);
-        pstInsert.setInt(2, teacherId);
-        pstInsert.execute();
+    public void insert(DisciplineTeacher link) throws SQLException {
+        insertStatement.setInt(1, link.getDisciplineId());
+        insertStatement.setInt(2, link.getTeacherId());
+        insertStatement.executeUpdate();
     }
 
-    public void delete(int disciplineId, int teacherId) throws SQLException {
-        pstDelete.setInt(1, disciplineId);
-        pstDelete.setInt(2, teacherId);
-        pstDelete.execute();
+    public void update(DisciplineTeacher link) throws SQLException {
+        updateStatement.setInt(1, link.getTeacherId());
+        updateStatement.setInt(2, link.getDisciplineId());
+        updateStatement.executeUpdate();
     }
 
-    public void update(int disciplineId, int teacherId) throws SQLException {
-        pstUpdate.setInt(1, teacherId);
-        pstUpdate.setInt(2, disciplineId);
-        pstUpdate.execute();
+    public void delete(DisciplineTeacher link) throws SQLException {
+        deleteStatement.setInt(1, link.getDisciplineId());
+        deleteStatement.setInt(2, link.getTeacherId());
+        deleteStatement.executeUpdate();
     }
 
     public ArrayList<DisciplineTeacher> selectAll() throws SQLException {
-        ArrayList<DisciplineTeacher> listDT = new ArrayList<>();
-        ResultSet result = pstSelectAll.executeQuery();
-        
-        while (result.next()) {
-            DisciplineTeacher disciplineTeacher = new DisciplineTeacher();
-            disciplineTeacher.setDisciplineId(result.getInt("discipline_id"));
-            disciplineTeacher.setTeacherId(result.getInt("teacher_id"));
-            listDT.add(disciplineTeacher);
+        ArrayList<DisciplineTeacher> links = new ArrayList<>();
+        try (ResultSet resultSet = selectAllStatement.executeQuery()) {
+            while (resultSet.next()) {
+                DisciplineTeacher link = new DisciplineTeacher();
+                link.setDisciplineId(resultSet.getInt("discipline_id"));
+                link.setTeacherId(resultSet.getInt("teacher_id"));
+                links.add(link);
+            }
         }
-        
-        return listDT;
+        return links;
     }
 
-    public ArrayList<DisciplineTeacher> selectWhere(int disciplineId) throws SQLException {
-        ArrayList<DisciplineTeacher> listDT = new ArrayList<>();
-        pstSelectWhere.setInt(1, disciplineId);
-        ResultSet result = pstSelectWhere.executeQuery();
-        
-        while (result.next()) {
-            DisciplineTeacher disciplineTeacher = new DisciplineTeacher();
-            disciplineTeacher.setDisciplineId(result.getInt("discipline_id"));
-            disciplineTeacher.setTeacherId(result.getInt("teacher_id"));
-            listDT.add(disciplineTeacher);
+    public ArrayList<DisciplineTeacher> selectByDisciplineId(int disciplineId) throws SQLException {
+        ArrayList<DisciplineTeacher> links = new ArrayList<>();
+        selectByDisciplineStatement.setInt(1, disciplineId);
+        try (ResultSet resultSet = selectByDisciplineStatement.executeQuery()) {
+            while (resultSet.next()) {
+                DisciplineTeacher link = new DisciplineTeacher();
+                link.setDisciplineId(resultSet.getInt("discipline_id"));
+                link.setTeacherId(resultSet.getInt("teacher_id"));
+                links.add(link);
+            }
         }
-        
-        return listDT;
+        return links;
+    }
+
+    public ArrayList<DisciplineTeacher> select(DisciplineTeacher filter) throws SQLException {
+        return selectByDisciplineId(filter.getDisciplineId());
     }
 }

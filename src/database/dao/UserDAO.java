@@ -11,73 +11,73 @@ import database.model.User;
 
 public class UserDAO {
 
-	private String selectAll = "SELECT id, username FROM tb_users";
-	private String selectWhere = "SELECT * FROM users WHERE username = ?";
-	private String insert = "INSERT INTO users(username, password) VALUES (?, ?)";
-	private String update = "UPDATE users SET password = ? WHERE username = ?";
-	private String delete = "DELETE FROM users WHERE id = ?";
+	private static final String SELECT_ALL_QUERY = "SELECT id, username FROM tb_users";
+	private static final String SELECT_BY_USERNAME_QUERY = "SELECT id, username, password FROM tb_users WHERE username = ?";
+	private static final String INSERT_QUERY = "INSERT INTO tb_users(username, password) VALUES (?, ?)";
+	private static final String UPDATE_QUERY = "UPDATE tb_users SET password = ? WHERE id = ?";
+	private static final String DELETE_QUERY = "DELETE FROM tb_users WHERE id = ?";
 
-	private PreparedStatement pstSelectAll;
-	private PreparedStatement pstSelectWhere;
-	private PreparedStatement pstInsert;
-	private PreparedStatement pstUpdate;
-	private PreparedStatement pstDelete;
+	private final PreparedStatement selectAllStatement;
+	private final PreparedStatement selectByUsernameStatement;
+	private final PreparedStatement insertStatement;
+	private final PreparedStatement updateStatement;
+	private final PreparedStatement deleteStatement;
 
 	public UserDAO() throws SQLException {
-		Connection conn = ConnectionFactory.getConnection();
-		pstSelectAll = conn.prepareStatement(selectAll);
-		pstSelectWhere = conn.prepareStatement(selectWhere);
-		pstInsert = conn.prepareStatement(insert);
-		pstUpdate = conn.prepareStatement(update);
-		pstDelete = conn.prepareStatement(delete);
+		Connection connection = ConnectionFactory.getConnection();
+		selectAllStatement = connection.prepareStatement(SELECT_ALL_QUERY);
+		selectByUsernameStatement = connection.prepareStatement(SELECT_BY_USERNAME_QUERY);
+		insertStatement = connection.prepareStatement(INSERT_QUERY);
+		updateStatement = connection.prepareStatement(UPDATE_QUERY);
+		deleteStatement = connection.prepareStatement(DELETE_QUERY);
 	}
 
-	public void insert(String username, String password) throws SQLException {
-		pstInsert.setString(1, username);
-		pstInsert.setString(2, password);
-		pstInsert.execute();
+	public void insert(User user) throws SQLException {
+		insertStatement.setString(1, user.getUsername());
+		insertStatement.setString(2, user.getPassword());
+		insertStatement.executeUpdate();
 	}
 
-	public void delete(int id) throws SQLException {
-		pstDelete.setInt(1, id);
-		pstDelete.execute();
+	public void update(User user) throws SQLException {
+		updateStatement.setString(1, user.getPassword());
+		updateStatement.setInt(2, user.getId());
+		updateStatement.executeUpdate();
 	}
 
-	public void update(String username, String password) throws SQLException {
-		pstUpdate.setString(1, username);
-		pstUpdate.setString(2, password);
-		pstUpdate.execute();
+	public void delete(User user) throws SQLException {
+		deleteStatement.setInt(1, user.getId());
+		deleteStatement.executeUpdate();
 	}
 
 	public ArrayList<User> selectAll() throws SQLException {
-
-		ArrayList<User> users = new ArrayList<User>();
-
-		ResultSet result = pstSelectAll.executeQuery();
-		while (result.next()) {
-			User user = new User();
-			user.setId(result.getInt("id"));
-			user.setUsername(result.getString("username"));
-			user.setPassword("");
-			users.add(user);
+		ArrayList<User> userList = new ArrayList<>();
+		try (ResultSet resultSet = selectAllStatement.executeQuery()) {
+			while (resultSet.next()) {
+				User user = new User();
+				user.setId(resultSet.getInt("id"));
+				user.setUsername(resultSet.getString("username"));
+				user.setPassword("");
+				userList.add(user);
+			}
 		}
-
-		return users;
+		return userList;
 	}
 
-	public User selectWhere(String username) throws SQLException {
+	public User selectByUsername(String username) throws SQLException {
+		selectByUsernameStatement.setString(1, username);
+		try (ResultSet resultSet = selectByUsernameStatement.executeQuery()) {
+			if (resultSet.next()) {
+				User user = new User();
+				user.setId(resultSet.getInt("id"));
+				user.setUsername(resultSet.getString("username"));
+				user.setPassword(resultSet.getString("password"));
+				return user;
+			}
+		}
+		return null;
+	}
 
-		User user = null;
-		pstSelectWhere.setString(1, username);
-
-		ResultSet result = pstSelectWhere.executeQuery();
-		if (result.next()) {
-			user = new User();
-			user.setId(result.getInt("id"));
-			user.setUsername(result.getString("username"));
-			user.setPassword(result.getString("password"));
-		}	
-
-		return user;
+	public User select(User user) throws SQLException {
+		return selectByUsername(user.getUsername());
 	}
 }

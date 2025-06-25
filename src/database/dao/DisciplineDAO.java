@@ -6,114 +6,102 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import database.ConnectionFactory;
 import database.model.Discipline;
 import database.model.Phase;
 
 public class DisciplineDAO {
 
-	private String selectAll = "SELECT * FROM tb_disciplines";
-	private String selectWhere = "SELECT * FROM tb_disciplines WHERE id = ?";
-	private String selectWhereName = "SELECT * FROM tb_disciplines WHERE name = ?";
-	private String insert = "INSERT INTO tb_disciplines(code, name, week_day, id_phase) VALUES (?, ?, ?, ?)";
-	private String update = "UPDATE tb_disciplines SET code = ?, name = ?, week_day = ?, id_phase = ? WHERE id = ?";
-	private String delete = "DELETE FROM tb_disciplines WHERE id = ?";
+	private static final String SELECT_ALL_QUERY = "SELECT id, code, name, week_day, id_phase FROM tb_disciplines";
+	private static final String SELECT_BY_ID_QUERY = "SELECT id, code, name, week_day, id_phase FROM tb_disciplines WHERE id = ?";
+	private static final String SELECT_BY_NAME_QUERY = "SELECT id, code, name, week_day, id_phase FROM tb_disciplines WHERE name = ?";
+	private static final String INSERT_QUERY = "INSERT INTO tb_disciplines(code, name, week_day, id_phase) VALUES (?, ?, ?, ?)";
+	private static final String UPDATE_QUERY = "UPDATE tb_disciplines SET code = ?, name = ?, week_day = ?, id_phase = ? WHERE id = ?";
+	private static final String DELETE_QUERY = "DELETE FROM tb_disciplines WHERE id = ?";
 
-	private PreparedStatement pstSelectAll;
-	private PreparedStatement pstSelectWhere;
-	private PreparedStatement pstInsert;
-	private PreparedStatement pstUpdate;
-	private PreparedStatement pstDelete;
-	private PreparedStatement pstSelectWhereName;
+	private final PreparedStatement selectAllStatement;
+	private final PreparedStatement selectByIdStatement;
+	private final PreparedStatement selectByNameStatement;
+	private final PreparedStatement insertStatement;
+	private final PreparedStatement updateStatement;
+	private final PreparedStatement deleteStatement;
 
-	public DisciplineDAO(Connection conn) throws SQLException {
-		pstSelectAll = conn.prepareStatement(selectAll);
-		pstSelectWhere = conn.prepareStatement(selectWhere);
-		pstInsert = conn.prepareStatement(insert);
-		pstUpdate = conn.prepareStatement(update);
-		pstDelete = conn.prepareStatement(delete);
-		pstSelectWhereName = conn.prepareStatement(selectWhereName);
+	public DisciplineDAO() throws SQLException {
+		Connection connection = ConnectionFactory.getConnection();
+		selectAllStatement = connection.prepareStatement(SELECT_ALL_QUERY);
+		selectByIdStatement = connection.prepareStatement(SELECT_BY_ID_QUERY);
+		selectByNameStatement = connection.prepareStatement(SELECT_BY_NAME_QUERY);
+		insertStatement = connection.prepareStatement(INSERT_QUERY);
+		updateStatement = connection.prepareStatement(UPDATE_QUERY);
+		deleteStatement = connection.prepareStatement(DELETE_QUERY);
 	}
 
-	public void insert(String code, String name, int weekDay, int phaseId) throws SQLException {
-		pstInsert.setString(2, code);
-		pstInsert.setString(3, name);
-		pstInsert.setInt(4, weekDay);
-		pstInsert.setInt(5, phaseId);
-		pstInsert.execute();
+	public void insert(Discipline discipline) throws SQLException {
+		insertStatement.setString(1, discipline.getCode());
+		insertStatement.setString(2, discipline.getName());
+		insertStatement.setInt(3, discipline.getWeekDay());
+		insertStatement.setInt(4, discipline.getPhase().getId());
+		insertStatement.executeUpdate();
 	}
 
-	public void update(String code, String name, int weekDay, int phaseId) throws SQLException {
-		pstUpdate.setString(2, code);
-		pstUpdate.setString(3, name);
-		pstUpdate.setInt(4, weekDay);
-		pstUpdate.setInt(5, phaseId);
-		pstUpdate.execute();
-	}
-	
-	public void delete(int id) throws SQLException {
-		pstDelete.setInt(1, id);
-		pstDelete.execute();
+	public void update(Discipline discipline) throws SQLException {
+		updateStatement.setString(1, discipline.getCode());
+		updateStatement.setString(2, discipline.getName());
+		updateStatement.setInt(3, discipline.getWeekDay());
+		updateStatement.setInt(4, discipline.getPhase().getId());
+		updateStatement.setInt(5, discipline.getId());
+		updateStatement.executeUpdate();
 	}
 
+	public void delete(Discipline discipline) throws SQLException {
+		deleteStatement.setInt(1, discipline.getId());
+		deleteStatement.executeUpdate();
+	}
 
 	public ArrayList<Discipline> selectAll() throws SQLException {
-		ArrayList<Discipline> list = new ArrayList<>();
-		ResultSet result = pstSelectAll.executeQuery();
-
-		while (result.next()) {
-			Discipline discipline = new Discipline();
-			discipline.setId(result.getInt("id"));
-			discipline.setCode(result.getString("code"));
-			discipline.setName(result.getString("name"));
-			discipline.setWeekDay(result.getInt("week_day"));
-
-			Phase phase = new Phase();
-			phase.setId(result.getInt("id_phase"));
-			discipline.setPhase(phase);
-
-			list.add(discipline);
+		ArrayList<Discipline> disciplineList = new ArrayList<>();
+		try (ResultSet rs = selectAllStatement.executeQuery()) {
+			while (rs.next()) {
+				Discipline d = buildDisciplineFromResultSet(rs);
+				disciplineList.add(d);
+			}
 		}
-
-		return list;
+		return disciplineList;
 	}
 
-	public Discipline selectWhere(int id) throws SQLException {
-		Discipline discipline = null;
-		pstSelectWhere.setInt(1, id);
-		ResultSet result = pstSelectWhere.executeQuery();
-
-		if (result.next()) {
-			discipline = new Discipline();
-			discipline.setId(result.getInt("id"));
-			discipline.setCode(result.getString("code"));
-			discipline.setName(result.getString("name"));
-			discipline.setWeekDay(result.getInt("week_day"));
-
-			Phase phase = new Phase();
-			phase.setId(result.getInt("id_phase"));
-			discipline.setPhase(phase);
+	public Discipline selectById(int id) throws SQLException {
+		selectByIdStatement.setInt(1, id);
+		try (ResultSet rs = selectByIdStatement.executeQuery()) {
+			if (rs.next()) {
+				return buildDisciplineFromResultSet(rs);
+			}
 		}
-
-		return discipline;
+		return null;
 	}
 
-	public Discipline selectWhereName(String name) throws SQLException {
-		Discipline discipline = null;
-		pstSelectWhereName.setString(1, name);
-		ResultSet result = pstSelectWhereName.executeQuery();
-
-		if (result.next()) {
-			discipline = new Discipline();
-			discipline.setId(result.getInt("id"));
-			discipline.setCode(result.getString("code"));
-			discipline.setName(result.getString("name"));
-			discipline.setWeekDay(result.getInt("week_day"));
-
-			Phase phase = new Phase();
-			phase.setId(result.getInt("id_phase"));
-			discipline.setPhase(phase);
+	public Discipline selectByName(String name) throws SQLException {
+		selectByNameStatement.setString(1, name);
+		try (ResultSet rs = selectByNameStatement.executeQuery()) {
+			if (rs.next()) {
+				return buildDisciplineFromResultSet(rs);
+			}
 		}
+		return null;
+	}
 
+	public Discipline select(Discipline filter) throws SQLException {
+		return selectById(filter.getId());
+	}
+
+	private Discipline buildDisciplineFromResultSet(ResultSet rs) throws SQLException {
+		Discipline discipline = new Discipline();
+		discipline.setId(rs.getInt("id"));
+		discipline.setCode(rs.getString("code"));
+		discipline.setName(rs.getString("name"));
+		discipline.setWeekDay(rs.getInt("week_day"));
+		Phase phase = new Phase();
+		phase.setId(rs.getInt("id_phase"));
+		discipline.setPhase(phase);
 		return discipline;
 	}
 }

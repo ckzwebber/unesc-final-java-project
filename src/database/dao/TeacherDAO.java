@@ -6,78 +6,92 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import database.ConnectionFactory;
 import database.model.Teacher;
 
 public class TeacherDAO {
-    
-    public String selectAll = "SELECT * FROM tb_teachers";
-    public String selectWhereName = "SELECT * FROM tb_teachers WHERE name = ?";
-    public String insert = "INSERT INTO tb_teachers(name, title) VALUES (?, ?)";
-    public String update = "UPDATE tb_teachers SET name = ?, title = ? WHERE id = ?";
-    public String delete = "DELETE FROM tb_teachers WHERE id = ?";
 
-    private PreparedStatement pstSelectAll;
-    private PreparedStatement pstSelectWhereName;
-    private PreparedStatement pstInsert;
-    private PreparedStatement pstUpdate;
-    private PreparedStatement pstDelete;
+    private static final String SELECT_ALL_QUERY = "SELECT id, name, title FROM tb_teachers";
+    private static final String SELECT_BY_ID_QUERY = "SELECT id, name, title FROM tb_teachers WHERE id = ?";
+    private static final String SELECT_BY_NAME_QUERY = "SELECT id, name, title FROM tb_teachers WHERE name = ?";
+    private static final String INSERT_QUERY = "INSERT INTO tb_teachers(name, title) VALUES (?, ?)";
+    private static final String UPDATE_QUERY = "UPDATE tb_teachers SET name = ?, title = ? WHERE id = ?";
+    private static final String DELETE_QUERY = "DELETE FROM tb_teachers WHERE id = ?";
 
-    public TeacherDAO(Connection conn) throws SQLException {
-        pstSelectAll = conn.prepareStatement(selectAll);
-        pstSelectWhereName = conn.prepareStatement(selectWhereName);
-        pstInsert = conn.prepareStatement(insert);
-        pstUpdate = conn.prepareStatement(update);
-        pstDelete = conn.prepareStatement(delete);
+    private final PreparedStatement selectAllStatement;
+    private final PreparedStatement selectByIdStatement;
+    private final PreparedStatement selectByNameStatement;
+    private final PreparedStatement insertStatement;
+    private final PreparedStatement updateStatement;
+    private final PreparedStatement deleteStatement;
+
+    public TeacherDAO() throws SQLException {
+        Connection connection = ConnectionFactory.getConnection();
+        selectAllStatement = connection.prepareStatement(SELECT_ALL_QUERY);
+        selectByIdStatement = connection.prepareStatement(SELECT_BY_ID_QUERY);
+        selectByNameStatement = connection.prepareStatement(SELECT_BY_NAME_QUERY);
+        insertStatement = connection.prepareStatement(INSERT_QUERY);
+        updateStatement = connection.prepareStatement(UPDATE_QUERY);
+        deleteStatement = connection.prepareStatement(DELETE_QUERY);
     }
 
-    public void insert(String name, String title) throws SQLException {
-        pstInsert.setString(1, name);
-        pstInsert.setString(2, title);
-        pstInsert.execute();
+    public void insert(Teacher teacher) throws SQLException {
+        insertStatement.setString(1, teacher.getName());
+        insertStatement.setInt(2, teacher.getTitle());
+        insertStatement.executeUpdate();
     }
 
-    public void delete(int id) throws SQLException {
-        pstDelete.setInt(1, id);
-        pstDelete.execute();
+    public void update(Teacher teacher) throws SQLException {
+        updateStatement.setString(1, teacher.getName());
+        updateStatement.setInt(2, teacher.getTitle());
+        updateStatement.setInt(3, teacher.getId());
+        updateStatement.executeUpdate();
     }
 
-    public void update(String name, String title) throws SQLException {
-        pstUpdate.setString(2, name);
-        pstUpdate.setString(3, title);
-        pstUpdate.execute();
+    public void delete(Teacher teacher) throws SQLException {
+        deleteStatement.setInt(1, teacher.getId());
+        deleteStatement.executeUpdate();
     }
 
     public ArrayList<Teacher> selectAll() throws SQLException {
-        
-        ArrayList<Teacher> teachers = new ArrayList<>();
-        
-        ResultSet result = pstSelectAll.executeQuery();
-        
-        while (result.next()) {
-            Teacher teacher = new Teacher();
-            teacher.setId(result.getInt("id"));
-            teacher.setName(result.getString("name"));
-            teacher.setTitle(result.getInt("title"));
-            teachers.add(teacher);     
+        ArrayList<Teacher> teacherList = new ArrayList<>();
+        try (ResultSet rs = selectAllStatement.executeQuery()) {
+            while (rs.next()) {
+                Teacher teacher = new Teacher();
+                teacher.setId(rs.getInt("id"));
+                teacher.setName(rs.getString("name"));
+                teacher.setTitle(rs.getInt("title"));
+                teacherList.add(teacher);
+            }
         }
-        
-        return teachers;
+        return teacherList;
     }
 
-    public Teacher selectWhereName(String name) throws SQLException {
-        
-        Teacher teacher = null;
-        pstSelectWhereName.setString(1, name);
-        
-        ResultSet result = pstSelectWhereName.executeQuery();
-        if (result.next()) {
-            teacher = new Teacher();
-            teacher.setId(result.getInt("id"));
-            teacher.setName(result.getString("name"));
-            teacher.setTitle(result.getInt("title"));
+    public Teacher selectById(int id) throws SQLException {
+        selectByIdStatement.setInt(1, id);
+        try (ResultSet rs = selectByIdStatement.executeQuery()) {
+            if (rs.next()) {
+                Teacher teacher = new Teacher();
+                teacher.setId(rs.getInt("id"));
+                teacher.setName(rs.getString("name"));
+                teacher.setTitle(rs.getInt("title"));
+                return teacher;
+            }
         }
-        
-        return teacher;
+        return null;
     }
 
+    public Teacher selectByName(String name) throws SQLException {
+        selectByNameStatement.setString(1, name);
+        try (ResultSet rs = selectByNameStatement.executeQuery()) {
+            if (rs.next()) {
+                Teacher teacher = new Teacher();
+                teacher.setId(rs.getInt("id"));
+                teacher.setName(rs.getString("name"));
+                teacher.setTitle(rs.getInt("title"));
+                return teacher;
+            }
+        }
+        return null;
+    }
 }
