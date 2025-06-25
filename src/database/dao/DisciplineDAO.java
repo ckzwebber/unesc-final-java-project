@@ -53,17 +53,17 @@ public class DisciplineDAO {
 		updateStatement.executeUpdate();
 	}
 
-	public void delete(Discipline discipline) throws SQLException {
-		deleteStatement.setInt(1, discipline.getId());
+	public void delete(int id) throws SQLException {
+		deleteStatement.setInt(1, id);
 		deleteStatement.executeUpdate();
 	}
 
 	public ArrayList<Discipline> selectAll() throws SQLException {
 		ArrayList<Discipline> disciplineList = new ArrayList<>();
-		try (ResultSet rs = selectAllStatement.executeQuery()) {
-			while (rs.next()) {
-				Discipline d = buildDisciplineFromResultSet(rs);
-				disciplineList.add(d);
+		try (ResultSet resultSet = selectAllStatement.executeQuery()) {
+			while (resultSet.next()) {
+				Discipline discipline = buildDisciplineFromResultSet(resultSet);
+				disciplineList.add(discipline);
 			}
 		}
 		return disciplineList;
@@ -71,9 +71,10 @@ public class DisciplineDAO {
 
 	public Discipline selectById(int id) throws SQLException {
 		selectByIdStatement.setInt(1, id);
-		try (ResultSet rs = selectByIdStatement.executeQuery()) {
-			if (rs.next()) {
-				return buildDisciplineFromResultSet(rs);
+		try (ResultSet resultSet = selectByIdStatement.executeQuery()) {
+			if (resultSet.next()) {
+				Discipline discipline = buildDisciplineFromResultSet(resultSet);
+				return discipline;
 			}
 		}
 		return null;
@@ -81,26 +82,23 @@ public class DisciplineDAO {
 
 	public Discipline selectByName(String name) throws SQLException {
 		selectByNameStatement.setString(1, name);
-		try (ResultSet rs = selectByNameStatement.executeQuery()) {
-			if (rs.next()) {
-				return buildDisciplineFromResultSet(rs);
+		try (ResultSet resultSet = selectByNameStatement.executeQuery()) {
+			if (resultSet.next()) {
+				Discipline discipline = buildDisciplineFromResultSet(resultSet);
+				return discipline;
 			}
 		}
 		return null;
 	}
 
-	public Discipline select(Discipline filter) throws SQLException {
-		return selectById(filter.getId());
-	}
-
-	private Discipline buildDisciplineFromResultSet(ResultSet rs) throws SQLException {
+	private Discipline buildDisciplineFromResultSet(ResultSet resultSet) throws SQLException {
 		Discipline discipline = new Discipline();
-		discipline.setId(rs.getInt("id"));
-		discipline.setCode(rs.getString("code"));
-		discipline.setName(rs.getString("name"));
-		discipline.setWeekDay(rs.getInt("week_day"));
+		discipline.setId(resultSet.getInt("id"));
+		discipline.setCode(resultSet.getString("code"));
+		discipline.setName(resultSet.getString("name"));
+		discipline.setWeekDay(resultSet.getInt("week_day"));
 		Phase phase = new Phase();
-		phase.setId(rs.getInt("id_phase"));
+		phase.setId(resultSet.getInt("id_phase"));
 		discipline.setPhase(phase);
 		return discipline;
 	}

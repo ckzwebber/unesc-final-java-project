@@ -30,8 +30,8 @@ public class CourseController {
         return courseDAO.selectByName(name);
     }
 
-    public void insert(int id, String name) throws SQLException {
-        Course course = new Course(id, name);
+    public void insert(String name) throws SQLException {
+        Course course = new Course(name);
         courseDAO.insert(course);
     }
 

@@ -53,9 +53,10 @@ public class CourseDAO {
 
 	public ArrayList<Course> selectAll() throws SQLException {
 		ArrayList<Course> courses = new ArrayList<>();
-		try (ResultSet rs = selectAllStatement.executeQuery()) {
-			while (rs.next()) {
-				courses.add(buildCourseFromResultSet(rs));
+		try (ResultSet resultSet = selectAllStatement.executeQuery()) {
+			while (resultSet.next()) {
+				Course course = buildCourseFromResultSet(resultSet);
+				courses.add(course);
 			}
 		}
 		return courses;
@@ -63,9 +64,10 @@ public class CourseDAO {
 
 	public Course selectById(int id) throws SQLException {
 		selectByIdStatement.setInt(1, id);
-		try (ResultSet rs = selectByIdStatement.executeQuery()) {
-			if (rs.next()) {
-				return buildCourseFromResultSet(rs);
+		try (ResultSet resultSet = selectByIdStatement.executeQuery()) {
+			if (resultSet.next()) {
+				Course course = buildCourseFromResultSet(resultSet);
+				return course;
 			}
 		}
 		return null;
@@ -73,22 +75,19 @@ public class CourseDAO {
 
 	public Course selectByName(String name) throws SQLException {
 		selectByNameStatement.setString(1, name);
-		try (ResultSet rs = selectByNameStatement.executeQuery()) {
-			if (rs.next()) {
-				return buildCourseFromResultSet(rs);
+		try (ResultSet resultSet = selectByNameStatement.executeQuery()) {
+			if (resultSet.next()) {
+				Course course = buildCourseFromResultSet(resultSet);
+				return course;
 			}
 		}
 		return null;
 	}
 
-	public Course select(Course filter) throws SQLException {
-		return selectById(filter.getId());
-	}
-
-	private Course buildCourseFromResultSet(ResultSet rs) throws SQLException {
+	private Course buildCourseFromResultSet(ResultSet resultSet) throws SQLException {
 		Course course = new Course();
-		course.setId(rs.getInt("id"));
-		course.setName(rs.getString("name"));
+		course.setId(resultSet.getInt("id"));
+		course.setName(resultSet.getString("name"));
 		return course;
 	}
 }

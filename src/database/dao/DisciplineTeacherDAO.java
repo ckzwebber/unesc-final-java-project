@@ -32,52 +32,50 @@ public class DisciplineTeacherDAO {
         deleteStatement = connection.prepareStatement(DELETE_QUERY);
     }
 
-    public void insert(DisciplineTeacher link) throws SQLException {
-        insertStatement.setInt(1, link.getDisciplineId());
-        insertStatement.setInt(2, link.getTeacherId());
+    public void insert(DisciplineTeacher disciplineTeacher) throws SQLException {
+        insertStatement.setInt(1, disciplineTeacher.getDisciplineId());
+        insertStatement.setInt(2, disciplineTeacher.getTeacherId());
         insertStatement.executeUpdate();
     }
 
-    public void update(DisciplineTeacher link) throws SQLException {
-        updateStatement.setInt(1, link.getTeacherId());
-        updateStatement.setInt(2, link.getDisciplineId());
+    public void update(DisciplineTeacher disciplineTeacher) throws SQLException {
+        updateStatement.setInt(1, disciplineTeacher.getTeacherId());
+        updateStatement.setInt(2, disciplineTeacher.getDisciplineId());
         updateStatement.executeUpdate();
     }
 
-    public void delete(DisciplineTeacher link) throws SQLException {
-        deleteStatement.setInt(1, link.getDisciplineId());
-        deleteStatement.setInt(2, link.getTeacherId());
+    public void delete(int disciplineId, int teacherId) throws SQLException {
+        deleteStatement.setInt(1, disciplineId);
+        deleteStatement.setInt(2, teacherId);
         deleteStatement.executeUpdate();
     }
 
     public ArrayList<DisciplineTeacher> selectAll() throws SQLException {
-        ArrayList<DisciplineTeacher> links = new ArrayList<>();
+        ArrayList<DisciplineTeacher> disciplineTeachers = new ArrayList<>();
         try (ResultSet resultSet = selectAllStatement.executeQuery()) {
             while (resultSet.next()) {
-                DisciplineTeacher link = new DisciplineTeacher();
-                link.setDisciplineId(resultSet.getInt("discipline_id"));
-                link.setTeacherId(resultSet.getInt("teacher_id"));
-                links.add(link);
+                DisciplineTeacher disciplineTeacher = buildDisciplineTeacherFromResultSet(resultSet);
+                disciplineTeachers.add(disciplineTeacher);
             }
         }
-        return links;
+        return disciplineTeachers;
     }
 
-    public ArrayList<DisciplineTeacher> selectByDisciplineId(int disciplineId) throws SQLException {
-        ArrayList<DisciplineTeacher> links = new ArrayList<>();
+    public DisciplineTeacher selectByDisciplineId(int disciplineId) throws SQLException {
         selectByDisciplineStatement.setInt(1, disciplineId);
         try (ResultSet resultSet = selectByDisciplineStatement.executeQuery()) {
-            while (resultSet.next()) {
-                DisciplineTeacher link = new DisciplineTeacher();
-                link.setDisciplineId(resultSet.getInt("discipline_id"));
-                link.setTeacherId(resultSet.getInt("teacher_id"));
-                links.add(link);
+            if (resultSet.next()) {
+                DisciplineTeacher disciplineTeacher = buildDisciplineTeacherFromResultSet(resultSet);
+                return disciplineTeacher;
             }
         }
-        return links;
+        return null;
     }
 
-    public ArrayList<DisciplineTeacher> select(DisciplineTeacher filter) throws SQLException {
-        return selectByDisciplineId(filter.getDisciplineId());
+    private DisciplineTeacher buildDisciplineTeacherFromResultSet(ResultSet resultSet) throws SQLException {
+        DisciplineTeacher disciplineTeacher = new DisciplineTeacher();
+        disciplineTeacher.setDisciplineId(resultSet.getInt("discipline_id"));
+        disciplineTeacher.setTeacherId(resultSet.getInt("teacher_id"));
+        return disciplineTeacher;
     }
 }

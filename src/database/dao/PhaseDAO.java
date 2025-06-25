@@ -55,12 +55,7 @@ public class PhaseDAO {
 		ArrayList<Phase> phaseList = new ArrayList<>();
 		try (ResultSet resultSet = selectAllStatement.executeQuery()) {
 			while (resultSet.next()) {
-				Phase phase = new Phase();
-				phase.setId(resultSet.getInt("id"));
-				phase.setName(resultSet.getString("name"));
-				Course course = new Course();
-				course.setId(resultSet.getInt("course_id"));
-				phase.setCourse(course);
+				Phase phase = buildPhaseFromResultSet(resultSet);
 				phaseList.add(phase);
 			}
 		}
@@ -71,19 +66,20 @@ public class PhaseDAO {
 		selectByIdStatement.setInt(1, id);
 		try (ResultSet resultSet = selectByIdStatement.executeQuery()) {
 			if (resultSet.next()) {
-				Phase phase = new Phase();
-				phase.setId(resultSet.getInt("id"));
-				phase.setName(resultSet.getString("name"));
-				Course course = new Course();
-				course.setId(resultSet.getInt("course_id"));
-				phase.setCourse(course);
+				Phase phase = buildPhaseFromResultSet(resultSet);
 				return phase;
 			}
 		}
 		return null;
 	}
 
-	public Phase select(Phase phase) throws SQLException {
-		return selectById(phase.getId());
+	private Phase buildPhaseFromResultSet(ResultSet resultSet) throws SQLException {
+		Phase phase = new Phase();
+		phase.setId(resultSet.getInt("id"));
+		phase.setName(resultSet.getString("name"));
+		Course course = new Course();
+		course.setId(resultSet.getInt("course_id"));
+		phase.setCourse(course);
+		return phase;
 	}
 }

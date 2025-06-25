@@ -55,12 +55,9 @@ public class TeacherDAO {
 
     public ArrayList<Teacher> selectAll() throws SQLException {
         ArrayList<Teacher> teacherList = new ArrayList<>();
-        try (ResultSet rs = selectAllStatement.executeQuery()) {
-            while (rs.next()) {
-                Teacher teacher = new Teacher();
-                teacher.setId(rs.getInt("id"));
-                teacher.setName(rs.getString("name"));
-                teacher.setTitle(rs.getInt("title"));
+        try (ResultSet resultSet = selectAllStatement.executeQuery()) {
+            while (resultSet.next()) {
+                Teacher teacher = buildTeacherFromResultSet(resultSet);
                 teacherList.add(teacher);
             }
         }
@@ -69,12 +66,9 @@ public class TeacherDAO {
 
     public Teacher selectById(int id) throws SQLException {
         selectByIdStatement.setInt(1, id);
-        try (ResultSet rs = selectByIdStatement.executeQuery()) {
-            if (rs.next()) {
-                Teacher teacher = new Teacher();
-                teacher.setId(rs.getInt("id"));
-                teacher.setName(rs.getString("name"));
-                teacher.setTitle(rs.getInt("title"));
+        try (ResultSet resultSet = selectByIdStatement.executeQuery()) {
+            if (resultSet.next()) {
+                Teacher teacher = buildTeacherFromResultSet(resultSet);
                 return teacher;
             }
         }
@@ -83,15 +77,20 @@ public class TeacherDAO {
 
     public Teacher selectByName(String name) throws SQLException {
         selectByNameStatement.setString(1, name);
-        try (ResultSet rs = selectByNameStatement.executeQuery()) {
-            if (rs.next()) {
-                Teacher teacher = new Teacher();
-                teacher.setId(rs.getInt("id"));
-                teacher.setName(rs.getString("name"));
-                teacher.setTitle(rs.getInt("title"));
+        try (ResultSet resultSet = selectByNameStatement.executeQuery()) {
+            if (resultSet.next()) {
+                Teacher teacher = buildTeacherFromResultSet(resultSet);
                 return teacher;
             }
         }
         return null;
+    }
+
+    private Teacher buildTeacherFromResultSet(ResultSet resultSet) throws SQLException {
+        Teacher teacher = new Teacher();
+        teacher.setId(resultSet.getInt("id"));
+        teacher.setName(resultSet.getString("name"));
+        teacher.setTitle(resultSet.getInt("title"));
+        return teacher;
     }
 }

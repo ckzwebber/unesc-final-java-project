@@ -9,6 +9,11 @@ public class Phase {
 	public Phase() {
 	}
 
+	public Phase(String name, Course course) {
+		this.name = name;
+		this.course = course;
+	}
+
 	public Phase(int id, String name, Course course) {
 		this.id = id;
 		this.name = name;

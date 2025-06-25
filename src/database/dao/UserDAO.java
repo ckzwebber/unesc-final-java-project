@@ -53,10 +53,7 @@ public class UserDAO {
 		ArrayList<User> userList = new ArrayList<>();
 		try (ResultSet resultSet = selectAllStatement.executeQuery()) {
 			while (resultSet.next()) {
-				User user = new User();
-				user.setId(resultSet.getInt("id"));
-				user.setUsername(resultSet.getString("username"));
-				user.setPassword("");
+				User user = buildUserFromResultSet(resultSet);
 				userList.add(user);
 			}
 		}
@@ -67,17 +64,18 @@ public class UserDAO {
 		selectByUsernameStatement.setString(1, username);
 		try (ResultSet resultSet = selectByUsernameStatement.executeQuery()) {
 			if (resultSet.next()) {
-				User user = new User();
-				user.setId(resultSet.getInt("id"));
-				user.setUsername(resultSet.getString("username"));
-				user.setPassword(resultSet.getString("password"));
+				User user = buildUserFromResultSet(resultSet);
 				return user;
 			}
 		}
 		return null;
 	}
 
-	public User select(User user) throws SQLException {
-		return selectByUsername(user.getUsername());
+	private User buildUserFromResultSet(ResultSet resultSet) throws SQLException {
+		User user = new User();
+		user.setId(resultSet.getInt("id"));
+		user.setUsername(resultSet.getString("username"));
+		user.setPassword(resultSet.getString("password"));
+		return user;
 	}
 }

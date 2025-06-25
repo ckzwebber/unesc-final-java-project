@@ -8,6 +8,10 @@ public class Course {
     public Course() {
     }
 
+    public Course(String name) {
+        this.name = name;
+    }
+
     public Course(int id, String name) {
         this.id = id;
         this.name = name;
