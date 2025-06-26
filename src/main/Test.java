@@ -1,7 +1,7 @@
 package main;
 
 import database.ConnectionFactory;
-import view.ImportScreen;
+import view.MainScreen;
 
 public class Test {
 
@@ -11,7 +11,7 @@ public class Test {
             ConnectionFactory.closeConnection();
     }));
 
-	new ImportScreen();
+	new MainScreen();
 		
 	}
 }

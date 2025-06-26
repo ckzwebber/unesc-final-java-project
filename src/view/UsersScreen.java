@@ -1,4 +1,4 @@
-package view;
+/*package view;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -51,5 +51,5 @@ public class UsersScreen extends JFrame{
 				
 				
 				
-			};
+			};*/
 
