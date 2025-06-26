@@ -1,13 +1,23 @@
 package service;
 
+import java.sql.SQLException;
+
+import at.favre.lib.crypto.bcrypt.BCrypt;
+import database.dao.UserDAO;
 import database.model.User;
 
 public class UserService {
 
-    public boolean authenticate(String username, String password) {
-
-        // Criar logica de autenticação
-        return true;
+    public boolean loginUser(String username, String password) {
+        if (username == null || username.isEmpty() || password == null || password.isEmpty()) {
+            return false;
+        }
+        try {
+            User user = userOnDatabase(username);
+            return BCrypt.verifyer().verify(password.toCharArray(), user.getPassword()).verified;
+        } catch (RuntimeException e) {
+            return false;
+        }
     }
 
     public User registerUser(String username, String password) {
@@ -19,16 +29,37 @@ public class UserService {
             throw new IllegalArgumentException("Invalid username or password");
         }
 
-        // Ver se o usuario ja existe
-        // Criar hash e salt para a senha
+        User userOnDatabase = userOnDatabase(username);
+        if (userOnDatabase != null) {
+            throw new IllegalArgumentException("Username already exists");
+        }
+
+        int saltLength = 12;
+        String hashedPassword = BCrypt.withDefaults().hashToString(saltLength, password.toCharArray());
 
         User user = new User();
         user.setUsername(username);
-        user.setPassword(password);
+        user.setPassword(hashedPassword);
         return user;
     }
 
     public void updateUserProfile(int userId, String newUsername, String newPassword) {
-        // Criar logica de atualização de perfil
+
+    }
+
+    public User userOnDatabase(String username) {
+        try {
+            UserDAO userDAO = new UserDAO();
+            User user = userDAO.selectByUsername(username);
+            if (user == null) {
+                throw new SQLException("User not found");
+            }
+
+            return user;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error accessing user data", e);
+        }
     }
 }
