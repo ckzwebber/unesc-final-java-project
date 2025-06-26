@@ -9,6 +9,11 @@ public class Teacher {
 	public Teacher() {
 	}
 
+	public Teacher(String name, int title) {
+		this.name = name;
+		this.title = title;
+	}
+
 	public Teacher(int id, String name, int title) {
 		this.id = id;
 		this.name = name;

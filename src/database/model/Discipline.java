@@ -11,6 +11,13 @@ public class Discipline {
 	public Discipline() {
 	}
 
+	public Discipline(String code, String name, int weekDay, Phase phase) {
+		this.code = code;
+		this.name = name;
+		this.weekDay = weekDay;
+		this.phase = phase;
+	}
+
 	public Discipline(int id, String code, String name, int weekDay, Phase phase) {
 		this.id = id;
 		this.code = code;

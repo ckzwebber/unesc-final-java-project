@@ -1,4 +1,4 @@
-package services;
+package service;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -6,7 +6,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import utils.CourseInfo;
+import database.model.CourseInfo;
 
 public class ImportService {
 
@@ -28,20 +28,20 @@ public class ImportService {
 			while ((line = buffer.readLine()) != null) {
 				if (line.startsWith("0")) {
 					course.append(line, 1, 51);
-				    date.append(line, 51, 59);
-				    initialPeriod.append(line, 59, 66);
-				    lastPeriod.append(line, 66, 73);
-				    sequence.append(line, 73, 80);
-				    layout.append(line, 80, 83);
+					date.append(line, 51, 59);
+					initialPeriod.append(line, 59, 66);
+					lastPeriod.append(line, 66, 73);
+					sequence.append(line, 73, 80);
+					layout.append(line, 80, 83);
 				}
 
-				//continuar linhas do arquivo
+				// continuar linhas do arquivo
 			}
 
 			buffer.close();
-			
-			
-			CourseInfo courseInfo = new CourseInfo(course.toString(), date.toString(), initialPeriod.toString(), lastPeriod.toString(), layout.toString());
+
+			CourseInfo courseInfo = new CourseInfo(course.toString(), date.toString(), initialPeriod.toString(),
+					lastPeriod.toString(), layout.toString());
 			return courseInfo;
 
 		} catch (Exception e) {
