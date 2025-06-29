@@ -22,21 +22,21 @@ public class DisciplineTeacherController {
         return disciplineTeacherDAO.selectAll();
     }
 
-    public DisciplineTeacher getByDisciplineId(int disciplineId) throws SQLException {
+    public static DisciplineTeacher getByDisciplineId(int disciplineId) throws SQLException {
         return disciplineTeacherDAO.selectByDisciplineId(disciplineId);
     }
 
-    public void insert(int disciplineId, int teacherId) throws SQLException {
+    public static void insert(int disciplineId, int teacherId) throws SQLException {
         DisciplineTeacher disciplineTeacher = new DisciplineTeacher(disciplineId, teacherId);
         disciplineTeacherDAO.insert(disciplineTeacher);
     }
 
-    public void update(int disciplineId, int teacherId) throws SQLException {
+    public static void update(int disciplineId, int teacherId) throws SQLException {
         DisciplineTeacher disciplineTeacher = new DisciplineTeacher(disciplineId, teacherId);
         disciplineTeacherDAO.update(disciplineTeacher);
     }
 
-    public void delete(int disciplineId, int teacherId) throws SQLException {
+    public static void delete(int disciplineId, int teacherId) throws SQLException {
         disciplineTeacherDAO.delete(disciplineId, teacherId);
     }
 

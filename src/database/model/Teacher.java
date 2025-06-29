@@ -43,4 +43,12 @@ public class Teacher {
 	public void setTitle(int title) {
 		this.title = title;
 	}
+
+	public String getIdAsString() {
+		return String.valueOf(id);
+	}
+	
+	public String getTitleAsString() {
+		return String.valueOf(title);
+	}
 }

@@ -15,22 +15,22 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
-import controller.UserController;
-import database.model.User;
+import controller.TeacherController;
+import database.model.Teacher;
 import utils.TablesUtil;
 
-public class UsersScreen {
+public class TeacherScreen {
 
     private MainScreen mainScreen;
-    private JPanel pnlUsers;
+    private JPanel pnlTeachers;
     private String action;
     private JPanel panel;
-    private JLabel lblId, lblName;
-    private JTextField txfId, txfName;
+    private JLabel lblId, lblName, lblTitle;
+    private JTextField txfId, txfName, txfTitle;
     private JTable table;
     private JScrollPane scroll;
     private JButton btnExit, btnConfirmAdd, btnConfirm;
-    private String name, id;
+    private String name, title, id;
 
     private DefaultTableModel model = new DefaultTableModel() {
         @Override
@@ -39,21 +39,21 @@ public class UsersScreen {
         }
     };
 
-    public UsersScreen(MainScreen mainScreen) {
+    public TeacherScreen(MainScreen mainScreen) {
         this.mainScreen = mainScreen;
     }
 
     public JPanel createPanel() throws SQLException {
-        pnlUsers = new JPanel();
-        pnlUsers.setBorder(BorderFactory.createTitledBorder("Users"));
-        pnlUsers.setLayout(null);
-        pnlUsers.setVisible(true);
-        pnlUsers.setBounds(210, 120, 450, 280);
+        pnlTeachers = new JPanel();
+        pnlTeachers.setBorder(BorderFactory.createTitledBorder("Teachers"));
+        pnlTeachers.setLayout(null);
+        pnlTeachers.setVisible(true);
+        pnlTeachers.setBounds(210, 120, 450, 280);
         action = MainScreen.getActionSelected();
 
         btnExit = new JButton("<--");
         btnExit.setBounds(20, 20, 50, 20);
-        pnlUsers.add(btnExit);
+        pnlTeachers.add(btnExit);
 
         btnExit.addActionListener(new ActionListener() {
             @Override
@@ -68,83 +68,95 @@ public class UsersScreen {
 
             model.addColumn("ID");
             model.addColumn("Name");
+            model.addColumn("Title");
             table = new JTable(model);
             scroll = new JScrollPane(table);
 
-        /*    List<User> userList = UserController.list();
-            for (User u : userList) {
+         /*   List<Teacher> teacherList = TeacherController.list();
+            for (Teacher t : teacherList) {
                 model.addRow(new String[]{
-                    u.getIdAsString(), u.getName()
-                });
-            }*/
+                        t.getIdAsString(), t.getName(), t.getTitle()
+                });*/
+            
 
             scroll.setBounds(50, 50, 350, 150);
-            pnlUsers.add(scroll);
-            return pnlUsers;
+            pnlTeachers.add(scroll);
+            return pnlTeachers;
 
         } else if (action.equals("Add")) {
 
             lblName = new JLabel("Name:");
-            lblName.setBounds(50, 100, 100, 20);
-            pnlUsers.add(lblName);
+            lblName.setBounds(50, 80, 100, 20);
+            pnlTeachers.add(lblName);
             txfName = new JTextField();
-            txfName.setBounds(160, 100, 200, 20);
-            pnlUsers.add(txfName);
+            txfName.setBounds(160, 80, 200, 20);
+            pnlTeachers.add(txfName);
+
+            lblTitle = new JLabel("Title:");
+            lblTitle.setBounds(50, 110, 100, 20);
+            pnlTeachers.add(lblTitle);
+            txfTitle = new JTextField();
+            txfTitle.setBounds(160, 110, 200, 20);
+            pnlTeachers.add(txfTitle);
 
             btnConfirmAdd = new JButton("Confirm");
             btnConfirmAdd.setBounds(150, 180, 150, 30);
-            pnlUsers.add(btnConfirmAdd);
+            pnlTeachers.add(btnConfirmAdd);
             btnConfirmAdd.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     try {
                         name = txfName.getText();
-                        UserController.insert(name);
-                        JOptionPane.showMessageDialog(btnConfirmAdd, "User: " + name + " added.");
+                        title = txfTitle.getText();
+                        TeacherController.insert(name, title);
+                        JOptionPane.showMessageDialog(btnConfirmAdd, "Teacher: " + name + " added.");
                         txfName.setText("");
+                        txfTitle.setText("");
                     } catch (SQLException ex) {
                         ex.printStackTrace();
                     }
                 }
             });
 
-            return pnlUsers;
+            return pnlTeachers;
 
         } else if (action.equals("Remove")) {
 
             model.addColumn("ID");
             model.addColumn("Name");
+            model.addColumn("Title");
             table = new JTable(model);
             scroll = new JScrollPane(table);
+            pnlTeachers.add(scroll);
 
-         /*   List<User> userList = UserController.list();
-            for (User u : userList) {
+            /*List<Teacher> teacherList = TeacherController.list();
+            for (Teacher t : teacherList) {
                 model.addRow(new String[]{
-                    u.getIdAsString(), u.getName()
-                });
-            }*/
+                        t.getIdAsString(), t.getName(), t.getTitle()
+                });*/
+            
 
             lblId = new JLabel("Select ID to remove:");
             lblId.setBounds(100, 210, 200, 20);
-            pnlUsers.add(lblId);
+            pnlTeachers.add(lblId);
             txfId = new JTextField();
             txfId.setBounds(250, 210, 100, 20);
-            pnlUsers.add(txfId);
+            pnlTeachers.add(txfId);
 
             btnConfirm = new JButton("Confirm");
             btnConfirm.setBounds(150, 240, 150, 30);
-            pnlUsers.add(btnConfirm);
+            pnlTeachers.add(btnConfirm);
             btnConfirm.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     try {
                         id = txfId.getText();
                         int intId = Integer.parseInt(id);
-                        UserController.delete(intId);
-                        JOptionPane.showMessageDialog(btnConfirm, "User with ID " + id + " removed.");
+                        TeacherController.delete(intId);
+                        JOptionPane.showMessageDialog(btnConfirm, "Teacher with ID " + id + " removed.");
                         txfId.setText(null);
-                        TablesUtil.refreshTable(model, UserController.list(), u -> new String[]{
-                          //  u.getIdAsString(), u.getName()
+                        TablesUtil.refreshTable(model, TeacherController.list(), t -> new String[]{
+                            //    t.getIdAsString(), t.getName(), t.getTitle()
                         });
                     } catch (SQLException ex) {
                         ex.printStackTrace();
@@ -153,12 +165,12 @@ public class UsersScreen {
             });
 
             scroll.setBounds(50, 50, 350, 150);
-            pnlUsers.add(scroll);
+            pnlTeachers.add(scroll);
 
-            return pnlUsers;
+            return pnlTeachers;
 
         } else {
-            return pnlUsers;
+            return pnlTeachers;
         }
     }
 }

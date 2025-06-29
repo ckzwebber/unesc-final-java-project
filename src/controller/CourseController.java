@@ -22,25 +22,25 @@ public class CourseController {
         return courseDAO.selectAll();
     }
 
-    public Course getById(int id) throws SQLException {
+    public static Course getById(int id) throws SQLException {
         return courseDAO.selectById(id);
     }
 
-    public Course getByName(String name) throws SQLException {
+    public static Course getByName(String name) throws SQLException {
         return courseDAO.selectByName(name);
     }
 
-    public void insert(String name) throws SQLException {
+    public static void insert(String name) throws SQLException {
         Course course = new Course(name);
         courseDAO.insert(course);
     }
 
-    public void update(int id, String name) throws SQLException {
+    public static void update(int id, String name) throws SQLException {
         Course course = new Course(id, name);
         courseDAO.update(course);
     }
 
-    public void delete(int id) throws SQLException {
+    public static void delete(int id) throws SQLException {
         courseDAO.delete(id);
     }
 }

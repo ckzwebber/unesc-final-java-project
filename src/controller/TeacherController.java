@@ -22,25 +22,25 @@ public class TeacherController {
         return teacherDAO.selectAll();
     }
 
-    public Teacher getById(int id) throws SQLException {
+    public static Teacher getById(int id) throws SQLException {
         return teacherDAO.selectById(id);
     }
 
-    public Teacher getByName(String name) throws SQLException {
+    public static Teacher getByName(String name) throws SQLException {
         return teacherDAO.selectByName(name);
     }
 
-    public void insert(String name, int id) throws SQLException {
+    public static void insert(String name, int id) throws SQLException {
         Teacher teacher = new Teacher(name, id);
         teacherDAO.insert(teacher);
     }
 
-    public void update(int id, String name, int title) throws SQLException {
+    public static void update(int id, String name, int title) throws SQLException {
         Teacher teacher = new Teacher(id, name, title);
         teacherDAO.update(teacher);
     }
 
-    public void delete(int id) throws SQLException {
+    public static void delete(int id) throws SQLException {
         teacherDAO.delete(id);
     }
 

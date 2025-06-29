@@ -3,6 +3,8 @@ package view;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
+
 import javax.swing.*;
 
 public class SelectTableScreen extends JFrame{
@@ -32,7 +34,11 @@ public class SelectTableScreen extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				CoursesScreen courseScreen = new CoursesScreen(mainScreen);
-				pnlScreen = courseScreen.createPanel();
+				try {
+					pnlScreen = courseScreen.createPanel();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
 				mainScreen.setPanel(pnlScreen);
 				
 			}
@@ -41,18 +47,71 @@ public class SelectTableScreen extends JFrame{
         btnDisciplines = new JButton("Disciplines");
         btnDisciplines.setBounds(70, 130, 120, 30);
         pnlScreen.add(btnDisciplines);
+        btnDisciplines.addActionListener( new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				DisciplinesScreen disciplinesScreen = new DisciplinesScreen(mainScreen);
+				try {
+					pnlScreen = disciplinesScreen.createPanel();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+				mainScreen.setPanel(pnlScreen);
+			}
+		});
 
         btnPhases = new JButton("Phases");
         btnPhases.setBounds(70, 180, 120, 30);
         pnlScreen.add(btnPhases);
+        btnPhases.addActionListener( new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				PhaseScreen phasesScreen = new PhaseScreen(mainScreen);
+				try {
+					pnlScreen = phasesScreen.createPanel();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+				mainScreen.setPanel(pnlScreen);
+			}
+		});
 
         btnTeachers = new JButton("Teachers");
         btnTeachers.setBounds(250, 80, 120, 30);
         pnlScreen.add(btnTeachers);
+        btnTeachers.addActionListener( new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				TeacherScreen teacherScreen = new TeacherScreen(mainScreen);
+				try {
+					pnlScreen = teacherScreen.createPanel();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+				mainScreen.setPanel(pnlScreen);
+			}
+		});
 
         btnUsers = new JButton("Users");
         btnUsers.setBounds(250, 130, 120, 30);
         pnlScreen.add(btnUsers);
+        btnUsers.addActionListener( new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				UsersScreen usersScreen = new UsersScreen(mainScreen);
+				try {
+					pnlScreen = usersScreen.createPanel();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+				mainScreen.setPanel(pnlScreen);
+				
+			}
+		});
 
         btnExit = new JButton("<--");
         btnExit.setBounds(20, 20, 50, 20);
@@ -61,24 +120,12 @@ public class SelectTableScreen extends JFrame{
         btnExit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JPanel voidPanel = createPanel();
-                mainScreen.setPanel(voidPanel);
+            	WelcomeScreen welcomeScreen = new WelcomeScreen();
+                JPanel welcomePanel = welcomeScreen.createWelcomePanel(mainScreen, getName());
+                mainScreen.setPanel(welcomePanel);
             }
         });
 
         return pnlScreen;
-    }
-
-	public JPanel createPanel() {
-        JPanel pnlVoid = new JPanel();
-        pnlVoid.setBounds(210, 120, 450, 280);
-        pnlVoid.setBorder(BorderFactory.createTitledBorder("Choose an option:"));
-        pnlVoid.setLayout(null);
-
-        lblChoose = new JLabel("Choose an option on the left.");
-        lblChoose.setBounds(120, 130, 200, 20);
-        pnlVoid.add(lblChoose);
-
-        return pnlVoid;
     }
 }

@@ -65,4 +65,12 @@ public class Discipline {
 	public void setPhase(Phase phase) {
 		this.phase = phase;
 	}
+
+	public String getIdAsString() {
+		return String.valueOf(id);
+	}
+
+	public String getWeekDayAsString() {
+		return String.valueOf(weekDay);
+	}
 }

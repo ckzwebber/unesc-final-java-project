@@ -28,4 +28,12 @@ public class DisciplineTeacher {
 	public void setTeacherId(int teacherId) {
 		this.teacherId = teacherId;
 	}
+
+	public String getDisciplineIdAsString() {
+		return String.valueOf(disciplineId);
+	}
+
+	public String getTeacherIdAsString() {
+		return String.valueOf(teacherId);
+	}
 }

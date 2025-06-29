@@ -25,28 +25,27 @@ public class UserController {
         return userDAO.selectAll();
     }
 
-    public User getByUsername(String username) throws SQLException {
+    public static User getByUsername(String username) throws SQLException {
         return userDAO.selectByUsername(username);
     }
 
-    public void insert(String username, String password) throws SQLException {
+    public static void insert(String username, String password) throws SQLException {
         User user = userService.registerUser(username, password);
-
         userDAO.insert(user);
     }
 
-    public void login(String username, String password) throws SQLException {
+    public static void login(String username, String password) throws SQLException {
         if (!userService.loginUser(username, password)) {
             throw new SQLException("Invalid username or password");
         }
     }
 
-    public void update(int id, String username, String password) throws SQLException {
+    public static void update(int id, String username, String password) throws SQLException {
         User user = new User(id, username, password);
         userDAO.update(user);
     }
 
-    public void delete(int id) throws SQLException {
+    public static void delete(int id) throws SQLException {
         userDAO.delete(id);
     }
 

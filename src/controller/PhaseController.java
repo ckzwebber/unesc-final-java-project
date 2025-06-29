@@ -27,17 +27,17 @@ public class PhaseController {
         return phaseDAO.selectById(id);
     }
 
-    public void insert(String name, Course course) throws SQLException {
+    public static void insert(String name, Course course) throws SQLException {
         Phase phase = new Phase(name, course);
         phaseDAO.insert(phase);
     }
 
-    public void update(int id, String name, Course course) throws SQLException {
+    public static void update(int id, String name, Course course) throws SQLException {
         Phase phase = new Phase(id, name, course);
         phaseDAO.update(phase);
     }
 
-    public void delete(int id) throws SQLException {
+    public static void delete(int id) throws SQLException {
         phaseDAO.delete(id);
     }
 

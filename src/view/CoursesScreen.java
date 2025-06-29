@@ -2,6 +2,8 @@ package view;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -12,6 +14,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
+
+import controller.CourseController;
+import database.model.Course;
+import utils.TablesUtil;
 
 public class CoursesScreen {
 	
@@ -38,7 +44,7 @@ public class CoursesScreen {
         this.mainScreen = mainScreen;
     }
 	
-	public JPanel createPanel() {
+	public JPanel createPanel() throws SQLException {
 		pnlCourses = new JPanel();
 		pnlCourses.setBorder(BorderFactory.createTitledBorder("Courses"));
 		pnlCourses.setLayout(null);
@@ -66,6 +72,16 @@ public class CoursesScreen {
 		tabel = new JTable(model);
 		scroll = new JScrollPane(tabel);
 		
+		List<Course> courseList = CourseController.list();
+		for(Course c : courseList) {
+			id = c.getIdAsString();
+			name = c.getName();
+			
+			model.addRow(new String[] {
+					id, name
+			});
+		}
+		
 		scroll.setBounds(100, 50, 250, 150);
 		pnlCourses.add(scroll);
 		
@@ -87,8 +103,14 @@ public class CoursesScreen {
 				
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					name = txfName.getText();
-					JOptionPane.showMessageDialog(btnConfirm, "Course: " + name + ", was added.");
+			
+					try {
+						name = txfName.getText();
+						CourseController.insert(name);
+						JOptionPane.showMessageDialog(btnConfirm, "Course: " + name + ", was added.");
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
 				}
 			});
 			
@@ -100,6 +122,16 @@ public class CoursesScreen {
 			model.addColumn("Name");
 			tabel = new JTable(model);
 			scroll = new JScrollPane(tabel);
+			
+			List<Course> courseList = CourseController.list();
+			for(Course c : courseList) {
+				id = c.getIdAsString();
+				name = c.getName();
+				
+				model.addRow(new String[] {
+						id, name
+				});
+			}
 			
 			lblId = new JLabel("Select ID to be removed:");
 			lblId.setBounds(100, 210, 200, 20);
@@ -114,8 +146,19 @@ public class CoursesScreen {
 				
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					id = txfId.getText();
-					JOptionPane.showMessageDialog(btnConfirm, "The course with ID " + id + " was removed.");
+					try {
+						id = txfId.getText();
+						int intId = Integer.parseInt(id);
+						CourseController.delete(intId);
+						JOptionPane.showMessageDialog(btnConfirm, "The course with ID " + id + " was removed.");
+						txfId.setText(null);
+						TablesUtil.refreshTable(model, CourseController.list(), c -> new String[] {
+				                c.getIdAsString(), c.getName()
+				            });
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
+				
 				}
 			});
 			

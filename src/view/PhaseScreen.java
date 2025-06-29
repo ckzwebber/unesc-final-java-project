@@ -15,22 +15,23 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
-import controller.UserController;
-import database.model.User;
+import controller.PhaseController;
+import database.model.Course;
+import database.model.Phase;
 import utils.TablesUtil;
 
-public class UsersScreen {
+public class PhaseScreen {
 
     private MainScreen mainScreen;
-    private JPanel pnlUsers;
+    private JPanel pnlPhases;
     private String action;
     private JPanel panel;
-    private JLabel lblId, lblName;
-    private JTextField txfId, txfName;
+    private JLabel lblId, lblName, lblCourseId;
+    private JTextField txfId, txfName, txfCourseId;
     private JTable table;
     private JScrollPane scroll;
     private JButton btnExit, btnConfirmAdd, btnConfirm;
-    private String name, id;
+    private String name, id, courseId;
 
     private DefaultTableModel model = new DefaultTableModel() {
         @Override
@@ -39,21 +40,21 @@ public class UsersScreen {
         }
     };
 
-    public UsersScreen(MainScreen mainScreen) {
+    public PhaseScreen(MainScreen mainScreen) {
         this.mainScreen = mainScreen;
     }
 
     public JPanel createPanel() throws SQLException {
-        pnlUsers = new JPanel();
-        pnlUsers.setBorder(BorderFactory.createTitledBorder("Users"));
-        pnlUsers.setLayout(null);
-        pnlUsers.setVisible(true);
-        pnlUsers.setBounds(210, 120, 450, 280);
+        pnlPhases = new JPanel();
+        pnlPhases.setBorder(BorderFactory.createTitledBorder("Phases"));
+        pnlPhases.setLayout(null);
+        pnlPhases.setVisible(true);
+        pnlPhases.setBounds(210, 120, 450, 280);
         action = MainScreen.getActionSelected();
 
         btnExit = new JButton("<--");
         btnExit.setBounds(20, 20, 50, 20);
-        pnlUsers.add(btnExit);
+        pnlPhases.add(btnExit);
 
         btnExit.addActionListener(new ActionListener() {
             @Override
@@ -68,83 +69,102 @@ public class UsersScreen {
 
             model.addColumn("ID");
             model.addColumn("Name");
+            model.addColumn("Course ID");
             table = new JTable(model);
             scroll = new JScrollPane(table);
 
-        /*    List<User> userList = UserController.list();
-            for (User u : userList) {
+          /*  List<Phase> phaseList = PhaseController.list();
+            for (Phase p : phaseList) {
                 model.addRow(new String[]{
-                    u.getIdAsString(), u.getName()
+                //tem que converter o id course em course name? ou vamos exibir o id mesmo?
+                ///nao seria melhor entao exibir as fases por cursos, e nao os cursos de cada fase
+                ///ex: ciencias: fase 1, 2, 3, ao inves de fase 1 ciencias, fase 2 ciencias, fase 3 ciencias, 
+                ///e nao tem que exibir as materias?
+                        p.getIdAsString(), p.getName(), p.getCourseIdAsString()
                 });
             }*/
 
             scroll.setBounds(50, 50, 350, 150);
-            pnlUsers.add(scroll);
-            return pnlUsers;
+            pnlPhases.add(scroll);
+            return pnlPhases;
 
         } else if (action.equals("Add")) {
 
             lblName = new JLabel("Name:");
-            lblName.setBounds(50, 100, 100, 20);
-            pnlUsers.add(lblName);
+            lblName.setBounds(50, 80, 100, 20);
+            pnlPhases.add(lblName);
             txfName = new JTextField();
-            txfName.setBounds(160, 100, 200, 20);
-            pnlUsers.add(txfName);
+            txfName.setBounds(160, 80, 200, 20);
+            pnlPhases.add(txfName);
+
+            lblCourseId = new JLabel("Course ID:");
+            lblCourseId.setBounds(50, 110, 100, 20);
+            pnlPhases.add(lblCourseId);
+            txfCourseId = new JTextField();
+            txfCourseId.setBounds(160, 110, 200, 20);
+            pnlPhases.add(txfCourseId);
 
             btnConfirmAdd = new JButton("Confirm");
             btnConfirmAdd.setBounds(150, 180, 150, 30);
-            pnlUsers.add(btnConfirmAdd);
+            pnlPhases.add(btnConfirmAdd);
             btnConfirmAdd.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     try {
                         name = txfName.getText();
-                        UserController.insert(name);
-                        JOptionPane.showMessageDialog(btnConfirmAdd, "User: " + name + " added.");
+                        int courseIdInt = Integer.parseInt(txfCourseId.getText());
+                        PhaseController.insert(name, courseIdInt);
+                        JOptionPane.showMessageDialog(btnConfirmAdd, "Phase: " + name + " was added.");
                         txfName.setText("");
+                        txfCourseId.setText("");
                     } catch (SQLException ex) {
                         ex.printStackTrace();
                     }
                 }
             });
 
-            return pnlUsers;
+            return pnlPhases;
 
         } else if (action.equals("Remove")) {
 
             model.addColumn("ID");
             model.addColumn("Name");
+            model.addColumn("Course ID");
             table = new JTable(model);
             scroll = new JScrollPane(table);
 
-         /*   List<User> userList = UserController.list();
-            for (User u : userList) {
+            List<Phase> phaseList = PhaseController.list();
+            for (Phase p : phaseList) {
+            	//logica duvidosa
+            	String courseName;
+        		Course c = new Course();
+        		courseName = c.getName();
                 model.addRow(new String[]{
-                    u.getIdAsString(), u.getName()
+                        p.getIdAsString(), p.getName(), courseName
                 });
-            }*/
+            }
 
             lblId = new JLabel("Select ID to remove:");
             lblId.setBounds(100, 210, 200, 20);
-            pnlUsers.add(lblId);
+            pnlPhases.add(lblId);
             txfId = new JTextField();
             txfId.setBounds(250, 210, 100, 20);
-            pnlUsers.add(txfId);
+            pnlPhases.add(txfId);
 
             btnConfirm = new JButton("Confirm");
             btnConfirm.setBounds(150, 240, 150, 30);
-            pnlUsers.add(btnConfirm);
+            pnlPhases.add(btnConfirm);
             btnConfirm.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     try {
                         id = txfId.getText();
                         int intId = Integer.parseInt(id);
-                        UserController.delete(intId);
-                        JOptionPane.showMessageDialog(btnConfirm, "User with ID " + id + " removed.");
+                        PhaseController.delete(intId);
+                        JOptionPane.showMessageDialog(btnConfirm, "Phase with ID " + id + " removed.");
                         txfId.setText(null);
-                        TablesUtil.refreshTable(model, UserController.list(), u -> new String[]{
-                          //  u.getIdAsString(), u.getName()
+                        TablesUtil.refreshTable(model, PhaseController.list(), p -> new String[]{
+                            //    p.getIdAsString(), p.getName(), p.getCourseIdAsString()
                         });
                     } catch (SQLException ex) {
                         ex.printStackTrace();
@@ -153,12 +173,12 @@ public class UsersScreen {
             });
 
             scroll.setBounds(50, 50, 350, 150);
-            pnlUsers.add(scroll);
+            pnlPhases.add(scroll);
 
-            return pnlUsers;
+            return pnlPhases;
 
         } else {
-            return pnlUsers;
+            return pnlPhases;
         }
     }
 }

@@ -1,15 +1,21 @@
 package view;
 
 import javax.swing.*;
+
+import database.model.User;
+
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 public class MainScreen extends JFrame {
 
     private JLabel lblSystem;
     private JButton btnView, btnAdd, btnRemove, btnImportFile;
-    private JPanel voidPanel;
+    private JPanel welcomePanel;
     private static String actionSelected;
+    private JFileChooser fileChooser;
     
   
     public static String getActionSelected() {
@@ -32,12 +38,16 @@ public class MainScreen extends JFrame {
     }
 
     public void createComponent() {
+    	
+    	//os botoes nao podem aparecer enquanto o usuario nao logar
         
         SelectTableScreen screen = new SelectTableScreen();
+        WelcomeScreen welcomeScreen = new WelcomeScreen();
+        welcomePanel = welcomeScreen.createWelcomePanel(MainScreen.this, getName());
         
-        voidPanel = screen.createPanel();
-        
-        //getContentPane().add(voidPanel); 
+        LoginScreen loginScreen = new LoginScreen();
+        welcomePanel = loginScreen.createLoginPanel(MainScreen.this);
+        getContentPane().add(welcomePanel); 
 
         lblSystem = new JLabel("Register system");
         lblSystem.setBounds(20, 20, 150, 40);
@@ -49,11 +59,16 @@ public class MainScreen extends JFrame {
         btnView.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+            	btnAdd.setBackground(UIManager.getColor("Button.background"));
+            	btnRemove.setBackground(UIManager.getColor("Button.background"));
+            	btnImportFile.setBackground(UIManager.getColor("Button.background"));
+            	btnView.setBackground( new Color(50, 205, 50));
+            	
             	setActionSelected("View");
-                getContentPane().remove(voidPanel);
+                getContentPane().remove(welcomePanel);
                 SelectTableScreen selectScreen = new SelectTableScreen();
-                voidPanel = selectScreen.createComponentsSelectTable(MainScreen.this);
-                getContentPane().add(voidPanel);
+                welcomePanel = selectScreen.createComponentsSelectTable(MainScreen.this);
+                getContentPane().add(welcomePanel);
                 repaint();
                 revalidate();
             }
@@ -65,11 +80,16 @@ public class MainScreen extends JFrame {
         btnAdd.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+            	btnView.setBackground(UIManager.getColor("Button.background"));
+            	btnRemove.setBackground(UIManager.getColor("Button.background"));
+            	btnImportFile.setBackground(UIManager.getColor("Button.background"));
+            	btnAdd.setBackground( new Color(50, 205, 50));
+            	
             	setActionSelected("Add");
-                getContentPane().remove(voidPanel);
+                getContentPane().remove(welcomePanel);
                 SelectTableScreen selectScreen = new SelectTableScreen();
-                voidPanel = selectScreen.createComponentsSelectTable(MainScreen.this);
-                getContentPane().add(voidPanel);
+                welcomePanel = selectScreen.createComponentsSelectTable(MainScreen.this);
+                getContentPane().add(welcomePanel);
                 repaint();
                 revalidate();
             }
@@ -81,11 +101,16 @@ public class MainScreen extends JFrame {
         btnRemove.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+            	btnAdd.setBackground(UIManager.getColor("Button.background"));
+            	btnView.setBackground(UIManager.getColor("Button.background"));
+            	btnImportFile.setBackground(UIManager.getColor("Button.background"));
+            	btnRemove.setBackground( new Color(50, 205, 50));
+            	
             	setActionSelected("Remove");
-                getContentPane().remove(voidPanel);
+                getContentPane().remove(welcomePanel);
                 SelectTableScreen selectScreen = new SelectTableScreen();
-                voidPanel = selectScreen.createComponentsSelectTable(MainScreen.this);
-                getContentPane().add(voidPanel);
+                welcomePanel = selectScreen.createComponentsSelectTable(MainScreen.this);
+                getContentPane().add(welcomePanel);
                 repaint();
                 revalidate();
             }
@@ -94,19 +119,42 @@ public class MainScreen extends JFrame {
         btnImportFile = new JButton("Import file");
         btnImportFile.setBounds(750, 200, 100, 100);
         getContentPane().add(btnImportFile);
+        btnImportFile.addActionListener( new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				btnAdd.setBackground(UIManager.getColor("Button.background"));
+            	btnView.setBackground(UIManager.getColor("Button.background"));
+            	btnRemove.setBackground(UIManager.getColor("Button.background"));
+            	btnImportFile.setBackground( new Color(50, 205, 50));
+				
+            	fileChooser = new JFileChooser();
+				
+				if( e.getSource() == btnImportFile) {
+					int i = fileChooser.showOpenDialog(screen);
+					if( i == JFileChooser.APPROVE_OPTION) {
+						File file = fileChooser.getSelectedFile();
+						//caminho 
+						JOptionPane.showMessageDialog(screen, file.getPath().toString());
+						//service.ImportService.readImportFile(file);
+					}
+				}
+			}
+		});
     }
 
-    public void setVoidPanel() {
-		SelectTableScreen screen = new SelectTableScreen();
-        voidPanel = screen.createPanel();
-        getContentPane().add(voidPanel);
+    public void setWelcomePanel() {
+    	WelcomeScreen welcomeScreen = new WelcomeScreen();
+        welcomePanel = welcomeScreen.createWelcomePanel(MainScreen.this, getName());
+        getContentPane().add(welcomePanel);
 	}
 
     public void setPanel(JPanel newPanel) {
-        getContentPane().remove(voidPanel);
-        voidPanel = newPanel;
-        getContentPane().add(voidPanel);
+        getContentPane().remove(welcomePanel);
+        welcomePanel = newPanel;
+        getContentPane().add(welcomePanel);
         repaint();
         revalidate();
     }
+
 }
