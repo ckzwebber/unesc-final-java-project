@@ -6,6 +6,7 @@ import java.util.HashMap;
 public class DisciplineUtil {
 
 	private static final Map<Integer, String> days = new HashMap<>();
+	private static final Map<Integer, String> disciplinesCodes = new HashMap<>();
 
 	static {
 		days.put(1, "Domingo");
@@ -15,6 +16,12 @@ public class DisciplineUtil {
 		days.put(5, "Thursday");
 		days.put(6, "Friday");
 		days.put(7, "Sunday");
+	}
+
+	static {
+		disciplinesCodes.put(10850, "Algoritmos e Programação");
+		disciplinesCodes.put(10854, "Fundamentos Matemáticos");
+		disciplinesCodes.put(10851, "Introd. Ciência da Computação");
 	}
 
 	public static String getDayByCode(int code) {
@@ -28,5 +35,9 @@ public class DisciplineUtil {
 			}
 		}
 		throw new IllegalArgumentException("Invalid day: " + day);
+	}
+
+	public static String getDisciplineNameByCode(int code) {
+		return disciplinesCodes.get(code);
 	}
 }

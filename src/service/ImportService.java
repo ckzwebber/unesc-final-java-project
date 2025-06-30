@@ -1,56 +1,4 @@
-/*package service;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
-import database.model.CourseInfo;
-
-public class ImportService {
-
-	public static CourseInfo readImportFile() {
-		try {
-			InputStream is = new FileInputStream(new File("File"));
-			InputStreamReader isr = new InputStreamReader(is);
-			BufferedReader buffer = new BufferedReader(isr);
-
-			String line = null;
-
-			StringBuilder course = new StringBuilder();
-			StringBuilder date = new StringBuilder();
-			StringBuilder initialPeriod = new StringBuilder();
-			StringBuilder lastPeriod = new StringBuilder();
-			StringBuilder sequence = new StringBuilder();
-			StringBuilder layout = new StringBuilder();
-
-			while ((line = buffer.readLine()) != null) {
-				if (line.startsWith("0")) {
-					course.append(line, 1, 51);
-					date.append(line, 51, 59);
-					initialPeriod.append(line, 59, 66);
-					lastPeriod.append(line, 66, 73);
-					sequence.append(line, 73, 80);
-					layout.append(line, 80, 83);
-				}
-
-				// continuar linhas do arquivo
-			}
-
-			buffer.close();
-
-			CourseInfo courseInfo = new CourseInfo(course.toString(), date.toString(), initialPeriod.toString(),
-					lastPeriod.toString(), layout.toString());
-			return courseInfo;
-
-		} catch (Exception e) {
-			throw new Error(e);
-		}
-	}
-
-}*/
-/*package service;
+package service;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -60,63 +8,75 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import database.model.CourseInfo;
+import database.model.ImportData;
+import database.model.Course;
+import database.model.Discipline;
+import database.model.Phase;
+import database.model.Teacher;
+import utils.DisciplineUtil;
 
 public class ImportService {
 
-	public static CourseInfo readImportFile() {
+	public static ImportData readImportFile(String path) {
 		try {
-			 readImportFile(File file) {
-			    InputStream is = new FileInputStream(path);
-			}
 
-			InputStreamReader isr = new InputStreamReader(is);
-			BufferedReader buffer = new BufferedReader(isr);
+			InputStream inputStream = new FileInputStream(path);
+
+			InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+			BufferedReader buffer = new BufferedReader(inputStreamReader);
 
 			String line;
 
-			StringBuilder course = new StringBuilder();
-			StringBuilder date = new StringBuilder();
-			StringBuilder initialPeriod = new StringBuilder();
-			StringBuilder lastPeriod = new StringBuilder();
-			StringBuilder sequence = new StringBuilder();
-			StringBuilder layout = new StringBuilder();
-
-			List<PhaseInfo> phases = new ArrayList<>();
-			List<DisciplineInfo> disciplines = new ArrayList<>();
-			List<ProfessorInfo> professors = new ArrayList<>();
+			Course course = new Course();
+			String processDate;
+			String phaseInitialPeriod;
+			String phaseLastPeriod;
+			int fileSequence;
+			String fileLayout;
+			List<Phase> phases;
+			int quantityOfDisciplines;
+			int quantityOfTeachers;
+			List<Discipline> disciplines;
+			List<Integer> quantityOfTeachersInDiscipline;
+			List<Teacher> teachers;
+			int typeOfImport;
+			int totalOfImports;
 
 			while ((line = buffer.readLine()) != null) {
 				char recordType = line.charAt(0);
 
 				switch (recordType) {
 					case '0':
-						course.append(line, 1, 51);
-						date.append(line, 51, 59);
-						initialPeriod.append(line, 59, 66);
-						lastPeriod.append(line, 66, 73);
-						sequence.append(line, 73, 80);
-						layout.append(line, 80, 83);
+						String courseName = line.substring(1, 51).trim();
+						course.setName(courseName);
+						processDate = line.substring(51, 59).trim();
+						phaseInitialPeriod = line.substring(59, 66).trim();
+						phaseLastPeriod = line.substring(66, 73).trim();
+						fileSequence = Integer.parseInt(line.substring(73, 80).trim());
+						fileLayout = line.substring(80, 83).trim();
 						break;
 
 					case '1':
-						String phase = line.substring(2, 9);
-						int qtdDisc = Integer.parseInt(line.substring(9, 11));
-						int qtdProf = Integer.parseInt(line.substring(11, 13));
-						phases.add(new PhaseInfo(phase, qtdDisc, qtdProf));
+						String phaseName = line.substring(2, 9).trim();
+						phases.add(new Phase(phaseName, course));
+						quantityOfDisciplines = Integer.parseInt(line.substring(9, 11).trim());
+						quantityOfTeachers = Integer.parseInt(line.substring(11, 13).trim());
 						break;
 
 					case '2':
-						String code = line.substring(2, 8);
-						int day = Integer.parseInt(line.substring(8, 10));
-						int qtdP = Integer.parseInt(line.substring(10, 12));
-						disciplines.add(new DisciplineInfo(code, day, qtdP));
+						String disciplineCode = line.substring(2, 8);
+						int disciplineCodeInt = Integer.parseInt(disciplineCode);
+						int dayOfWeek = Integer.parseInt(line.substring(8, 10));
+						quantityOfTeachersInDiscipline.add(Integer.parseInt(line.substring(10, 12)));
+						Phase disciplinePhase = phases.get(dayOfWeek - 1);
+						String disciplineName = DisciplineUtil.getDisciplineNameByCode(disciplineCodeInt);
+						disciplines.add(new Discipline(disciplineCode, disciplineName, dayOfWeek, disciplinePhase));
 						break;
 
 					case '3':
 						String name = line.substring(2, 42).trim();
 						String title = line.substring(42, 44);
-						professors.add(new ProfessorInfo(name, title));
+						teachers.add(new ProfessorInfo(name, title));
 						break;
 
 					case '9':
@@ -128,17 +88,15 @@ public class ImportService {
 
 			buffer.close();
 
-			CourseInfo courseInfo = new CourseInfo(course.toString(), date.toString(), initialPeriod.toString(),
+			ImportData courseInfo = new ImportData(course.toString(), date.toString(), initialPeriod.toString(),
 					lastPeriod.toString(), layout.toString());
 			courseInfo.setPhases(phases);
 			courseInfo.setDisciplines(disciplines);
-			courseInfo.setProfessors(professors);
+			courseInfo.setteachers(teachers);
 			return courseInfo;
 
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
-}*/
-
-
+}
