@@ -3,44 +3,43 @@ package controller;
 import java.sql.SQLException;
 import java.util.List;
 
-import database.dao.CourseDAO;
 import database.model.Course;
+import service.CourseService;
 
 public class CourseController {
 
-    private static CourseDAO courseDAO;
+    private static CourseService courseService;
 
     static {
-        try {
-            courseDAO = new CourseDAO();
-        } catch (SQLException e) {
-            throw new ExceptionInInitializerError(e);
-        }
+        courseService = new CourseService();
     }
 
     public static List<Course> list() throws SQLException {
-        return courseDAO.selectAll();
+        List<Course> courses = courseService.list();
+        return courses;
     }
 
     public static Course getById(int id) throws SQLException {
-        return courseDAO.selectById(id);
+        Course course = courseService.getById(id);
+        return course;
     }
 
     public static Course getByName(String name) throws SQLException {
-        return courseDAO.selectByName(name);
+        Course course = courseService.getByName(name);
+        return course;
     }
 
-    public static void insert(String name) throws SQLException {
-        Course course = new Course(name);
-        courseDAO.insert(course);
+    public static Course insert(String name) throws SQLException {
+        Course course = courseService.create(name);
+        return course;
     }
 
-    public static void update(int id, String name) throws SQLException {
-        Course course = new Course(id, name);
-        courseDAO.update(course);
+    public static Course update(int id, String name) throws SQLException {
+        Course course = courseService.update(id, name);
+        return course;
     }
 
     public static void delete(int id) throws SQLException {
-        courseDAO.delete(id);
+        courseService.delete(id);
     }
 }

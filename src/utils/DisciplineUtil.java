@@ -20,4 +20,13 @@ public class DisciplineUtil {
 	public static String getDayByCode(int code) {
 		return days.get(code);
 	}
+
+	public static int getCodeByDay(String day) {
+		for (Map.Entry<Integer, String> entry : days.entrySet()) {
+			if (entry.getValue().equalsIgnoreCase(day)) {
+				return entry.getKey();
+			}
+		}
+		throw new IllegalArgumentException("Invalid day: " + day);
+	}
 }

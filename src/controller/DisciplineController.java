@@ -3,50 +3,48 @@ package controller;
 import java.sql.SQLException;
 import java.util.List;
 
-import database.dao.DisciplineDAO;
 import database.model.Discipline;
-import database.model.Phase;
+import service.DisciplineService;
 
 public class DisciplineController {
 
-    private static DisciplineDAO disciplineDAO;
+    private static DisciplineService disciplineService;
 
     static {
-        try {
-            disciplineDAO = new DisciplineDAO();
-        } catch (SQLException e) {
-            throw new ExceptionInInitializerError(e);
-        }
+        disciplineService = new DisciplineService();
     }
 
     public static List<Discipline> list() throws SQLException {
-        return disciplineDAO.selectAll();
+        List<Discipline> disciplines = disciplineService.list();
+        return disciplines;
     }
 
     public static Discipline getById(int id) throws SQLException {
-        return disciplineDAO.selectById(id);
+        Discipline discipline = disciplineService.getById(id);
+        return discipline;
     }
 
     public static Discipline getByName(String name) throws SQLException {
-        return disciplineDAO.selectByName(name);
+        Discipline discipline = disciplineService.getByName(name);
+        return discipline;
     }
 
     public static List<Discipline> getByPhaseId(int phaseId) throws SQLException {
-        return disciplineDAO.selectByPhaseId(phaseId);
+        List<Discipline> disciplines = disciplineService.getByPhaseId(phaseId);
+        return disciplines;
     }
 
-    public static void insert(String code, String name, int weekDay, Phase phase) throws SQLException {
-        Discipline discipline = new Discipline(code, name, weekDay, phase);
-        disciplineDAO.insert(discipline);
+    public static Discipline insert(String code, String name, int weekDay, int phaseId) throws SQLException {
+        Discipline discipline = disciplineService.create(code, name, weekDay, phaseId);
+        return discipline;
     }
 
-    public static void update(int id, String code, String name, int weekDay, Phase phase) throws SQLException {
-        Discipline discipline = new Discipline(id, code, name, weekDay, phase);
-        disciplineDAO.update(discipline);
+    public static Discipline update(int id, String code, String name, int weekDay, int phaseId) throws SQLException {
+        Discipline discipline = disciplineService.update(id, code, name, weekDay, phaseId);
+        return discipline;
     }
 
     public static void delete(int id) throws SQLException {
-        disciplineDAO.delete(id);
+        disciplineService.delete(id);
     }
-
 }

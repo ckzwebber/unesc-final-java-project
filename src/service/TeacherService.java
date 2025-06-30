@@ -76,9 +76,9 @@ public class TeacherService {
 			throw new IllegalArgumentException("Title must be between 0 and 4");
 		}
 
-		Teacher existing = teacherOnDatabase(name);
+		Teacher teacherOnDatabase = teacherOnDatabase(name);
 
-		if (existing != null) {
+		if (teacherOnDatabase != null) {
 			throw new IllegalArgumentException("Teacher with this name already exists");
 		}
 
