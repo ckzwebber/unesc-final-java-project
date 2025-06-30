@@ -49,5 +49,4 @@ public class UserController {
     public void delete(int id) throws SQLException {
         userDAO.delete(id);
     }
-
 }
