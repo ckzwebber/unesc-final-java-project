@@ -72,11 +72,11 @@ public class TeacherScreen {
             table = new JTable(model);
             scroll = new JScrollPane(table);
 
-         /*   List<Teacher> teacherList = TeacherController.list();
+            List<Teacher> teacherList = TeacherController.list();
             for (Teacher t : teacherList) {
                 model.addRow(new String[]{
-                        t.getIdAsString(), t.getName(), t.getTitle()
-                });*/
+                        t.getIdAsString(), t.getName(), //t.getTitle()
+                });
             
 
             scroll.setBounds(50, 50, 350, 150);
@@ -129,11 +129,11 @@ public class TeacherScreen {
             scroll = new JScrollPane(table);
             pnlTeachers.add(scroll);
 
-            /*List<Teacher> teacherList = TeacherController.list();
+            List<Teacher> teacherList = TeacherController.list();
             for (Teacher t : teacherList) {
                 model.addRow(new String[]{
-                        t.getIdAsString(), t.getName(), t.getTitle()
-                });*/
+                        t.getIdAsString(), t.getName(), //t.getTitle()
+                });
             
 
             lblId = new JLabel("Select ID to remove:");
@@ -156,7 +156,7 @@ public class TeacherScreen {
                         JOptionPane.showMessageDialog(btnConfirm, "Teacher with ID " + id + " removed.");
                         txfId.setText(null);
                         TablesUtil.refreshTable(model, TeacherController.list(), t -> new String[]{
-                            //    t.getIdAsString(), t.getName(), t.getTitle()
+                                t.getIdAsString(), t.getName(), t.getTitle()
                         });
                     } catch (SQLException ex) {
                         ex.printStackTrace();

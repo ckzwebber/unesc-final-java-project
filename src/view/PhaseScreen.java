@@ -15,9 +15,12 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
+import controller.CourseController;
+import controller.DisciplineController;
 import controller.PhaseController;
 import database.model.Course;
 import database.model.Phase;
+import utils.PhaseUtil;
 import utils.TablesUtil;
 
 public class PhaseScreen {
@@ -32,6 +35,7 @@ public class PhaseScreen {
     private JScrollPane scroll;
     private JButton btnExit, btnConfirmAdd, btnConfirm;
     private String name, id, courseId;
+    private String disciplinesByPhase;
 
     private DefaultTableModel model = new DefaultTableModel() {
         @Override
@@ -70,19 +74,18 @@ public class PhaseScreen {
             model.addColumn("ID");
             model.addColumn("Name");
             model.addColumn("Course ID");
+            model.addColumn("Disciplines");
             table = new JTable(model);
             scroll = new JScrollPane(table);
 
-          /*  List<Phase> phaseList = PhaseController.list();
+            List<Phase> phaseList = PhaseController.list();
             for (Phase p : phaseList) {
+            	Course c = CourseController.getById(p.getId());
+            	disciplinesByPhase = PhaseUtil.groupDiscpilinesByPhaseId(p.getId());
                 model.addRow(new String[]{
-                //tem que converter o id course em course name? ou vamos exibir o id mesmo?
-                ///nao seria melhor entao exibir as fases por cursos, e nao os cursos de cada fase
-                ///ex: ciencias: fase 1, 2, 3, ao inves de fase 1 ciencias, fase 2 ciencias, fase 3 ciencias, 
-                ///e nao tem que exibir as materias?
-                        p.getIdAsString(), p.getName(), p.getCourseIdAsString()
+                        p.getIdAsString(), p.getName() + " - " + c.getName(), c.getIdAsString(), disciplinesByPhase
                 });
-            }*/
+            }
 
             scroll.setBounds(50, 50, 350, 150);
             pnlPhases.add(scroll);
@@ -111,8 +114,9 @@ public class PhaseScreen {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     try {
-                        name = txfName.getText();
-                        int courseIdInt = Integer.parseInt(txfCourseId.getText());
+                     /*   name = txfName.getText();
+                        int courseIdInt = Integer.parseInt(txfCourseId.getText());*/
+                        Course c = new Course();
                         PhaseController.insert(name, courseIdInt);
                         JOptionPane.showMessageDialog(btnConfirmAdd, "Phase: " + name + " was added.");
                         txfName.setText("");
@@ -127,20 +131,19 @@ public class PhaseScreen {
 
         } else if (action.equals("Remove")) {
 
-            model.addColumn("ID");
+        	model.addColumn("ID");
             model.addColumn("Name");
             model.addColumn("Course ID");
+            model.addColumn("Disciplines");
             table = new JTable(model);
             scroll = new JScrollPane(table);
 
             List<Phase> phaseList = PhaseController.list();
             for (Phase p : phaseList) {
-            	//logica duvidosa
-            	String courseName;
-        		Course c = new Course();
-        		courseName = c.getName();
+            	Course c = CourseController.getById(p.getId());
+            	disciplinesByPhase = PhaseUtil.groupDiscpilinesByPhaseId(p.getId());
                 model.addRow(new String[]{
-                        p.getIdAsString(), p.getName(), courseName
+                        p.getIdAsString(), p.getName() + " - " + c.getName(), c.getIdAsString(), disciplinesByPhase
                 });
             }
 
@@ -163,8 +166,10 @@ public class PhaseScreen {
                         PhaseController.delete(intId);
                         JOptionPane.showMessageDialog(btnConfirm, "Phase with ID " + id + " removed.");
                         txfId.setText(null);
+                        Phase phase = new Phase();
+                    	Course c = CourseController.getById(phase.getId());
                         TablesUtil.refreshTable(model, PhaseController.list(), p -> new String[]{
-                            //    p.getIdAsString(), p.getName(), p.getCourseIdAsString()
+                                phase.getIdAsString(), phase.getName() + " - " + c.getName(), c.getIdAsString(), disciplinesByPhase
                         });
                     } catch (SQLException ex) {
                         ex.printStackTrace();

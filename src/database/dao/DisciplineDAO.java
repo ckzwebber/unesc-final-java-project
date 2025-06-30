@@ -12,16 +12,18 @@ import database.model.Phase;
 
 public class DisciplineDAO {
 
-	private static final String SELECT_ALL_QUERY = "SELECT id, code, name, week_day, id_phase FROM tb_disciplines";
-	private static final String SELECT_BY_ID_QUERY = "SELECT id, code, name, week_day, id_phase FROM tb_disciplines WHERE id = ?";
-	private static final String SELECT_BY_NAME_QUERY = "SELECT id, code, name, week_day, id_phase FROM tb_disciplines WHERE name = ?";
-	private static final String INSERT_QUERY = "INSERT INTO tb_disciplines(code, name, week_day, id_phase) VALUES (?, ?, ?, ?)";
-	private static final String UPDATE_QUERY = "UPDATE tb_disciplines SET code = ?, name = ?, week_day = ?, id_phase = ? WHERE id = ?";
+	private static final String SELECT_ALL_QUERY = "SELECT id, code, name, week_day, phase_id FROM tb_disciplines";
+	private static final String SELECT_BY_ID_QUERY = "SELECT id, code, name, week_day, phase_id FROM tb_disciplines WHERE id = ?";
+	private static final String SELECT_BY_NAME_QUERY = "SELECT id, code, name, week_day, phase_id FROM tb_disciplines WHERE name = ?";
+	private static final String SELECT_BY_PHASE_ID_QUERY = "SELECT id, code, name, week_day, phase_id FROM tb_disciplines WHERE phase_id = ?";
+	private static final String INSERT_QUERY = "INSERT INTO tb_disciplines(code, name, week_day, phase_id) VALUES (?, ?, ?, ?)";
+	private static final String UPDATE_QUERY = "UPDATE tb_disciplines SET code = ?, name = ?, week_day = ?, phase_id = ? WHERE id = ?";
 	private static final String DELETE_QUERY = "DELETE FROM tb_disciplines WHERE id = ?";
 
 	private final PreparedStatement selectAllStatement;
 	private final PreparedStatement selectByIdStatement;
 	private final PreparedStatement selectByNameStatement;
+	private final PreparedStatement selectByPhaseIdStatement;
 	private final PreparedStatement insertStatement;
 	private final PreparedStatement updateStatement;
 	private final PreparedStatement deleteStatement;
@@ -31,6 +33,7 @@ public class DisciplineDAO {
 		selectAllStatement = connection.prepareStatement(SELECT_ALL_QUERY);
 		selectByIdStatement = connection.prepareStatement(SELECT_BY_ID_QUERY);
 		selectByNameStatement = connection.prepareStatement(SELECT_BY_NAME_QUERY);
+		selectByPhaseIdStatement = connection.prepareStatement(SELECT_BY_PHASE_ID_QUERY);
 		insertStatement = connection.prepareStatement(INSERT_QUERY);
 		updateStatement = connection.prepareStatement(UPDATE_QUERY);
 		deleteStatement = connection.prepareStatement(DELETE_QUERY);
@@ -89,6 +92,18 @@ public class DisciplineDAO {
 			}
 		}
 		return null;
+	}
+
+	public ArrayList<Discipline> selectByPhaseId(int phaseId) throws SQLException {
+		ArrayList<Discipline> disciplineList = new ArrayList<>();
+		selectByPhaseIdStatement.setInt(1, phaseId);
+		try (ResultSet resultSet = selectByPhaseIdStatement.executeQuery()) {
+			while (resultSet.next()) {
+				Discipline discipline = buildDisciplineFromResultSet(resultSet);
+				disciplineList.add(discipline);
+			}
+		}
+		return disciplineList;
 	}
 
 	private Discipline buildDisciplineFromResultSet(ResultSet resultSet) throws SQLException {

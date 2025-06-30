@@ -3,42 +3,38 @@ package controller;
 import java.sql.SQLException;
 import java.util.List;
 
-import database.dao.PhaseDAO;
-import database.model.Course;
 import database.model.Phase;
+import service.PhaseService;
 
 public class PhaseController {
 
-    private static PhaseDAO phaseDAO;
+	private static PhaseService phaseService;
 
-    static {
-        try {
-            phaseDAO = new PhaseDAO();
-        } catch (SQLException e) {
-            throw new ExceptionInInitializerError(e);
-        }
-    }
+	static {
+		phaseService = new PhaseService();
+	}
 
-    public static List<Phase> list() throws SQLException {
-        return phaseDAO.selectAll();
-    }
+	public static List<Phase> list() throws SQLException {
+		List<Phase> phases = phaseService.list();
+		return phases;
+	}
 
-    public static Phase getById(int id) throws SQLException {
-        return phaseDAO.selectById(id);
-    }
+	public static Phase getById(int id) throws SQLException {
+		Phase phase = phaseService.getById(id);
+		return phase;
+	}
 
-    public static void insert(String name, Course course) throws SQLException {
-        Phase phase = new Phase(name, course);
-        phaseDAO.insert(phase);
-    }
+	public static Phase insert(String name, int courseId) throws SQLException {
+		Phase phase = phaseService.create(name, courseId);
+		return phase;
+	}
 
-    public static void update(int id, String name, Course course) throws SQLException {
-        Phase phase = new Phase(id, name, course);
-        phaseDAO.update(phase);
-    }
+	public static Phase update(int id, String name, int courseId) throws SQLException {
+		Phase phase = phaseService.update(id, name, courseId);
+		return phase;
+	}
 
-    public static void delete(int id) throws SQLException {
-        phaseDAO.delete(id);
-    }
-
+	public static void delete(int id) throws SQLException {
+		phaseService.delete(id);
+	}
 }

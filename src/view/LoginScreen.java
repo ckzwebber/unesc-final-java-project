@@ -85,7 +85,7 @@ public class LoginScreen {
                         JOptionPane.showMessageDialog(btnCreateAccount, "Fill in all fields.");
                         return;
                     }
-                    UserController.insert(name, password);
+                    UserController.login(name, password);
                     JOptionPane.showMessageDialog(btnCreateAccount, "User created successfully. You can now log in.");
                     txfName.setText("");
                     txfPassword.setText("");

@@ -1,22 +1,36 @@
 package view;
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Vector;
 
 import javax.swing.BorderFactory;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.plaf.ComboBoxUI;
 import javax.swing.table.DefaultTableModel;
 
+import org.postgresql.core.Utils;
+
 import controller.DisciplineController;
+import controller.EnderecoController;
+import controller.PhaseController;
+import database.model.Course;
 import database.model.Discipline;
+import database.model.Endereco;
+import database.model.Phase;
+import utils.DisciplineUtil;
 import utils.TablesUtil;
 
 public class DisciplinesScreen {
@@ -25,12 +39,24 @@ public class DisciplinesScreen {
     private JPanel pnlDisciplines;
     private String action;
     private JPanel panel;
-    private JLabel lblCode, lblName, lblWeekDay, lblPhaseId;
+    private JLabel lblCode, lblName, lblWeekDay, lblPhase;
     private JTextField txfCode, txfName, txfWeekDay, txfPhaseId;
     private JTable table;
     private JScrollPane scroll;
     private JButton btnExit, btnConfirmAdd, btnConfirm;
-    private String code, name, weekDay, phaseId;
+    private String code, name, weekDay;
+    private JComboBox<Phase> cbPhase;
+    JComboBox<String> cbWeekDays;
+    private Phase selectedPhase;
+    private String[] week = {
+    		"Monday",
+    		"Tuesday",
+    		"Wednesday",
+    		"Thursday",
+    		"Friday",
+    		"Saturday",
+    		"Sunday"
+    	};
 
     private DefaultTableModel model = new DefaultTableModel() {
         @Override
@@ -73,12 +99,13 @@ public class DisciplinesScreen {
             table = new JTable(model);
             scroll = new JScrollPane(table);
 
-        /*    List<Discipline> disciplineList = DisciplineController.list();
+            List<Discipline> disciplineList = DisciplineController.list();
             for (Discipline d : disciplineList) {
                 model.addRow(new String[]{
-                        d.getCodeAsString(), d.getName(), d.getWeekDay(), d.getPhaseIdAsString()
+                        d.getIdAsString(), d.getName(), DisciplineUtil.getDayByCode( d.getWeekDay()), 
+                        d.getPhase().getName()
                 });
-            }*/
+            }
 
             scroll.setBounds(50, 50, 350, 150);
             pnlDisciplines.add(scroll);
@@ -96,16 +123,56 @@ public class DisciplinesScreen {
             lblWeekDay = new JLabel("Week Day:");
             lblWeekDay.setBounds(50, 90, 100, 20);
             pnlDisciplines.add(lblWeekDay);
-            txfWeekDay = new JTextField();
-            txfWeekDay.setBounds(160, 90, 200, 20);
-            pnlDisciplines.add(txfWeekDay);
+            	JComboBox<String> cbWeekDays = new JComboBox<>(week);
+            	cbWeekDays.setBounds(160, 90, 200, 20);
+            	cbWeekDays.setRenderer(new DefaultListCellRenderer() {
+            	    @Override
+            	    public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+            	            boolean isSelected, boolean cellHasFocus) {
+            	        super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            	        if (value instanceof String) {
+            	            String day = (String) value;
+            	            setText(day);
+            	        }
+            	        return this;
+            	    }
+            	});
+            	pnlDisciplines.add(cbWeekDays);
 
-            lblPhaseId = new JLabel("Phase ID:");
-            lblPhaseId.setBounds(50, 120, 100, 20);
-            pnlDisciplines.add(lblPhaseId);
-            txfPhaseId = new JTextField();
-            txfPhaseId.setBounds(160, 120, 200, 20);
-            pnlDisciplines.add(txfPhaseId);
+
+            lblPhase = new JLabel("Phase:");
+            lblPhase.setBounds(50, 120, 100, 20);
+            pnlDisciplines.add(lblPhase);
+            
+            try {
+    			List<Phase> phaseList = PhaseController.list();
+    			cbPhase = new JComboBox<>(new Vector<>(phaseList));
+    			cbPhase.setBounds(160, 120, 200, 20);
+
+    			cbPhase.setRenderer(new DefaultListCellRenderer() {
+    				@Override
+    				public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+    						boolean isSelected, boolean cellHasFocus) {
+    					super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+						setText("ID - name, course");
+    					if (value instanceof Phase) {
+    						Phase phase = (Phase) value;
+    						setText( phase.getIdAsString() + " – " + phase.getName() + ", " + phase.getCourse());
+    					}
+    					selectedPhase = (Phase) cbPhase.getSelectedItem();
+
+    					return this;
+    				}
+    			});
+
+    			pnlDisciplines.add(cbPhase);
+
+    		} catch (SQLException ex) {
+    			JOptionPane.showMessageDialog(pnlDisciplines,
+    			        "Error on load phases:\n" + ex.getMessage(),
+    			        "Error",
+    			        JOptionPane.ERROR_MESSAGE);
+    		}
 
             btnConfirmAdd = new JButton("Confirm");
             btnConfirmAdd.setBounds(150, 180, 150, 30);
@@ -117,7 +184,7 @@ public class DisciplinesScreen {
                         name = txfName.getText();
                         weekDay = txfWeekDay.getText();
                         int phaseIdInt = Integer.parseInt(txfPhaseId.getText());
-                        DisciplineController.insert(name, weekDay, phaseIdInt);
+                        DisciplineController.insert(code, name, weekDay, selectedPhase);
                         JOptionPane.showMessageDialog(btnConfirmAdd, "Discipline: " + name + " was added.");
                         txfName.setText("");
                         txfWeekDay.setText("");
@@ -139,12 +206,13 @@ public class DisciplinesScreen {
             table = new JTable(model);
             scroll = new JScrollPane(table);
 
-     /*       List<Discipline> disciplineList = DisciplineController.list();
+           List<Discipline> disciplineList = DisciplineController.list();
             for (Discipline d : disciplineList) {
                 model.addRow(new String[]{
-                        d.getCodeAsString(), d.getName(), d.getWeekDay(), d.getPhaseIdAsString()
+                		d.getIdAsString(), d.getName(), DisciplineUtil.getDayByCode( d.getWeekDay()), 
+                        d.getPhase().getName()
                 });
-            }*/
+            }
 
             lblCode = new JLabel("Select Code to remove:");
             lblCode.setBounds(100, 210, 200, 20);
@@ -166,7 +234,8 @@ public class DisciplinesScreen {
                         JOptionPane.showMessageDialog(btnConfirm, "Discipline with code " + code + " removed.");
                         txfCode.setText(null);
                         TablesUtil.refreshTable(model, DisciplineController.list(), d -> new String[]{
-                                d.getCodeAsString(), d.getName(), d.getWeekDay(), d.getPhaseIdAsString()
+                        		d.getIdAsString(), d.getName(), DisciplineUtil.getDayByCode( d.getWeekDay()), 
+                                d.getPhase().getName()
                         });
                     } catch (SQLException ex) {
                         ex.printStackTrace();

@@ -1,6 +1,7 @@
 package service;
 
 import java.sql.SQLException;
+import java.util.List;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import database.dao.UserDAO;
@@ -8,58 +9,118 @@ import database.model.User;
 
 public class UserService {
 
-    public boolean loginUser(String username, String password) {
-        if (username == null || username.isEmpty() || password == null || password.isEmpty()) {
-            return false;
-        }
-        try {
-            User user = userOnDatabase(username);
-            return BCrypt.verifyer().verify(password.toCharArray(), user.getPassword()).verified;
-        } catch (RuntimeException e) {
-            return false;
-        }
-    }
+	private static UserDAO userDAO;
 
-    public User registerUser(String username, String password) {
-        if (username == null || username.isEmpty() || password == null || password.isEmpty()) {
-            throw new IllegalArgumentException("Username and password cannot be empty");
-        }
+	static {
+		try {
+			userDAO = new UserDAO();
+		} catch (SQLException e) {
+			throw new ExceptionInInitializerError(e);
+		}
+	}
 
-        if (username.length() < 3 || password.length() < 8) {
-            throw new IllegalArgumentException("Invalid username or password");
-        }
+	public List<User> list() {
+		try {
+			return userDAO.selectAll();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 
-        User userOnDatabase = userOnDatabase(username);
-        if (userOnDatabase != null) {
-            throw new IllegalArgumentException("Username already exists");
-        }
+	public User getByUsername(String username) {
+		if (username == null || username.isEmpty()) {
+			throw new IllegalArgumentException("Username cannot be null or empty");
+		}
 
-        int saltLength = 12;
-        String hashedPassword = BCrypt.withDefaults().hashToString(saltLength, password.toCharArray());
+		try {
+			return userDAO.selectByUsername(username);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 
-        User user = new User();
-        user.setUsername(username);
-        user.setPassword(hashedPassword);
-        return user;
-    }
+	public void delete(int id) {
+		if (id <= 0) {
+			throw new IllegalArgumentException("ID must be greater than zero");
+		}
 
-    public void updateUserProfile(int userId, String newUsername, String newPassword) {
+		try {
+			userDAO.delete(id);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 
-    }
+	public User login(String username, String password) {
+		if (username == null || username.isEmpty() || password == null || password.isEmpty()) {
+			return null;
+		}
 
-    public User userOnDatabase(String username) {
-        try {
-            UserDAO userDAO = new UserDAO();
-            User user = userDAO.selectByUsername(username);
-            if (user == null) {
-                throw new SQLException("User not found");
-            }
+		try {
+			User user = userOnDatabase(username);
+			Boolean userVerified = BCrypt.verifyer().verify(password.toCharArray(), user.getPassword()).verified;
 
-            return user;
+			return userVerified ? user : null;
+		} catch (RuntimeException e) {
+			return null;
+		}
+	}
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Error accessing user data", e);
-        }
-    }
+	public User create(String username, String password, String confirmPassword) {
+		if (username == null || username.isEmpty() || password == null || password.isEmpty() || confirmPassword == null
+				|| confirmPassword.isEmpty()) {
+			throw new IllegalArgumentException("Username, password or confirm password cannot be empty");
+		}
+
+		if (username.length() < 3 || password.length() < 8) {
+			throw new IllegalArgumentException("Invalid username or password");
+		}
+
+		if (!password.equals(confirmPassword)) {
+			throw new IllegalArgumentException("Passwords do not match");
+		}
+
+		User userOnDatabase = userOnDatabase(username);
+
+		if (userOnDatabase != null) {
+			throw new IllegalArgumentException("Username already exists");
+		}
+
+		int saltLength = 12;
+		String hashedPassword = BCrypt.withDefaults().hashToString(saltLength, password.toCharArray());
+
+		User user = new User();
+		user.setUsername(username);
+		user.setPassword(hashedPassword);
+
+		try {
+			userDAO.insert(user);
+			return user;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	private User userOnDatabase(String username) {
+		if (username == null || username.isEmpty()) {
+			throw new IllegalArgumentException("Username cannot be null or empty");
+
+		}
+
+		try {
+			User user = userDAO.selectByUsername(username);
+
+			if (user == null) {
+				throw new SQLException("User not found");
+			}
+
+			return user;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 }

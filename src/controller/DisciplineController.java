@@ -31,6 +31,10 @@ public class DisciplineController {
         return disciplineDAO.selectByName(name);
     }
 
+    public static List<Discipline> getByPhaseId(int phaseId) throws SQLException {
+        return disciplineDAO.selectByPhaseId(phaseId);
+    }
+
     public static void insert(String code, String name, int weekDay, Phase phase) throws SQLException {
         Discipline discipline = new Discipline(code, name, weekDay, phase);
         disciplineDAO.insert(discipline);

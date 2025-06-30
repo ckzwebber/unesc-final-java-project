@@ -3,45 +3,44 @@ package controller;
 import java.sql.SQLException;
 import java.util.List;
 
-import database.dao.TeacherDAO;
 import database.model.Teacher;
+import service.TeacherService;
 
 public class TeacherController {
 
-    private static TeacherDAO teacherDAO;
+	private static TeacherService teacherService;
 
-    static {
-        try {
-            teacherDAO = new TeacherDAO();
-        } catch (SQLException e) {
-            throw new ExceptionInInitializerError(e);
-        }
-    }
+	static {
+		teacherService = new TeacherService();
+	}
 
-    public static List<Teacher> list() throws SQLException {
-        return teacherDAO.selectAll();
-    }
+	public static List<Teacher> list() throws SQLException {
+		List<Teacher> teachers = teacherService.list();
+		return teachers;
+	}
 
-    public static Teacher getById(int id) throws SQLException {
-        return teacherDAO.selectById(id);
-    }
+	public static Teacher getById(int id) throws SQLException {
+		Teacher teacher = teacherService.getById(id);
+		return teacher;
+	}
 
-    public static Teacher getByName(String name) throws SQLException {
-        return teacherDAO.selectByName(name);
-    }
+	public static Teacher getByName(String name) throws SQLException {
+		Teacher teacher = teacherService.getByName(name);
+		return teacher;
+	}
 
-    public static void insert(String name, int id) throws SQLException {
-        Teacher teacher = new Teacher(name, id);
-        teacherDAO.insert(teacher);
-    }
+	public static Teacher insert(String name, int id) throws SQLException {
+		Teacher teacher = teacherService.create(name, id);
+		return teacher;
+	}
 
-    public static void update(int id, String name, int title) throws SQLException {
-        Teacher teacher = new Teacher(id, name, title);
-        teacherDAO.update(teacher);
-    }
+	public static Teacher update(int id, String name, int title) throws SQLException {
+		Teacher teacher = teacherService.update(id, name, title);
+		return teacher;
+	}
 
-    public static void delete(int id) throws SQLException {
-        teacherDAO.delete(id);
-    }
+	public static void delete(int id) throws SQLException {
+		teacherService.delete(id);
+	}
 
 }
