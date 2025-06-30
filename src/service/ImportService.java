@@ -1,11 +1,13 @@
 package service;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
 import java.util.ArrayList;
+import java.util.HexFormat;
 import java.util.List;
 
 import database.model.ImportData;
@@ -14,33 +16,39 @@ import database.model.Discipline;
 import database.model.Phase;
 import database.model.Teacher;
 import utils.DisciplineUtil;
+import utils.ImportServiceUtil;
 
 public class ImportService {
 
-	public static ImportData readImportFile(String path) {
+	public ImportData readImportFile(String path) {
 		try {
 
 			InputStream inputStream = new FileInputStream(path);
 
-			InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+			MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+
+			DigestInputStream digestInputStream = new DigestInputStream(inputStream, messageDigest);
+
+			InputStreamReader inputStreamReader = new InputStreamReader(digestInputStream);
 			BufferedReader buffer = new BufferedReader(inputStreamReader);
 
 			String line;
 
 			Course course = new Course();
-			String processDate;
-			String phaseInitialPeriod;
-			String phaseLastPeriod;
-			int fileSequence;
-			String fileLayout;
-			List<Phase> phases;
-			int quantityOfDisciplines;
-			int quantityOfTeachers;
-			List<Discipline> disciplines;
-			List<Integer> quantityOfTeachersInDiscipline;
-			List<Teacher> teachers;
-			int typeOfImport;
-			int totalOfImports;
+			String processDate = "";
+			String phaseInitialPeriod = "";
+			String phaseLastPeriod = "";
+			int fileSequence = 0;
+			String fileLayout = "";
+			List<Phase> phases = new ArrayList<>();
+			int quantityOfDisciplines = 0;
+			int quantityOfTeachers = 0;
+			List<Discipline> disciplines = new ArrayList<>();
+			List<Integer> quantityOfTeachersInDiscipline = new ArrayList<>();
+			List<Teacher> teachers = new ArrayList<>();
+			int typeOfImport = 0;
+			int totalOfImports = 0;
+			String fileHash = "";
 
 			while ((line = buffer.readLine()) != null) {
 				char recordType = line.charAt(0);
@@ -64,36 +72,36 @@ public class ImportService {
 						break;
 
 					case '2':
-						String disciplineCode = line.substring(2, 8);
-						int disciplineCodeInt = Integer.parseInt(disciplineCode);
-						int dayOfWeek = Integer.parseInt(line.substring(8, 10));
-						quantityOfTeachersInDiscipline.add(Integer.parseInt(line.substring(10, 12)));
+						String disciplineCode = line.substring(2, 8).trim();
+						int dayOfWeek = Integer.parseInt(line.substring(8, 10).trim());
+						quantityOfTeachersInDiscipline.add(Integer.parseInt(line.substring(10, 12).trim()));
 						Phase disciplinePhase = phases.get(dayOfWeek - 1);
-						String disciplineName = DisciplineUtil.getDisciplineNameByCode(disciplineCodeInt);
+						String disciplineName = DisciplineUtil.getDisciplineNameByCode(disciplineCode);
 						disciplines.add(new Discipline(disciplineCode, disciplineName, dayOfWeek, disciplinePhase));
 						break;
 
 					case '3':
-						String name = line.substring(2, 42).trim();
-						String title = line.substring(42, 44);
-						teachers.add(new ProfessorInfo(name, title));
+						String teacherName = line.substring(2, 42).trim();
+						int teacherTitle = Integer.parseInt(line.substring(42, 44).trim());
+						teachers.add(new Teacher(teacherName, teacherTitle));
 						break;
 
 					case '9':
-						int totalReg = Integer.parseInt(line.substring(2, 13));
-						// você pode validar a contagem se necessário
+						totalOfImports = Integer.parseInt(line.substring(2, 13).trim());
+						typeOfImport = Integer.parseInt(line.substring(13, 14).trim());
 						break;
 				}
 			}
 
 			buffer.close();
 
-			ImportData courseInfo = new ImportData(course.toString(), date.toString(), initialPeriod.toString(),
-					lastPeriod.toString(), layout.toString());
-			courseInfo.setPhases(phases);
-			courseInfo.setDisciplines(disciplines);
-			courseInfo.setteachers(teachers);
-			return courseInfo;
+			fileHash = ImportServiceUtil.getAndVerifyFileHash(messageDigest);
+
+			ImportData importData = new ImportData(course, processDate, phaseInitialPeriod, phaseLastPeriod,
+					fileSequence, fileLayout, phases, quantityOfDisciplines, quantityOfTeachers, disciplines,
+					quantityOfTeachersInDiscipline, teachers, typeOfImport, totalOfImports, fileHash);
+
+			return importData;
 
 		} catch (Exception e) {
 			throw new RuntimeException(e);

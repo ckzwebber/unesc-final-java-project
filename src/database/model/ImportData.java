@@ -18,11 +18,12 @@ public class ImportData {
 	private List<Teacher> teachers;
 	private int typeOfImport;
 	private int totalOfImports;
+	private String fileHash;
 
 	public ImportData(Course course, String processDate, String phaseInitialPeriod, String phaseLastPeriod,
 			int fileSequence, String fileLayout, List<Phase> phases, int quantityOfDisciplines,
 			int quantityOfTeachers, List<Discipline> disciplines, List<Integer> quantityOfTeachersInDiscipline,
-			List<Teacher> teachers, int typeOfImport, int totalOfImports) {
+			List<Teacher> teachers, int typeOfImport, int totalOfImports, String fileHash) {
 		this.course = course;
 		this.processDate = processDate;
 		this.phaseInitialPeriod = phaseInitialPeriod;
@@ -37,6 +38,7 @@ public class ImportData {
 		this.teachers = teachers;
 		this.typeOfImport = typeOfImport;
 		this.totalOfImports = totalOfImports;
+		this.fileHash = fileHash;
 	}
 
 	public Course getCourse() {
@@ -169,5 +171,13 @@ public class ImportData {
 
 	public String getTotalOfImportsAsString() {
 		return String.valueOf(totalOfImports);
+	}
+
+	public String getFileHash() {
+		return fileHash;
+	}
+
+	public void setFileHash(String fileHash) {
+		this.fileHash = fileHash;
 	}
 }
