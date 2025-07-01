@@ -19,9 +19,9 @@ public class DisciplineUtil {
 	}
 
 	static {
-		disciplinesCodes.put("10850", "Algoritmos e Programação");
-		disciplinesCodes.put("10854", "Fundamentos Matemáticos");
-		disciplinesCodes.put("10851", "Introd. Ciência da Computação");
+		disciplinesCodes.put("010850", "Algoritmos e Programação");
+		disciplinesCodes.put("010854", "Fundamentos Matemáticos");
+		disciplinesCodes.put("010851", "Introd. Ciência da Computação");
 	}
 
 	public static String getDayByCode(int code) {

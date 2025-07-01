@@ -65,31 +65,31 @@ public class ImportService {
 						break;
 
 					case '1':
-						String phaseName = line.substring(2, 9).trim();
+						String phaseName = line.substring(1, 8).trim();
 						phases.add(new Phase(phaseName, course));
-						quantityOfDisciplines = Integer.parseInt(line.substring(9, 11).trim());
-						quantityOfTeachers = Integer.parseInt(line.substring(11, 13).trim());
+						quantityOfDisciplines = Integer.parseInt(line.substring(8, 10).trim());
+						quantityOfTeachers = Integer.parseInt(line.substring(10, 12).trim());
 						break;
 
 					case '2':
-						String disciplineCode = line.substring(2, 8).trim();
-						int dayOfWeek = Integer.parseInt(line.substring(8, 10).trim());
-						quantityOfTeachersInDiscipline.add(Integer.parseInt(line.substring(10, 12).trim()));
-						Phase disciplinePhase = phases.get(dayOfWeek - 1);
+						String disciplineCode = line.substring(1, 7).trim();
+						int dayOfWeek = Integer.parseInt(line.substring(7, 9).trim());
+						quantityOfTeachersInDiscipline.add(Integer.parseInt(line.substring(9, 11).trim()));
+						Phase disciplinePhase = phases.getFirst();
 						String disciplineName = DisciplineUtil.getDisciplineNameByCode(disciplineCode);
 						disciplines.add(new Discipline(disciplineCode, disciplineName, dayOfWeek, disciplinePhase));
 						break;
 
-					case '3':
-						String teacherName = line.substring(2, 42).trim();
-						int teacherTitle = Integer.parseInt(line.substring(42, 44).trim());
-						teachers.add(new Teacher(teacherName, teacherTitle));
-						break;
+					 case '3':
+					 	String teacherName = line.substring(1, 41).trim();
+					 	int teacherTitle = Integer.parseInt(line.substring(41, 43).trim());
+					 	teachers.add(new Teacher(teacherName, teacherTitle));
+					 	break;
 
-					case '9':
-						totalOfImports = Integer.parseInt(line.substring(2, 13).trim());
-						typeOfImport = Integer.parseInt(line.substring(13, 14).trim());
-						break;
+					 case '9':
+					 	typeOfImport = 9;
+					 	totalOfImports = Integer.parseInt(line.substring(1, 12).trim());
+					 	break;
 				}
 			}
 

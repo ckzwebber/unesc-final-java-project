@@ -2,7 +2,11 @@ package view;
 
 import javax.swing.*;
 
+import database.model.ImportData;
 import database.model.User;
+import service.ImportService;
+import utils.DisciplineUtil;
+import utils.TeacherUtil;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -133,10 +137,62 @@ public class MainScreen extends JFrame {
 				if( e.getSource() == btnImportFile) {
 					int i = fileChooser.showOpenDialog(screen);
 					if( i == JFileChooser.APPROVE_OPTION) {
-						File file = fileChooser.getSelectedFile();
-						//caminho 
-						JOptionPane.showMessageDialog(screen, file.getPath().toString());
-						//service.ImportService.readImportFile(file);
+						File file = fileChooser.getSelectedFile(); 
+						//JOptionPane.showMessageDialog(screen, file.getPath().toString());
+						ImportService is = new ImportService();
+						ImportData importData = is.readImportFile(file.getPath().toString());
+						
+						JOptionPane.showConfirmDialog(screen, "Data in the file:\n" +
+						"Course name: " + importData.getCourse().getName() + "\n" +
+						"Process date: " + importData.getProcessDate() + "\n" +
+						importData.getPhaseInitialPeriod() + " until " + importData.getPhaseLastPeriod() + "\n" +
+						"File sequence: " + importData.getFileSequence() + "\n" +
+						"File layout: " + importData.getFileLayout() + "\n" +
+						"Phase: " + importData.getPhases().getFirst().getName() + "\n" +
+						"Quantity of Disciplines: " + importData.getQuantityOfDisciplines() + "\n" +
+						"Quantity of Teachers: " + importData.getQuantityOfTeachers() + "\n" +
+						"Discipline: " + importData.getDisciplines().getFirst().getCode() + "-" 
+						+ importData.getDisciplines().getFirst().getName() + "\n" +
+						"Week day: " + DisciplineUtil.getDayByCode(importData.getDisciplines().getFirst().getWeekDay()) + "\n" +
+						"Phase of discipline: " + importData.getDisciplines().getFirst().getPhase().getName() + "\n" +
+						"Discipline teachers: " + importData.getQuantityOfTeachersInDiscipline().getFirst() + "\n" +
+						"Teacher name: " + importData.getTeachers().getFirst().getName() + "\n" +
+						"Teacher title: " + TeacherUtil.getTitleById(importData.getTeachers().getFirst().getTitle()) + "\n" +
+						"Type of import: " + importData.getTypeOfImport() + "\n" +
+						"Total imports: " + importData.getTotalOfImports()
+						
+						);
+						
+						
+						//primeira linha
+						//System.out.println(importData.getCourse().getName());
+						//System.out.println(importData.getProcessDate());
+						//System.out.println(importData.getPhaseInitialPeriod());
+						//System.out.println(importData.getPhaseLastPeriod());
+						//System.out.println(importData.getFileSequence());
+						//System.out.println(importData.getFileLayout());
+
+						//segunda linha
+						//System.out.println(importData.getPhases().getFirst().getName());
+						//System.out.println(importData.getQuantityOfDisciplines());
+						//System.out.println(importData.getQuantityOfTeachers());
+						
+						//terceira linha
+						//System.out.println(importData.getDisciplines().getFirst().getCode() + "-" 
+						//+ importData.getDisciplines().getFirst().getName());
+						//System.out.println(importData.getDisciplines().getFirst().getWeekDayAsString());
+						//System.out.println(importData.getDisciplines().getFirst().getPhase().getName());
+						//System.out.println(importData.getQuantityOfTeachersInDiscipline().getFirst());
+						
+						//quarta linha
+						//System.out.println(importData.getTeachers().getFirst().getName());
+						//System.out.println(TeacherUtil.getTitleById(importData.getTeachers().getFirst().getTitle()));
+
+						//quinta linha
+						//System.out.println(importData.getTypeOfImport());
+						//System.out.println(importData.getTotalOfImports());
+						
+						
 					}
 				}
 			}

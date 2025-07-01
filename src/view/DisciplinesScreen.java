@@ -132,6 +132,7 @@ public class DisciplinesScreen {
                         String day = (String) value;
                         setText(day);
                     }
+                    //prgar dia selecionado e conventer para numero
                     return this;
                 }
             });
