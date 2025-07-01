@@ -7,16 +7,16 @@ import java.io.InputStreamReader;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.util.ArrayList;
-import java.util.HexFormat;
 import java.util.List;
 
+import controller.FileHashController;
 import database.model.ImportData;
 import database.model.Course;
 import database.model.Discipline;
+import database.model.FileHash;
 import database.model.Phase;
 import database.model.Teacher;
 import utils.DisciplineUtil;
-import utils.ImportServiceUtil;
 
 public class ImportService {
 
@@ -48,7 +48,7 @@ public class ImportService {
 			List<Teacher> teachers = new ArrayList<>();
 			int typeOfImport = 0;
 			int totalOfImports = 0;
-			String fileHash = "";
+			FileHash fileHash = new FileHash();
 
 			while ((line = buffer.readLine()) != null) {
 				char recordType = line.charAt(0);
@@ -95,7 +95,7 @@ public class ImportService {
 
 			buffer.close();
 
-			fileHash = ImportServiceUtil.getAndVerifyFileHash(messageDigest);
+			fileHash = FileHashController.insert(messageDigest);
 
 			ImportData importData = new ImportData(course, processDate, phaseInitialPeriod, phaseLastPeriod,
 					fileSequence, fileLayout, phases, quantityOfDisciplines, quantityOfTeachers, disciplines,

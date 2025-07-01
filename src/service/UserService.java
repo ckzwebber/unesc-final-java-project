@@ -107,7 +107,6 @@ public class UserService {
 	private User userOnDatabase(String username) {
 		if (username == null || username.isEmpty()) {
 			throw new IllegalArgumentException("Username cannot be null or empty");
-
 		}
 
 		try {

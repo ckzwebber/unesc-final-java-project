@@ -9,13 +9,13 @@ public class DisciplineUtil {
 	private static final Map<String, String> disciplinesCodes = new HashMap<>();
 
 	static {
-		days.put(1, "Domingo");
-		days.put(2, "Monday");
-		days.put(3, "Tuesday");
-		days.put(4, "Wednesday");
-		days.put(5, "Thursday");
-		days.put(6, "Friday");
-		days.put(7, "Sunday");
+		days.put(01, "Saturday");
+		days.put(02, "Monday");
+		days.put(03, "Tuesday");
+		days.put(04, "Wednesday");
+		days.put(05, "Thursday");
+		days.put(06, "Friday");
+		days.put(07, "Sunday");
 	}
 
 	static {

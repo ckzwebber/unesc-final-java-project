@@ -1,0 +1,96 @@
+package service;
+
+import java.security.MessageDigest;
+import java.sql.SQLException;
+import java.util.HexFormat;
+import java.util.List;
+
+import database.dao.FileHashDAO;
+import database.model.FileHash;
+
+public class FileHashService {
+
+    private static FileHashDAO fileHashDAO;
+
+    static {
+        try {
+            fileHashDAO = new FileHashDAO();
+        } catch (SQLException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
+
+    public List<FileHash> list() {
+        try {
+            return fileHashDAO.selectAll();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public FileHash getByFileHash(String fileHash) {
+        if (fileHash == null || fileHash.isEmpty()) {
+            throw new IllegalArgumentException("File hash cannot be null or empty");
+        }
+
+        try {
+            return fileHashDAO.selectByHash(fileHash);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public void delete(String fileHash) {
+        if (fileHash == null || fileHash.isEmpty()) {
+            throw new IllegalArgumentException("File hash cannot be null or empty");
+        }
+
+        try {
+            fileHashDAO.delete(fileHash);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public FileHash create(MessageDigest messageDigest) {
+        if (messageDigest == null) {
+            throw new IllegalArgumentException("Message digest cannot be null or empty");
+        }
+
+        String fileHash = "";
+
+        byte[] digestBytes = messageDigest.digest();
+        fileHash = HexFormat.of().formatHex(digestBytes);
+
+        FileHash existingFileHash = fileHashOnDatabase(fileHash);
+
+        if (existingFileHash != null) {
+            throw new IllegalArgumentException("File hash already exists in database");
+        }
+
+        FileHash newFileHash = new FileHash(fileHash);
+        try {
+            fileHashDAO.insert(newFileHash);
+            return newFileHash;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private FileHash fileHashOnDatabase(String fileHash) {
+        if (fileHash == null || fileHash.isEmpty()) {
+            throw new IllegalArgumentException("File hash cannot be null or empty");
+        }
+
+        try {
+            return fileHashDAO.selectByHash(fileHash);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+}
