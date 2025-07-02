@@ -162,9 +162,6 @@ public class CourseService {
 
 		try {
 			Course course = courseDAO.selectById(id);
-			if (course == null) {
-				throw new SQLException("Course not found");
-			}
 			return course;
 		} catch (SQLException e) {
 			e.printStackTrace();

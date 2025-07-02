@@ -4,7 +4,9 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -27,6 +29,7 @@ import database.model.Phase;
 import database.model.Subject;
 import database.model.Teacher;
 import utils.TablesUtil;
+import utils.TeacherUtil;
 
 public class TeacherScreen {
 
@@ -40,14 +43,8 @@ public class TeacherScreen {
     private JScrollPane scroll;
     private JButton btnExit, btnConfirmAdd, btnConfirm;
     private String name, title, id;
-    private JComboBox<String> cbTitles;
+    private JComboBox<Map.Entry<Integer, String>> cbTitles;
     private JComboBox<String> cbSubjects;
-    private String[] titles = {
-    	"Pós-Graduação",
-    	"Mestrado",
-    	"Doutorado",
-    	"Pós-Doutorado"
-    };
 
     private DefaultTableModel model = new DefaultTableModel() {
         @Override
@@ -92,7 +89,7 @@ public class TeacherScreen {
 
             List<Teacher> teacherList = TeacherController.list();
             for (Teacher t : teacherList) {
-                model.addRow(new String[]{
+                model.addRow(new String[] {
                         t.getIdAsString(), t.getName(), t.getTitleAsString(), t.getSubjectIdAsString()
                 });
             }
@@ -103,7 +100,7 @@ public class TeacherScreen {
 
         } else if (action.equals("Add")) {
 
-        	JLabel lblName = new JLabel("Name:");
+            JLabel lblName = new JLabel("Name:");
             lblName.setBounds(50, 50, 100, 20);
             pnlTeachers.add(lblName);
             txfName = new JTextField();
@@ -113,7 +110,26 @@ public class TeacherScreen {
             JLabel lblTitle = new JLabel("Title:");
             lblTitle.setBounds(50, 80, 100, 20);
             pnlTeachers.add(lblTitle);
-            cbTitles = new JComboBox<>(titles);
+            cbTitles = new JComboBox<>();
+            for (Map.Entry<Integer, String> entry : TeacherUtil.titles.entrySet()) {
+                cbTitles.addItem(entry);
+            }
+
+            cbTitles.setRenderer(new DefaultListCellRenderer() {
+                @Override
+                public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+                        boolean isSelected, boolean cellHasFocus) {
+                    JLabel label = (JLabel) super.getListCellRendererComponent(
+                            list, value, index, isSelected, cellHasFocus);
+                    if (value instanceof Map.Entry) {
+                        @SuppressWarnings("unchecked")
+                        Map.Entry<Integer, String> entry = (Map.Entry<Integer, String>) value;
+                        label.setText(entry.getValue());
+                    }
+                    return label;
+                }
+            });
+
             cbTitles.setBounds(160, 80, 200, 20);
             pnlTeachers.add(cbTitles);
 
@@ -124,22 +140,26 @@ public class TeacherScreen {
             cbSubjects.setBounds(160, 110, 200, 20);
             pnlTeachers.add(cbSubjects);
 
+            Map<String, Subject> mapSubjectByName = new HashMap<>();
             List<Subject> subjects = SubjectController.list();
-            for (Subject s : subjects) cbSubjects.addItem(s.getName());
+            for (Subject s : subjects) {
+                cbSubjects.addItem(s.getName());
+                mapSubjectByName.put(s.getName(), s);
+            }
 
             btnConfirm = new JButton("Confirm");
             btnConfirm.setBounds(150, 150, 120, 30);
             pnlTeachers.add(btnConfirm);
 
             btnConfirm.addActionListener(new ActionListener() {
-                
 
-				@Override
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     try {
                         String name = txfName.getText();
                         int title = cbTitles.getSelectedIndex() + 1;
-                        Subject selectedSubject = (Subject) cbSubjects.getSelectedItem();
+                        String selectedName = (String) cbSubjects.getSelectedItem();
+                        Subject selectedSubject = mapSubjectByName.get(selectedName);
                         TeacherController.insert(name, title, selectedSubject.getId());
                         JOptionPane.showMessageDialog(pnlTeachers, "Teacher added.");
                     } catch (Exception ex) {
@@ -162,12 +182,12 @@ public class TeacherScreen {
 
             List<Teacher> teacherList = TeacherController.list();
             for (Teacher t : teacherList) {
-                model.addRow(new String[]{
+                model.addRow(new String[] {
                         t.getIdAsString(), t.getName(), t.getTitleAsString(), t.getSubjectIdAsString()
                 });
-            
+
             }
-            
+
             lblId = new JLabel("Select ID to remove:");
             lblId.setBounds(100, 210, 200, 20);
             pnlTeachers.add(lblId);
@@ -187,7 +207,7 @@ public class TeacherScreen {
                         TeacherController.delete(intId);
                         JOptionPane.showMessageDialog(btnConfirm, "Teacher with ID " + id + " removed.");
                         txfId.setText(null);
-                        TablesUtil.refreshTable(model, TeacherController.list(), t -> new String[]{
+                        TablesUtil.refreshTable(model, TeacherController.list(), t -> new String[] {
                                 t.getIdAsString(), t.getName(), t.getTitleAsString(), t.getSubjectIdAsString()
                         });
                     } catch (SQLException ex) {

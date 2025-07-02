@@ -60,10 +60,16 @@ public class UserService {
 
 		try {
 			User user = userOnDatabase(username);
+			if (user == null) {
+				throw new SQLException("User not found");
+			}
 			Boolean userVerified = BCrypt.verifyer().verify(password.toCharArray(), user.getPassword()).verified;
 
 			return userVerified ? user : null;
 		} catch (RuntimeException e) {
+			return null;
+		} catch (SQLException e) {
+			e.printStackTrace();
 			return null;
 		}
 	}
@@ -111,10 +117,6 @@ public class UserService {
 
 		try {
 			User user = userDAO.selectByUsername(username);
-
-			if (user == null) {
-				throw new SQLException("User not found");
-			}
 
 			return user;
 		} catch (SQLException e) {

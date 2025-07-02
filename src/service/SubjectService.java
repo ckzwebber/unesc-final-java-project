@@ -112,9 +112,9 @@ public class SubjectService {
 	}
 
 	public Subject update(int id, String code, String name, int weekDay, int teacherQuantity, int phaseId) {
-        if(id <= 0) {
-            throw new IllegalArgumentException("ID must be greater than zero");
-        }
+		if (id <= 0) {
+			throw new IllegalArgumentException("ID must be greater than zero");
+		}
 		if (code == null || code.isEmpty()) {
 			throw new IllegalArgumentException("Code cannot be null or empty");
 		}
@@ -154,9 +154,6 @@ public class SubjectService {
 
 		try {
 			Subject subject = subjectDAO.selectById(id);
-			if (subject == null) {
-				throw new SQLException("Discipline not found");
-			}
 			return subject;
 		} catch (SQLException e) {
 			e.printStackTrace();

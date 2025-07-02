@@ -136,9 +136,6 @@ public class PhaseService {
 
 		try {
 			Phase phase = phaseDAO.selectById(id);
-			if (phase == null) {
-				throw new SQLException("Phase not found");
-			}
 			return phase;
 		} catch (SQLException e) {
 			e.printStackTrace();

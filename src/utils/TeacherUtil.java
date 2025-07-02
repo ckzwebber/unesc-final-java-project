@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 public class TeacherUtil {
 
-    private static final Map<Integer, String> titles = new HashMap<>();
+    public static final Map<Integer, String> titles = new HashMap<>();
 
     static {
         titles.put(1, "Postgraduate");

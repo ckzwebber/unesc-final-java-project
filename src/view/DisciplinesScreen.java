@@ -46,7 +46,7 @@ public class DisciplinesScreen {
     private JButton btnExit, btnConfirmAdd, btnConfirm;
     private String code, name, weekDay, day;
     private JComboBox<Map.Entry<Integer, String>> cbWeekdays;
-	private JComboBox<Phase> cbPhases;
+    private JComboBox<Phase> cbPhases;
     private Phase selectedPhase;
 
     private DefaultTableModel model = new DefaultTableModel() {
@@ -103,7 +103,7 @@ public class DisciplinesScreen {
 
         } else if (action.equals("Add")) {
 
-        	JLabel lblCode = new JLabel("Code:");
+            JLabel lblCode = new JLabel("Code:");
             lblCode.setBounds(50, 50, 100, 20);
             pnlDisciplines.add(lblCode);
             txfCode = new JTextField();
@@ -127,13 +127,13 @@ public class DisciplinesScreen {
             cbWeekdays.setRenderer(new DefaultListCellRenderer() {
                 @Override
                 public Component getListCellRendererComponent(JList<?> list, Object value, int index,
-                                                              boolean isSelected, boolean cellHasFocus) {
+                        boolean isSelected, boolean cellHasFocus) {
                     super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                     if (value instanceof Map.Entry) {
                         Map.Entry<Integer, String> entry = (Map.Entry<Integer, String>) value;
-                        Map.Entry<Integer, String> selectedEntry = (Map.Entry<Integer, String>) 
-                        		cbWeekdays.getSelectedItem();
-            int selectedDay = selectedEntry.getKey(); 
+                        Map.Entry<Integer, String> selectedEntry = (Map.Entry<Integer, String>) cbWeekdays
+                                .getSelectedItem();
+                        int selectedDay = selectedEntry.getKey();
                         setText(entry.getValue());
                     }
                     return this;
@@ -146,8 +146,7 @@ public class DisciplinesScreen {
             JLabel lblPhase = new JLabel("Phase:");
             lblPhase.setBounds(50, 140, 100, 20);
             pnlDisciplines.add(lblPhase);
-            
-            
+
             JComboBox<String> cbPhases = new JComboBox<>();
             // Map para relacionar nome -> objeto Phase
             Map<String, Phase> mapPhaseByName = new HashMap<>();
@@ -159,7 +158,6 @@ public class DisciplinesScreen {
             cbPhases.setBounds(160, 140, 200, 20);
             pnlDisciplines.add(cbPhases);
 
-
             btnConfirm = new JButton("Confirm");
             btnConfirm.setBounds(150, 200, 120, 30);
             pnlDisciplines.add(btnConfirm);
@@ -170,7 +168,7 @@ public class DisciplinesScreen {
                     try {
                         String code = txfCode.getText();
                         String name = txfName.getText();
-                        int weekDay = cbWeekdays.getSelectedIndex();
+                        int weekDay = cbWeekdays.getSelectedIndex() + 1;
                         String selectedName = (String) cbPhases.getSelectedItem();
                         Phase selectedPhase = mapPhaseByName.get(selectedName);
                         SubjectController.insert(code, name, weekDay, 1, selectedPhase.getId());
@@ -219,7 +217,8 @@ public class DisciplinesScreen {
                         JOptionPane.showMessageDialog(btnConfirm, "Subject with code " + code + " removed.");
                         txfCode.setText(null);
                         TablesUtil.refreshTable(model, SubjectController.list(), s -> new String[] {
-                             s.getCode(), s.getName(), SubjectUtil.getDayByCode(s.getWeekDay()), s.getPhaseIdAsString()
+                                s.getCode(), s.getName(), SubjectUtil.getDayByCode(s.getWeekDay()),
+                                s.getPhaseIdAsString()
 
                         });
                     } catch (SQLException ex) {

@@ -137,9 +137,6 @@ public class TeacherService {
 
 		try {
 			Teacher teacher = teacherDAO.selectByName(name);
-			if (teacher == null) {
-				throw new SQLException("Teacher not found");
-			}
 			return teacher;
 		} catch (SQLException e) {
 			e.printStackTrace();
