@@ -11,11 +11,11 @@ import database.model.User;
 
 public class UserDAO {
 
-	private static final String SELECT_ALL_QUERY = "SELECT id, username FROM tb_users";
-	private static final String SELECT_BY_USERNAME_QUERY = "SELECT id, username, password FROM tb_users WHERE username = ?";
-	private static final String INSERT_QUERY = "INSERT INTO tb_users(username, password) VALUES (?, ?)";
-	private static final String UPDATE_QUERY = "UPDATE tb_users SET password = ? WHERE id = ?";
-	private static final String DELETE_QUERY = "DELETE FROM tb_users WHERE id = ?";
+	private static final String SELECT_ALL_QUERY = "SELECT id, username FROM users";
+	private static final String SELECT_BY_USERNAME_QUERY = "SELECT id, username, password FROM users WHERE username = ?";
+	private static final String INSERT_QUERY = "INSERT INTO users(username, password) VALUES (?, ?)";
+	private static final String UPDATE_QUERY = "UPDATE users SET password = ? WHERE id = ?";
+	private static final String DELETE_QUERY = "DELETE FROM users WHERE id = ?";
 
 	private final PreparedStatement selectAllStatement;
 	private final PreparedStatement selectByUsernameStatement;

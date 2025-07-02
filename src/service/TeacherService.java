@@ -65,7 +65,7 @@ public class TeacherService {
 		}
 	}
 
-	public Teacher create(String name, int title) {
+	public Teacher create(String name, int title, int subjectId) {
 		if (name == null || name.isEmpty()) {
 			throw new IllegalArgumentException("Name cannot be null or empty");
 		}
@@ -75,6 +75,9 @@ public class TeacherService {
 		if (title < 0 || title > 4) {
 			throw new IllegalArgumentException("Title must be between 0 and 4");
 		}
+		if (subjectId <= 0) {
+			throw new IllegalArgumentException("Subject ID must be greater than zero");
+		}
 
 		Teacher teacherOnDatabase = teacherOnDatabase(name);
 
@@ -82,9 +85,7 @@ public class TeacherService {
 			throw new IllegalArgumentException("Teacher with this name already exists");
 		}
 
-		Teacher teacher = new Teacher();
-		teacher.setName(name);
-		teacher.setTitle(title);
+		Teacher teacher = new Teacher(name, title, subjectId);
 
 		try {
 			teacherDAO.insert(teacher);
@@ -95,21 +96,21 @@ public class TeacherService {
 		}
 	}
 
-	public Teacher update(int id, String name, int title) {
+	public Teacher update(int id, String name, int title, int subjectId) {
 		if (id <= 0) {
 			throw new IllegalArgumentException("ID must be greater than zero");
 		}
-
 		if (name == null || name.isEmpty()) {
 			throw new IllegalArgumentException("Name cannot be null or empty");
 		}
-
 		if (name.length() < 3) {
 			throw new IllegalArgumentException("Name must be at least 3 characters long");
 		}
-
-		if (title < 0) {
-			throw new IllegalArgumentException("Title must be non-negative");
+		if (title < 0 || title > 4) {
+			throw new IllegalArgumentException("Title must be between 0 and 4");
+		}
+		if (subjectId <= 0) {
+			throw new IllegalArgumentException("Subject ID must be greater than zero");
 		}
 
 		Teacher teacherOnDatabase = teacherOnDatabase(name);
@@ -118,10 +119,7 @@ public class TeacherService {
 			throw new IllegalArgumentException("Another teacher with this name already exists");
 		}
 
-		Teacher teacher = new Teacher();
-		teacher.setId(id);
-		teacher.setName(name);
-		teacher.setTitle(title);
+		Teacher teacher = new Teacher(id, name, title, subjectId);
 
 		try {
 			teacherDAO.update(teacher);

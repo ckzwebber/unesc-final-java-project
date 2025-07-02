@@ -1,13 +1,18 @@
 package view;
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.util.List;
+import javax.swing.*;
+import java.awt.*;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -16,7 +21,7 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 import controller.CourseController;
-import controller.DisciplineController;
+import controller.SubjectController;
 import controller.PhaseController;
 import database.model.Course;
 import database.model.Phase;
@@ -36,6 +41,10 @@ public class PhaseScreen {
     private JButton btnExit, btnConfirmAdd, btnConfirm;
     private String name, id, courseId;
     private String disciplinesByPhase;
+    private JTextField txfLabel;
+	private JTextField txfSubjectCount;
+	private JTextField txfTeacherCount;
+	private JComboBox<Course> cbCourses;
 
     private DefaultTableModel model = new DefaultTableModel() {
         @Override
@@ -43,6 +52,7 @@ public class PhaseScreen {
             return false;
         }
     };
+	
 
     public PhaseScreen(MainScreen mainScreen) {
         this.mainScreen = mainScreen;
@@ -73,17 +83,16 @@ public class PhaseScreen {
 
             model.addColumn("ID");
             model.addColumn("Name");
-            model.addColumn("Course ID");
-            model.addColumn("Disciplines");
+            model.addColumn("Subjects");
+            model.addColumn("Teachers");
             table = new JTable(model);
             scroll = new JScrollPane(table);
 
             List<Phase> phaseList = PhaseController.list();
             for (Phase p : phaseList) {
-            	Course c = CourseController.getById(p.getId());
-            	disciplinesByPhase = PhaseUtil.groupDiscpilinesByPhaseId(p.getId());
+            	Course c = CourseController.getById(p.getCourseId());
                 model.addRow(new String[]{
-                        p.getIdAsString(), p.getName() + " - " + c.getName(), c.getIdAsString(), disciplinesByPhase
+                        p.getIdAsString(p.getId()), p.getName() + " - " + c.getName(), p.getSubjectCountAsString(p.getSubjectCount()), p.getTeacherCountAsString(p.getTeacherCount())
                 });
             }
 
@@ -93,57 +102,89 @@ public class PhaseScreen {
 
         } else if (action.equals("Add")) {
 
-            lblName = new JLabel("Name:");
-            lblName.setBounds(50, 80, 100, 20);
-            pnlPhases.add(lblName);
-            txfName = new JTextField();
-            txfName.setBounds(160, 80, 200, 20);
-            pnlPhases.add(txfName);
+        	JLabel lblLabel = new JLabel("Name(000-Fase):");
+            lblLabel.setBounds(50, 50, 100, 20);
+            pnlPhases.add(lblLabel);
+            txfLabel = new JTextField();
+            txfLabel.setBounds(160, 50, 200, 20);
+            pnlPhases.add(txfLabel);
 
-            lblCourseId = new JLabel("Course ID:");
-            lblCourseId.setBounds(50, 110, 100, 20);
-            pnlPhases.add(lblCourseId);
-            txfCourseId = new JTextField();
-            txfCourseId.setBounds(160, 110, 200, 20);
-            pnlPhases.add(txfCourseId);
+            JLabel lblSubj = new JLabel("Subject Count:");
+            lblSubj.setBounds(50, 80, 100, 20);
+            pnlPhases.add(lblSubj);
+            txfSubjectCount = new JTextField();
+            txfSubjectCount.setBounds(160, 80, 200, 20);
+            pnlPhases.add(txfSubjectCount);
 
-            btnConfirmAdd = new JButton("Confirm");
-            btnConfirmAdd.setBounds(150, 180, 150, 30);
-            pnlPhases.add(btnConfirmAdd);
-            btnConfirmAdd.addActionListener(new ActionListener() {
+            JLabel lblTeach = new JLabel("Teacher Count:");
+            lblTeach.setBounds(50, 110, 100, 20);
+            pnlPhases.add(lblTeach);
+            txfTeacherCount = new JTextField();
+            txfTeacherCount.setBounds(160, 110, 200, 20);
+            pnlPhases.add(txfTeacherCount);
+
+            JLabel lblCourse = new JLabel("Course:");
+            lblCourse.setBounds(50, 140, 100, 20);
+            pnlPhases.add(lblCourse);
+            cbCourses = new JComboBox<>();
+            List<Course> courses = CourseController.list();
+            for (Course c : courses) {
+                cbCourses.addItem(c); 
+            }
+            cbCourses.setRenderer(new DefaultListCellRenderer() {
+                @Override
+                public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+                                                              boolean isSelected, boolean cellHasFocus) {
+                    super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                    if (value instanceof Course) {
+                        setText(((Course) value).getName());
+                    }
+                    return this;
+                }
+            });
+
+            cbCourses.setBounds(160, 140, 200, 20);
+            pnlPhases.add(cbCourses);
+
+ 
+
+            btnConfirm = new JButton("Confirm");
+            btnConfirm.setBounds(150, 180, 120, 30);
+            pnlPhases.add(btnConfirm);
+
+            btnConfirm.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     try {
-                     /*   name = txfName.getText();
-                        int courseIdInt = Integer.parseInt(txfCourseId.getText());*/
-                        Course c = new Course();
-                        PhaseController.insert(name, courseIdInt);
-                        JOptionPane.showMessageDialog(btnConfirmAdd, "Phase: " + name + " was added.");
-                        txfName.setText("");
-                        txfCourseId.setText("");
-                    } catch (SQLException ex) {
-                        ex.printStackTrace();
+                        String label = txfLabel.getText();
+                        int subjCount = Integer.parseInt(txfSubjectCount.getText());
+                        int teachCount = Integer.parseInt(txfTeacherCount.getText());
+                        Course selectedCourse = (Course) cbCourses.getSelectedItem();
+                        PhaseController.insert(label, subjCount, teachCount, selectedCourse.getId());
+                        JOptionPane.showMessageDialog(pnlPhases, "Phase added.");
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(pnlPhases, "Error: " + ex.getMessage());
                     }
                 }
             });
 
             return pnlPhases;
+        
 
         } else if (action.equals("Remove")) {
 
         	model.addColumn("ID");
             model.addColumn("Name");
-            model.addColumn("Course ID");
-            model.addColumn("Disciplines");
+            model.addColumn("Subjects");
+            model.addColumn("Teachers");
             table = new JTable(model);
             scroll = new JScrollPane(table);
 
             List<Phase> phaseList = PhaseController.list();
             for (Phase p : phaseList) {
-            	Course c = CourseController.getById(p.getId());
-            	disciplinesByPhase = PhaseUtil.groupDiscpilinesByPhaseId(p.getId());
+            	Course c = CourseController.getById(p.getCourseId());
                 model.addRow(new String[]{
-                        p.getIdAsString(), p.getName() + " - " + c.getName(), c.getIdAsString(), disciplinesByPhase
+                        p.getIdAsString(p.getId()), p.getName() + " - " + c.getName(), p.getSubjectCountAsString(p.getSubjectCount()), p.getTeacherCountAsString(p.getTeacherCount())
                 });
             }
 
@@ -169,8 +210,7 @@ public class PhaseScreen {
                         Phase phase = new Phase();
                     	Course c = CourseController.getById(phase.getId());
                         TablesUtil.refreshTable(model, PhaseController.list(), p -> new String[]{
-                                phase.getIdAsString(), phase.getName() + " - " + c.getName(), c.getIdAsString(), disciplinesByPhase
-                        });
+                        		 p.getIdAsString(p.getId()), p.getName() + " - " + c.getName(), p.getSubjectCountAsString(p.getSubjectCount()), p.getTeacherCountAsString(p.getTeacherCount())                        });
                     } catch (SQLException ex) {
                         ex.printStackTrace();
                     }

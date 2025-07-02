@@ -1,23 +1,28 @@
 package database.model;
 
+import utils.TeacherUtil;
+
 public class Teacher {
 
 	private int id;
 	private String name;
 	private int title;
+	private int subjectId;
 
 	public Teacher() {
 	}
 
-	public Teacher(String name, int title) {
+	public Teacher(String name, int title, int subjectId) {
 		this.name = name;
 		this.title = title;
+		this.subjectId = subjectId;
 	}
 
-	public Teacher(int id, String name, int title) {
+	public Teacher(int id, String name, int title, int subjectId) {
 		this.id = id;
 		this.name = name;
 		this.title = title;
+		this.subjectId = subjectId;
 	}
 
 	public int getId() {
@@ -44,11 +49,23 @@ public class Teacher {
 		this.title = title;
 	}
 
-	public String getIdAsString() {
+	public int getSubjectId() {
+		return subjectId;
+	}
+
+	public void setSubjectId(int subjectId) {
+		this.subjectId = subjectId;
+	}
+
+	public String getIdAsString(int id) {
 		return String.valueOf(id);
 	}
-	
-	public String getTitleAsString() {
-		return String.valueOf(title);
+
+	public String getTitleAsString(int title) {
+		return TeacherUtil.getTitleById(title);
+	}
+
+	public String getSubjectIdAsString(int subjectId) {
+		return String.valueOf(subjectId);
 	}
 }

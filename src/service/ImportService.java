@@ -12,11 +12,11 @@ import java.util.List;
 import controller.FileHashController;
 import database.model.ImportData;
 import database.model.Course;
-import database.model.Discipline;
 import database.model.FileHash;
 import database.model.Phase;
+import database.model.Subject;
 import database.model.Teacher;
-import utils.DisciplineUtil;
+import utils.SubjectUtil;
 
 public class ImportService {
 
@@ -35,61 +35,54 @@ public class ImportService {
 			String line;
 
 			Course course = new Course();
-			String processDate = "";
-			String phaseInitialPeriod = "";
-			String phaseLastPeriod = "";
-			int fileSequence = 0;
-			String fileLayout = "";
 			List<Phase> phases = new ArrayList<>();
-			int quantityOfDisciplines = 0;
-			int quantityOfTeachers = 0;
-			List<Discipline> disciplines = new ArrayList<>();
-			List<Integer> quantityOfTeachersInDiscipline = new ArrayList<>();
+			List<Subject> subject = new ArrayList<>();
 			List<Teacher> teachers = new ArrayList<>();
-			int typeOfImport = 0;
-			int totalOfImports = 0;
 			FileHash fileHash = new FileHash();
 
 			while ((line = buffer.readLine()) != null) {
 				char recordType = line.charAt(0);
 
 				switch (recordType) {
-					case '0':
-						String courseName = line.substring(1, 51).trim();
-						course.setName(courseName);
-						processDate = line.substring(51, 59).trim();
-						phaseInitialPeriod = line.substring(59, 66).trim();
-						phaseLastPeriod = line.substring(66, 73).trim();
-						fileSequence = Integer.parseInt(line.substring(73, 80).trim());
-						fileLayout = line.substring(80, 83).trim();
-						break;
+				case '0':
+					String courseName = line.substring(1, 51).trim();
+					course.setName(courseName);
+					String processingDate = line.substring(51, 59).trim();
 
-					case '1':
-						String phaseName = line.substring(1, 8).trim();
-						phases.add(new Phase(phaseName, course));
-						quantityOfDisciplines = Integer.parseInt(line.substring(8, 10).trim());
-						quantityOfTeachers = Integer.parseInt(line.substring(10, 12).trim());
-						break;
+					startPhase = line.substring(59, 66).trim();
+					endPhase = line.substring(66, 73).trim();
+					sequence = Integer.parseInt(line.substring(73, 80).trim());
+					layout = line.substring(80, 83).trim();
+					break;
 
-					case '2':
-						String disciplineCode = line.substring(1, 7).trim();
-						int dayOfWeek = Integer.parseInt(line.substring(7, 9).trim());
-						quantityOfTeachersInDiscipline.add(Integer.parseInt(line.substring(9, 11).trim()));
-						Phase disciplinePhase = phases.getFirst();
-						String disciplineName = DisciplineUtil.getDisciplineNameByCode(disciplineCode);
-						disciplines.add(new Discipline(disciplineCode, disciplineName, dayOfWeek, disciplinePhase));
-						break;
+				case '1':
+					String phaseName = line.substring(1, 8).trim();
+					subjectCount = Integer.parseInt(line.substring(8, 10).trim());
+					teachersCount = Integer.parseInt(line.substring(10, 12).trim());
+					phases.add(new Phase(phaseName, subjectCount, teachersCount, course));
 
-					 case '3':
-					 	String teacherName = line.substring(1, 41).trim();
-					 	int teacherTitle = Integer.parseInt(line.substring(41, 43).trim());
-					 	teachers.add(new Teacher(teacherName, teacherTitle));
-					 	break;
+					break;
 
-					 case '9':
-					 	typeOfImport = 9;
-					 	totalOfImports = Integer.parseInt(line.substring(1, 12).trim());
-					 	break;
+				case '2':
+					String subjectCode = line.substring(1, 7).trim();
+					int dayOfWeek = Integer.parseInt(line.substring(7, 9).trim());
+					teachersQuantitiy.add(Integer.parseInt(line.substring(9, 11).trim()));
+					Phase subjectPhase = phases.getFirst();
+					String subjectName = SubjectUtil.getSubjectNameByCode(subjectCode);
+					subject.add(
+							new Subject(subjectCode, subjectName, dayOfWeek, teachersQuantitiy.size(), subjectPhase));
+					break;
+
+				case '3':
+					String teacherName = line.substring(1, 41).trim();
+					int teacherTitle = Integer.parseInt(line.substring(41, 43).trim());
+					teachers.add(new Teacher(teacherName, teacherTitle));
+					break;
+
+				case '9':
+					typeOfImport = 9;
+					totalOfImports = Integer.parseInt(line.substring(1, 12).trim());
+					break;
 				}
 			}
 
@@ -97,9 +90,9 @@ public class ImportService {
 
 			fileHash = FileHashController.insert(messageDigest);
 
-			ImportData importData = new ImportData(course, processDate, phaseInitialPeriod, phaseLastPeriod,
-					fileSequence, fileLayout, phases, quantityOfDisciplines, quantityOfTeachers, disciplines,
-					quantityOfTeachersInDiscipline, teachers, typeOfImport, totalOfImports, fileHash);
+			ImportData importData = new ImportData(course, processingDate, startPhase, endPhase, sequence, layout,
+					phases, subjectCount, teachersCount, subject, teachersQuantitiy, teachers, typeOfImport,
+					totalOfImports, fileHash);
 
 			return importData;
 

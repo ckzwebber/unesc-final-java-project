@@ -1,13 +1,18 @@
 package view;
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Vector;
 
 import javax.swing.BorderFactory;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -15,7 +20,11 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
+import controller.PhaseController;
+import controller.SubjectController;
 import controller.TeacherController;
+import database.model.Phase;
+import database.model.Subject;
 import database.model.Teacher;
 import utils.TablesUtil;
 
@@ -31,6 +40,14 @@ public class TeacherScreen {
     private JScrollPane scroll;
     private JButton btnExit, btnConfirmAdd, btnConfirm;
     private String name, title, id;
+    private JComboBox<String> cbTitles;
+    private JComboBox<String> cbSubjects;
+    private String[] titles = {
+    	"Pós-Graduação",
+    	"Mestrado",
+    	"Doutorado",
+    	"Pós-Doutorado"
+    };
 
     private DefaultTableModel model = new DefaultTableModel() {
         @Override
@@ -75,9 +92,9 @@ public class TeacherScreen {
             List<Teacher> teacherList = TeacherController.list();
             for (Teacher t : teacherList) {
                 model.addRow(new String[]{
-                        t.getIdAsString(), t.getName(), //t.getTitle()
+                        t.getIdAsString(t.getId()), t.getName(), t.getTitleAsString(t.getTitle())
                 });
-            
+            }
 
             scroll.setBounds(50, 50, 350, 150);
             pnlTeachers.add(scroll);
@@ -85,35 +102,47 @@ public class TeacherScreen {
 
         } else if (action.equals("Add")) {
 
-            lblName = new JLabel("Name:");
-            lblName.setBounds(50, 80, 100, 20);
+        	JLabel lblName = new JLabel("Name:");
+            lblName.setBounds(50, 50, 100, 20);
             pnlTeachers.add(lblName);
             txfName = new JTextField();
-            txfName.setBounds(160, 80, 200, 20);
+            txfName.setBounds(160, 50, 200, 20);
             pnlTeachers.add(txfName);
 
-            lblTitle = new JLabel("Title:");
-            lblTitle.setBounds(50, 110, 100, 20);
+            JLabel lblTitle = new JLabel("Title:");
+            lblTitle.setBounds(50, 80, 100, 20);
             pnlTeachers.add(lblTitle);
-            txfTitle = new JTextField();
-            txfTitle.setBounds(160, 110, 200, 20);
-            pnlTeachers.add(txfTitle);
+            cbTitles = new JComboBox<>(titles);
+            cbTitles.setBounds(160, 80, 200, 20);
+            pnlTeachers.add(cbTitles);
 
-            btnConfirmAdd = new JButton("Confirm");
-            btnConfirmAdd.setBounds(150, 180, 150, 30);
-            pnlTeachers.add(btnConfirmAdd);
-            btnConfirmAdd.addActionListener(new ActionListener() {
-                @Override
+            JLabel lblSubject = new JLabel("Subject:");
+            lblSubject.setBounds(50, 110, 100, 20);
+            pnlTeachers.add(lblSubject);
+            cbSubjects = new JComboBox<>();
+            cbSubjects.setBounds(160, 110, 200, 20);
+            pnlTeachers.add(cbSubjects);
+
+            List<Subject> subjects = SubjectController.list();
+            for (Subject s : subjects) cbSubjects.addItem(s.getName());
+
+            btnConfirm = new JButton("Confirm");
+            btnConfirm.setBounds(150, 150, 120, 30);
+            pnlTeachers.add(btnConfirm);
+
+            btnConfirm.addActionListener(new ActionListener() {
+                
+
+				@Override
                 public void actionPerformed(ActionEvent e) {
                     try {
-                        name = txfName.getText();
-                        title = txfTitle.getText();
-                        TeacherController.insert(name, title);
-                        JOptionPane.showMessageDialog(btnConfirmAdd, "Teacher: " + name + " added.");
-                        txfName.setText("");
-                        txfTitle.setText("");
-                    } catch (SQLException ex) {
-                        ex.printStackTrace();
+                        String name = txfName.getText();
+                        int title = cbTitles.getSelectedIndex() + 1;
+                        Subject selectedSubject = (Subject) cbSubjects.getSelectedItem();
+                        TeacherController.insert(name, title, selectedSubject.getId());
+                        JOptionPane.showMessageDialog(pnlTeachers, "Teacher added.");
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(pnlTeachers, "Error: " + ex.getMessage());
                     }
                 }
             });
@@ -132,10 +161,11 @@ public class TeacherScreen {
             List<Teacher> teacherList = TeacherController.list();
             for (Teacher t : teacherList) {
                 model.addRow(new String[]{
-                        t.getIdAsString(), t.getName(), //t.getTitle()
+                        t.getIdAsString(t.getId()), t.getName(), t.getTitleAsString(t.getTitle())
                 });
             
-
+            }
+            
             lblId = new JLabel("Select ID to remove:");
             lblId.setBounds(100, 210, 200, 20);
             pnlTeachers.add(lblId);
@@ -156,7 +186,7 @@ public class TeacherScreen {
                         JOptionPane.showMessageDialog(btnConfirm, "Teacher with ID " + id + " removed.");
                         txfId.setText(null);
                         TablesUtil.refreshTable(model, TeacherController.list(), t -> new String[]{
-                                t.getIdAsString(), t.getName(), t.getTitle()
+                                t.getIdAsString(t.getId()), t.getName(), t.getTitleAsString(t.getTitle())
                         });
                     } catch (SQLException ex) {
                         ex.printStackTrace();

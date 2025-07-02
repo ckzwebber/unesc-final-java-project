@@ -4,7 +4,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 import database.dao.PhaseDAO;
-import database.model.Course;
 import database.model.Phase;
 
 public class PhaseService {
@@ -41,6 +40,19 @@ public class PhaseService {
 		}
 	}
 
+	public List<Phase> getByCourseId(int courseId) {
+		if (courseId <= 0) {
+			throw new IllegalArgumentException("ID must be greater than zero");
+		}
+
+		try {
+			return phaseDAO.selectByCourseId(courseId);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	public void delete(int id) {
 		if (id <= 0) {
 			throw new IllegalArgumentException("ID must be greater than zero");
@@ -53,23 +65,24 @@ public class PhaseService {
 		}
 	}
 
-	public Phase create(String name, int courseId) {
+	public Phase create(String name, int subjectCount, int teacherCount, int courseId) {
 		if (name == null || name.isEmpty()) {
 			throw new IllegalArgumentException("Name cannot be null or empty");
 		}
 		if (name.length() < 3) {
 			throw new IllegalArgumentException("Name must be at least 3 characters long");
 		}
-		if (courseId <= 0) {
-			throw new IllegalArgumentException("Course ID must be greater than zero");
+		if (subjectCount < 0) {
+			throw new IllegalArgumentException("Subject count cannot be negative");
+		}
+		if (teacherCount < 0) {
+			throw new IllegalArgumentException("Teacher count cannot be negative");
+		}
+		if (courseId < 0) {
+			throw new IllegalArgumentException("CourseID cannot be negative");
 		}
 
-		Phase phase = new Phase();
-		phase.setName(name);
-
-		Course course = new Course();
-		course.setId(courseId);
-		phase.setCourse(course);
+		Phase phase = new Phase(name, subjectCount, teacherCount, courseId);
 
 		try {
 			phaseDAO.insert(phase);
@@ -80,8 +93,8 @@ public class PhaseService {
 		}
 	}
 
-	public Phase update(int id, String name, int courseId) {
-		if (id <= 0) {
+	public Phase update(int id, String name, int subjectCount, int teacherCount, int courseId) {
+		if (id < 0) {
 			throw new IllegalArgumentException("ID must be greater than zero");
 		}
 		if (name == null || name.isEmpty()) {
@@ -90,8 +103,14 @@ public class PhaseService {
 		if (name.length() < 3) {
 			throw new IllegalArgumentException("Name must be at least 3 characters long");
 		}
-		if (courseId <= 0) {
-			throw new IllegalArgumentException("Course ID must be greater than zero");
+		if (subjectCount < 0) {
+			throw new IllegalArgumentException("Subject count cannot be negative");
+		}
+		if (teacherCount < 0) {
+			throw new IllegalArgumentException("Teacher count cannot be negative");
+		}
+		if (courseId < 0) {
+			throw new IllegalArgumentException("CourseID cannot be negative");
 		}
 
 		Phase phaseOnDatabase = phaseOnDatabase(id);
@@ -99,13 +118,7 @@ public class PhaseService {
 			throw new IllegalArgumentException("Phase not found");
 		}
 
-		Phase phase = new Phase();
-		phase.setId(id);
-		phase.setName(name);
-
-		Course course = new Course();
-		course.setId(courseId);
-		phase.setCourse(course);
+		Phase phase = new Phase(id, name, subjectCount, teacherCount, courseId);
 
 		try {
 			phaseDAO.update(phase);
@@ -117,7 +130,7 @@ public class PhaseService {
 	}
 
 	private Phase phaseOnDatabase(int id) {
-		if (id <= 0) {
+		if (id < 0) {
 			throw new IllegalArgumentException("ID must be greater than zero");
 		}
 

@@ -4,7 +4,9 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -23,12 +25,12 @@ import javax.swing.table.DefaultTableModel;
 
 import org.postgresql.core.Utils;
 
-import controller.DisciplineController;
+import controller.SubjectController;
 import controller.PhaseController;
 import database.model.Course;
-import database.model.Discipline;
 import database.model.Phase;
-import utils.DisciplineUtil;
+import database.model.Subject;
+import utils.SubjectUtil;
 import utils.TablesUtil;
 
 public class DisciplinesScreen {
@@ -42,19 +44,10 @@ public class DisciplinesScreen {
     private JTable table;
     private JScrollPane scroll;
     private JButton btnExit, btnConfirmAdd, btnConfirm;
-    private String code, name, weekDay;
-    private JComboBox<Phase> cbPhase;
-    JComboBox<String> cbWeekDays;
+    private String code, name, weekDay, day;
+    private JComboBox<Map.Entry<Integer, String>> cbWeekdays;
+	private JComboBox<Phase> cbPhases;
     private Phase selectedPhase;
-    private String[] week = {
-            "Monday",
-            "Tuesday",
-            "Wednesday",
-            "Thursday",
-            "Friday",
-            "Saturday",
-            "Sunday"
-    };
 
     private DefaultTableModel model = new DefaultTableModel() {
         @Override
@@ -97,11 +90,10 @@ public class DisciplinesScreen {
             table = new JTable(model);
             scroll = new JScrollPane(table);
 
-            List<Discipline> disciplineList = DisciplineController.list();
-            for (Discipline d : disciplineList) {
+            List<Subject> subjectList = SubjectController.list();
+            for (Subject s : subjectList) {
                 model.addRow(new String[] {
-                        d.getIdAsString(), d.getName(), DisciplineUtil.getDayByCode(d.getWeekDay()),
-                        d.getPhase().getName()
+                        s.getCode(), s.getName(), SubjectUtil.getDayByCode(s.getWeekDay()), s.getPhaseIdAsString(s.getPhaseId())
                 });
             }
 
@@ -111,85 +103,80 @@ public class DisciplinesScreen {
 
         } else if (action.equals("Add")) {
 
-            lblName = new JLabel("Name:");
-            lblName.setBounds(50, 60, 100, 20);
+        	JLabel lblCode = new JLabel("Code:");
+            lblCode.setBounds(50, 50, 100, 20);
+            pnlDisciplines.add(lblCode);
+            txfCode = new JTextField();
+            txfCode.setBounds(160, 50, 200, 20);
+            pnlDisciplines.add(txfCode);
+
+            JLabel lblName = new JLabel("Name:");
+            lblName.setBounds(50, 80, 100, 20);
             pnlDisciplines.add(lblName);
             txfName = new JTextField();
-            txfName.setBounds(160, 60, 200, 20);
+            txfName.setBounds(160, 80, 200, 20);
             pnlDisciplines.add(txfName);
 
-            lblWeekDay = new JLabel("Week Day:");
-            lblWeekDay.setBounds(50, 90, 100, 20);
-            pnlDisciplines.add(lblWeekDay);
-            JComboBox<String> cbWeekDays = new JComboBox<>(week);
-            cbWeekDays.setBounds(160, 90, 200, 20);
-            cbWeekDays.setRenderer(new DefaultListCellRenderer() {
+            JLabel lblDay = new JLabel("Weekday:");
+            lblDay.setBounds(50, 110, 100, 20);
+            pnlDisciplines.add(lblDay);
+            cbWeekdays = new JComboBox<>();
+            for (Map.Entry<Integer, String> entry : SubjectUtil.days.entrySet()) {
+                cbWeekdays.addItem(entry);
+            }
+            cbWeekdays.setRenderer(new DefaultListCellRenderer() {
                 @Override
                 public Component getListCellRendererComponent(JList<?> list, Object value, int index,
-                        boolean isSelected, boolean cellHasFocus) {
+                                                              boolean isSelected, boolean cellHasFocus) {
                     super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                    if (value instanceof String) {
-                        String day = (String) value;
-                        setText(day);
+                    if (value instanceof Map.Entry) {
+                        Map.Entry<Integer, String> entry = (Map.Entry<Integer, String>) value;
+                        Map.Entry<Integer, String> selectedEntry = (Map.Entry<Integer, String>) 
+                        		cbWeekdays.getSelectedItem();
+            int selectedDay = selectedEntry.getKey(); 
+                        setText(entry.getValue());
                     }
-                    //prgar dia selecionado e conventer para numero
                     return this;
                 }
             });
-            pnlDisciplines.add(cbWeekDays);
 
-            lblPhase = new JLabel("Phase:");
-            lblPhase.setBounds(50, 120, 100, 20);
+            cbWeekdays.setBounds(160, 110, 200, 20);
+            pnlDisciplines.add(cbWeekdays);
+
+            JLabel lblPhase = new JLabel("Phase:");
+            lblPhase.setBounds(50, 140, 100, 20);
             pnlDisciplines.add(lblPhase);
-
-            try {
-                List<Phase> phaseList = PhaseController.list();
-                cbPhase = new JComboBox<>(new Vector<>(phaseList));
-                cbPhase.setBounds(160, 120, 200, 20);
-
-                cbPhase.setRenderer(new DefaultListCellRenderer() {
-                    @Override
-                    public Component getListCellRendererComponent(JList<?> list, Object value, int index,
-                            boolean isSelected, boolean cellHasFocus) {
-                        super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                        setText("ID - name, course");
-                        if (value instanceof Phase) {
-                            Phase phase = (Phase) value;
-                            setText(phase.getIdAsString() + " – " + phase.getName() + ", " + phase.getCourse());
-                        }
-                        selectedPhase = (Phase) cbPhase.getSelectedItem();
-
-                        return this;
-                    }
-                });
-
-                pnlDisciplines.add(cbPhase);
-
-            } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(pnlDisciplines,
-                        "Error on load phases:\n" + ex.getMessage(),
-                        "Error",
-                        JOptionPane.ERROR_MESSAGE);
+            
+            
+            JComboBox<String> cbPhases = new JComboBox<>();
+            // Map para relacionar nome -> objeto Phase
+            Map<String, Phase> mapPhaseByName = new HashMap<>();
+            List<Phase> phases = PhaseController.list();
+            for (Phase p : phases) {
+                cbPhases.addItem(p.getName());
+                mapPhaseByName.put(p.getName(), p);
             }
+            cbPhases.setBounds(160, 140, 200, 20);
+            pnlDisciplines.add(cbPhases);
 
-            btnConfirmAdd = new JButton("Confirm");
-            btnConfirmAdd.setBounds(150, 180, 150, 30);
-            pnlDisciplines.add(btnConfirmAdd);
-            btnConfirmAdd.addActionListener(new ActionListener() {
+
+            btnConfirm = new JButton("Confirm");
+            btnConfirm.setBounds(150, 200, 120, 30);
+            pnlDisciplines.add(btnConfirm);
+
+            btnConfirm.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     try {
-                        name = txfName.getText();
-                        weekDay = txfWeekDay.getText();
-                        int phaseIdInt = Integer.parseInt(txfPhaseId.getText());
-                        int weekDayCode = DisciplineUtil.getCodeByDay(weekDay);
-                        DisciplineController.insert(code, name, weekDayCode, phaseIdInt);
-                        JOptionPane.showMessageDialog(btnConfirmAdd, "Discipline: " + name + " was added.");
-                        txfName.setText("");
-                        txfWeekDay.setText("");
-                        txfPhaseId.setText("");
-                    } catch (SQLException ex) {
-                        ex.printStackTrace();
+                        String code = txfCode.getText();
+                        String name = txfName.getText();
+                        int weekDay = cbWeekdays.getSelectedIndex();
+                        String selectedName = (String) cbPhases.getSelectedItem();
+                        Phase selectedPhase = mapPhaseByName.get(selectedName);
+                        SubjectController.insert(code, name, weekDay, 1, selectedPhase.getId());
+                        JOptionPane.showMessageDialog(pnlDisciplines, "Subject added.");
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(pnlDisciplines, "Error: " + ex.getMessage());
                     }
                 }
             });
@@ -205,11 +192,10 @@ public class DisciplinesScreen {
             table = new JTable(model);
             scroll = new JScrollPane(table);
 
-            List<Discipline> disciplineList = DisciplineController.list();
-            for (Discipline d : disciplineList) {
+            List<Subject> subjectList = SubjectController.list();
+            for (Subject s : subjectList) {
                 model.addRow(new String[] {
-                        d.getIdAsString(), d.getName(), DisciplineUtil.getDayByCode(d.getWeekDay()),
-                        d.getPhase().getName()
+                        s.getCode(), s.getName(), SubjectUtil.getDayByCode(s.getWeekDay()), s.getPhaseIdAsString(s.getPhaseId())
                 });
             }
 
@@ -229,12 +215,12 @@ public class DisciplinesScreen {
                     try {
                         code = txfCode.getText();
                         int intCode = Integer.parseInt(code);
-                        DisciplineController.delete(intCode);
-                        JOptionPane.showMessageDialog(btnConfirm, "Discipline with code " + code + " removed.");
+                        SubjectController.delete(intCode);
+                        JOptionPane.showMessageDialog(btnConfirm, "Subject with code " + code + " removed.");
                         txfCode.setText(null);
-                        TablesUtil.refreshTable(model, DisciplineController.list(), d -> new String[] {
-                                d.getIdAsString(), d.getName(), DisciplineUtil.getDayByCode(d.getWeekDay()),
-                                d.getPhase().getName()
+                        TablesUtil.refreshTable(model, SubjectController.list(), s -> new String[] {
+                             s.getCode(), s.getName(), SubjectUtil.getDayByCode(s.getWeekDay()), s.getPhaseIdAsString(s.getPhaseId())
+
                         });
                     } catch (SQLException ex) {
                         ex.printStackTrace();

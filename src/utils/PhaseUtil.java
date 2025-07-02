@@ -3,20 +3,20 @@ package utils;
 import java.sql.SQLException;
 import java.util.List;
 
-import controller.DisciplineController;
-import database.model.Discipline;
+import controller.SubjectController;
+import database.model.Subject;
 
 public class PhaseUtil {
 	
-	public static String groupDiscpilinesByPhaseId(int phaseId) {
+	public static String groupSubjectsByPhaseId(int phaseId) {
 		StringBuilder sb = new StringBuilder();
-	    List<Discipline> disciplines;
+	    List<Subject> subject;
 		try {
-			disciplines = DisciplineController.getByPhaseId(phaseId);
+			subject = SubjectController.getByPhaseId(phaseId);
 
-			    for (int i = 0; i < disciplines.size(); i++) {
-			        sb.append(disciplines.get(i).getName());
-			        if (i < disciplines.size() - 1) {
+			    for (int i = 0; i < subject.size(); i++) {
+			        sb.append(subject.get(i).getName());
+			        if (i < subject.size() - 1) {
 			            sb.append(", ");
 			        }
 			    }

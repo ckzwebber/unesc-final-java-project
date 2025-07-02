@@ -71,12 +71,12 @@ public class UsersScreen {
             table = new JTable(model);
             scroll = new JScrollPane(table);
 
-        /*    List<User> userList = UserController.list();
+            List<User> userList = UserController.list();
             for (User u : userList) {
                 model.addRow(new String[]{
                     u.getIdAsString(), u.getName()
                 });
-            }*/
+            }
 
             scroll.setBounds(50, 50, 350, 150);
             pnlUsers.add(scroll);
@@ -117,12 +117,12 @@ public class UsersScreen {
             table = new JTable(model);
             scroll = new JScrollPane(table);
 
-         /*   List<User> userList = UserController.list();
+           List<User> userList = UserController.list();
             for (User u : userList) {
                 model.addRow(new String[]{
                     u.getIdAsString(), u.getName()
                 });
-            }*/
+            }
 
             lblId = new JLabel("Select ID to remove:");
             lblId.setBounds(100, 210, 200, 20);
@@ -144,7 +144,7 @@ public class UsersScreen {
                         JOptionPane.showMessageDialog(btnConfirm, "User with ID " + id + " removed.");
                         txfId.setText(null);
                         TablesUtil.refreshTable(model, UserController.list(), u -> new String[]{
-                          //  u.getIdAsString(), u.getName()
+                            u.getIdAsString(), u.getName()
                         });
                     } catch (SQLException ex) {
                         ex.printStackTrace();

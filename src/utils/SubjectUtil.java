@@ -3,10 +3,10 @@ package utils;
 import java.util.Map;
 import java.util.HashMap;
 
-public class DisciplineUtil {
+public class SubjectUtil {
 
-	private static final Map<Integer, String> days = new HashMap<>();
-	private static final Map<String, String> disciplinesCodes = new HashMap<>();
+	public static final Map<Integer, String> days = new HashMap<>();
+	public static final Map<String, String> subjectsCodes = new HashMap<>();
 
 	static {
 		days.put(01, "Saturday");
@@ -19,9 +19,9 @@ public class DisciplineUtil {
 	}
 
 	static {
-		disciplinesCodes.put("010850", "Algoritmos e Programação");
-		disciplinesCodes.put("010854", "Fundamentos Matemáticos");
-		disciplinesCodes.put("010851", "Introd. Ciência da Computação");
+		subjectsCodes.put("010850", "Algoritmos e Programação");
+		subjectsCodes.put("010854", "Fundamentos Matemáticos");
+		subjectsCodes.put("010851", "Introd. Ciência da Computação");
 	}
 
 	public static String getDayByCode(int code) {
@@ -37,12 +37,12 @@ public class DisciplineUtil {
 		throw new IllegalArgumentException("Invalid day: " + day);
 	}
 
-	public static String getDisciplineNameByCode(String code) {
-		return disciplinesCodes.get(code);
+	public static String getSubjectNameByCode(String code) {
+		return subjectsCodes.get(code);
 	}
 
-	public static String getDisciplineCodeByName(String name) {
-		for (Map.Entry<String, String> entry : disciplinesCodes.entrySet()) {
+	public static String getSubjectCodeByName(String name) {
+		for (Map.Entry<String, String> entry : subjectsCodes.entrySet()) {
 			if (entry.getValue().equalsIgnoreCase(name)) {
 				return entry.getKey();
 			}

@@ -5,7 +5,7 @@ import javax.swing.*;
 import database.model.ImportData;
 import database.model.User;
 import service.ImportService;
-import utils.DisciplineUtil;
+import utils.SubjectUtil;
 import utils.TeacherUtil;
 
 import java.awt.Color;
@@ -153,13 +153,14 @@ public class MainScreen extends JFrame {
 						"Quantity of Teachers: " + importData.getQuantityOfTeachers() + "\n" +
 						"Discipline: " + importData.getDisciplines().getFirst().getCode() + "-" 
 						+ importData.getDisciplines().getFirst().getName() + "\n" +
-						"Week day: " + DisciplineUtil.getDayByCode(importData.getDisciplines().getFirst().getWeekDay()) + "\n" +
+						"Week day: " + SubjectUtil.getDayByCode(importData.getDisciplines().getFirst().getWeekDay()) + "\n" +
 						"Phase of discipline: " + importData.getDisciplines().getFirst().getPhase().getName() + "\n" +
 						"Discipline teachers: " + importData.getQuantityOfTeachersInDiscipline().getFirst() + "\n" +
 						"Teacher name: " + importData.getTeachers().getFirst().getName() + "\n" +
 						"Teacher title: " + TeacherUtil.getTitleById(importData.getTeachers().getFirst().getTitle()) + "\n" +
 						"Type of import: " + importData.getTypeOfImport() + "\n" +
-						"Total imports: " + importData.getTotalOfImports()
+						"Total imports: " + importData.getTotalOfImports() /*+ "\n" +
+						"File hash: " + importData.getFileHash().getFileHash()*/
 						
 						);
 						

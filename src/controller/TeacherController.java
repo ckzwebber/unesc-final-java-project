@@ -29,13 +29,13 @@ public class TeacherController {
 		return teacher;
 	}
 
-	public static Teacher insert(String name, int id) throws SQLException {
-		Teacher teacher = teacherService.create(name, id);
+	public static Teacher insert(String name, int title, int subjectId) throws SQLException {
+		Teacher teacher = teacherService.create(name, title, subjectId);
 		return teacher;
 	}
 
-	public static Teacher update(int id, String name, int title) throws SQLException {
-		Teacher teacher = teacherService.update(id, name, title);
+	public static Teacher update(int id, String name, int title, int subjectId) throws SQLException {
+		Teacher teacher = teacherService.update(id, name, title, subjectId);
 		return teacher;
 	}
 
