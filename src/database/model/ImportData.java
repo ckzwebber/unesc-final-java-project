@@ -6,15 +6,15 @@ public class ImportData {
 
 	private Course course;
 	private List<Phase> phases;
-	private List<Subject> disciplines;
+	private List<Subject> subjects;
 	private List<Teacher> teachers;
 	private FileHash fileHash;
 
-	public ImportData(Course course, List<Phase> phases, List<Subject> disciplines, List<Teacher> teachers,
+	public ImportData(Course course, List<Phase> phases, List<Subject> subjects, List<Teacher> teachers,
 			FileHash fileHash) {
 		this.course = course;
 		this.phases = phases;
-		this.disciplines = disciplines;
+		this.subjects = subjects;
 		this.teachers = teachers;
 		this.fileHash = fileHash;
 	}
@@ -35,12 +35,12 @@ public class ImportData {
 		this.phases = phases;
 	}
 
-	public List<Subject> getDisciplines() {
-		return disciplines;
+	public List<Subject> getSubjects() {
+		return subjects;
 	}
 
-	public void setDisciplines(List<Subject> disciplines) {
-		this.disciplines = disciplines;
+	public void setSubjects(List<Subject> subjects) {
+		this.subjects = subjects;
 	}
 
 	public List<Teacher> getTeachers() {

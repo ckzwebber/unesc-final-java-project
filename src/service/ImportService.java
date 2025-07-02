@@ -20,6 +20,17 @@ import utils.SubjectUtil;
 
 public class ImportService {
 
+	private String startPhase;
+	private String endPhase;
+	private int sequence;
+	private String layout;
+	private int subjectCount;
+	private int teachersCount;
+	private List<Phase> teachersQuantitiy;
+	private int typeOfImport;
+	private int totalOfImports;
+	private List<Phase> phases, processingDate;
+
 	public ImportData readImportFile(String path) {
 		try {
 
@@ -59,7 +70,7 @@ public class ImportService {
 					String phaseName = line.substring(1, 8).trim();
 					subjectCount = Integer.parseInt(line.substring(8, 10).trim());
 					teachersCount = Integer.parseInt(line.substring(10, 12).trim());
-					phases.add(new Phase(phaseName, subjectCount, teachersCount, course));
+					phases.add(new Phase(phaseName, subjectCount, teachersCount, course.getId()));
 
 					break;
 
@@ -70,7 +81,7 @@ public class ImportService {
 					Phase subjectPhase = phases.getFirst();
 					String subjectName = SubjectUtil.getSubjectNameByCode(subjectCode);
 					subject.add(
-							new Subject(subjectCode, subjectName, dayOfWeek, teachersQuantitiy.size(), subjectPhase));
+							new Subject(subjectCode, subjectName, dayOfWeek, teachersQuantitiy.size(), subjectPhase.getId()));
 					break;
 
 				case '3':
@@ -90,9 +101,9 @@ public class ImportService {
 
 			fileHash = FileHashController.insert(messageDigest);
 
-			ImportData importData = new ImportData(course, processingDate, startPhase, endPhase, sequence, layout,
-					phases, subjectCount, teachersCount, subject, teachersQuantitiy, teachers, typeOfImport,
-					totalOfImports, fileHash);
+			ImportData importData = new ImportData(course, phases, subject, teachers, fileHash/*, processingDate, startPhase, endPhase, sequence, layout,
+					, subjectCount, teachersCount, teachersQuantitiy, typeOfImport,
+					totalOfImports*/);
 
 			return importData;
 

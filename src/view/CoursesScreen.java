@@ -87,10 +87,6 @@ public class CoursesScreen {
 			model.addColumn("Name");
 			model.addColumn("Date");
 			model.addColumn("Phases");
-			/*
-			 * model.addColumn("Start phase"); model.addColumn("End phase");
-			 * model.addColumn("Sequence"); model.addColumn("Layout");
-			 */
 			tabel = new JTable(model);
 			scroll = new JScrollPane(tabel);
 
@@ -140,13 +136,6 @@ public class CoursesScreen {
 	        txfSequence.setBounds(160, 140, 200, 20);
 	        pnlCourses.add(txfSequence);
 
-	        JLabel lblLayout = new JLabel("Layout Version:");
-	        lblLayout.setBounds(50, 170, 100, 20);
-	        pnlCourses.add(lblLayout);
-	        txaLayout = new JTextArea("9");
-	        txaLayout.setBounds(160, 170, 200, 20);
-	        pnlCourses.add(txaLayout);
-
 	        btnConfirm = new JButton("Confirm");
 	        btnConfirm.setBounds(150, 200, 120, 30);
 	        pnlCourses.add(btnConfirm);
@@ -179,10 +168,6 @@ public class CoursesScreen {
 			model.addColumn("Name");
 			model.addColumn("Date");
 			model.addColumn("Phases");
-			/*
-			 * model.addColumn("Start phase"); model.addColumn("End phase");
-			 * model.addColumn("Sequence"); model.addColumn("Layout");
-			 */
 			tabel = new JTable(model);
 			scroll = new JScrollPane(tabel);
 			
@@ -191,9 +176,8 @@ public class CoursesScreen {
 				id = c.getIdAsString(c.getId());
 				name = c.getName();
 				processingDate = c.getProcessingDate();
-				List<Phase> p = PhaseController.getByCourseId(c.getId());
-
-					model.addRow(new String[] { id, name, processingDate.toString(), CourseUtil.groupPhaseByCourseId(p)
+				List<Phase> phases = PhaseController.getByCourseId(c.getId());
+					model.addRow(new String[] { id, name, processingDate.toString(), CourseUtil.groupPhaseByCourseId(phases)
 							});
 			}
 

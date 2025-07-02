@@ -44,6 +44,7 @@ public class MainScreen extends JFrame {
     public void createComponent() {
     	
     	//os botoes nao podem aparecer enquanto o usuario nao logar
+    	
         
         SelectTableScreen screen = new SelectTableScreen();
         WelcomeScreen welcomeScreen = new WelcomeScreen();
@@ -144,18 +145,18 @@ public class MainScreen extends JFrame {
 						
 						JOptionPane.showConfirmDialog(screen, "Data in the file:\n" +
 						"Course name: " + importData.getCourse().getName() + "\n" +
-						"Process date: " + importData.getProcessDate() + "\n" +
-						importData.getPhaseInitialPeriod() + " until " + importData.getPhaseLastPeriod() + "\n" +
-						"File sequence: " + importData.getFileSequence() + "\n" +
-						"File layout: " + importData.getFileLayout() + "\n" +
+						"Process date: " + importData.getCourse().getProcessingDate() + "\n" +
+						importData.getCourse().getStartPhase() + " until " + importData.getCourse().getEndPhase() + "\n" +
+						"File sequence: " + importData.getCourse().getSequence() + "\n" +
+						"File layout: " + importData.getCourse().getLayout() + "\n" +
 						"Phase: " + importData.getPhases().getFirst().getName() + "\n" +
-						"Quantity of Disciplines: " + importData.getQuantityOfDisciplines() + "\n" +
-						"Quantity of Teachers: " + importData.getQuantityOfTeachers() + "\n" +
-						"Discipline: " + importData.getDisciplines().getFirst().getCode() + "-" 
-						+ importData.getDisciplines().getFirst().getName() + "\n" +
-						"Week day: " + SubjectUtil.getDayByCode(importData.getDisciplines().getFirst().getWeekDay()) + "\n" +
-						"Phase of discipline: " + importData.getDisciplines().getFirst().getPhase().getName() + "\n" +
-						"Discipline teachers: " + importData.getQuantityOfTeachersInDiscipline().getFirst() + "\n" +
+						"Quantity of Disciplines: " + importData.getPhases().getFirst().getSubjectCount() + "\n" +
+						"Quantity of Teachers: " + importData.getPhases().getFirst().getTeacherCount() + "\n" +
+						"Discipline: " + importData.getSubjects().getFirst().getCode() + "-" 
+						+ importData.getSubjects().getFirst().getName() + "\n" +
+						"Week day: " + SubjectUtil.getDayByCode(importData.getSubjects().getFirst().getWeekDay()) + "\n" +
+						"Phase of discipline: " + importData.getSubjects().getFirst()/*fase da disciplina*/ + "\n" +
+						"Discipline teachers: " + importData.getSubjects().getFirst().getTeacherQuantity() + "\n" +
 						"Teacher name: " + importData.getTeachers().getFirst().getName() + "\n" +
 						"Teacher title: " + TeacherUtil.getTitleById(importData.getTeachers().getFirst().getTitle()) + "\n" +
 						"Type of import: " + importData.getTypeOfImport() + "\n" +
