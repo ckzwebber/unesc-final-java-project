@@ -4,30 +4,32 @@ import java.time.LocalDate;
 
 public class Course {
 
-    private int id;
-    private String name;
-    private LocalDate processingDate;
-    private String startPhase; 
+	private int id;
+	private String name;
+	private LocalDate processingDate;
+	private String startPhase;
 	private String endPhase;
-    private int sequence;
-    private String layout;
+	private int sequence;
+	private String layout;
 
-    public Course() {
-    }
+	public Course() {
+	}
 
-    public Course(String name, LocalDate processingDate, String startPhase, String endPhase, int sequence, String layout) {
-        this.name = name;
-        this.processingDate = processingDate;
-        this.startPhase = startPhase;
-        this.endPhase = endPhase;
-        this.sequence = sequence;
-        this.layout = layout;
-    }
+	public Course(String name, LocalDate processingDate, String startPhase, String endPhase, int sequence,
+			String layout) {
+		this.name = name;
+		this.processingDate = processingDate;
+		this.startPhase = startPhase;
+		this.endPhase = endPhase;
+		this.sequence = sequence;
+		this.layout = layout;
+	}
 
-    public Course(int id, String name, LocalDate processingDate, String startPhase, String endPhase, int sequence, String layou) {
-        this.id = id;
-        this.name = name;
-    }
+	public Course(int id, String name, LocalDate processingDate, String startPhase, String endPhase, int sequence,
+			String layou) {
+		this.id = id;
+		this.name = name;
+	}
 
 	public int getId() {
 		return id;
@@ -85,9 +87,8 @@ public class Course {
 		this.layout = layout;
 	}
 
-	public String getIdAsString(int id) {
+	public String getIdAsString() {
 		return String.valueOf(id);
 	}
 
-    
 }

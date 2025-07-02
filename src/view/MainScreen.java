@@ -159,9 +159,7 @@ public class MainScreen extends JFrame {
 						"Discipline teachers: " + importData.getSubjects().getFirst().getTeacherQuantity() + "\n" +
 						"Teacher name: " + importData.getTeachers().getFirst().getName() + "\n" +
 						"Teacher title: " + TeacherUtil.getTitleById(importData.getTeachers().getFirst().getTitle()) + "\n" +
-						"Type of import: " + importData.getTypeOfImport() + "\n" +
-						"Total imports: " + importData.getTotalOfImports() /*+ "\n" +
-						"File hash: " + importData.getFileHash().getFileHash()*/
+						"Type of import: 9\n" 
 						
 						);
 						

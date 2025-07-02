@@ -1,5 +1,6 @@
 package database.model;
 
+import java.security.MessageDigest;
 import java.util.List;
 
 public class ImportData {
@@ -8,15 +9,15 @@ public class ImportData {
 	private List<Phase> phases;
 	private List<Subject> subjects;
 	private List<Teacher> teachers;
-	private FileHash fileHash;
+	private MessageDigest messageDigest;
 
 	public ImportData(Course course, List<Phase> phases, List<Subject> subjects, List<Teacher> teachers,
-			FileHash fileHash) {
+			MessageDigest messageDigest) {
 		this.course = course;
 		this.phases = phases;
 		this.subjects = subjects;
 		this.teachers = teachers;
-		this.fileHash = fileHash;
+		this.messageDigest = messageDigest;
 	}
 
 	public Course getCourse() {
@@ -51,11 +52,11 @@ public class ImportData {
 		this.teachers = teachers;
 	}
 
-	public FileHash getFileHash() {
-		return fileHash;
+	public MessageDigest getMessageDigest() {
+		return messageDigest;
 	}
 
-	public void setFileHash(FileHash fileHash) {
-		this.fileHash = fileHash;
+	public void setMessageDigest(MessageDigest messageDigest) {
+		this.messageDigest = messageDigest;
 	}
 }

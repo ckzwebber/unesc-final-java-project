@@ -93,7 +93,7 @@ public class TeacherScreen {
             List<Teacher> teacherList = TeacherController.list();
             for (Teacher t : teacherList) {
                 model.addRow(new String[]{
-                        t.getIdAsString(t.getId()), t.getName(), t.getTitleAsString(t.getTitle()), t.getSubjectIdAsString(t.getSubjectId())
+                        t.getIdAsString(), t.getName(), t.getTitleAsString(), t.getSubjectIdAsString()
                 });
             }
 
@@ -163,7 +163,7 @@ public class TeacherScreen {
             List<Teacher> teacherList = TeacherController.list();
             for (Teacher t : teacherList) {
                 model.addRow(new String[]{
-                        t.getIdAsString(t.getId()), t.getName(), t.getTitleAsString(t.getTitle()), t.getSubjectIdAsString(t.getSubjectId())
+                        t.getIdAsString(), t.getName(), t.getTitleAsString(), t.getSubjectIdAsString()
                 });
             
             }
@@ -188,7 +188,7 @@ public class TeacherScreen {
                         JOptionPane.showMessageDialog(btnConfirm, "Teacher with ID " + id + " removed.");
                         txfId.setText(null);
                         TablesUtil.refreshTable(model, TeacherController.list(), t -> new String[]{
-                                t.getIdAsString(t.getId()), t.getName(), t.getTitleAsString(t.getTitle()), t.getSubjectIdAsString(t.getSubjectId())
+                                t.getIdAsString(), t.getName(), t.getTitleAsString(), t.getSubjectIdAsString()
                         });
                     } catch (SQLException ex) {
                         ex.printStackTrace();

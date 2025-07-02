@@ -45,4 +45,8 @@ public class User {
 		this.password = password;
 	}
 
+	public String getIdAsString() {
+		return String.valueOf(id);
+	}
+
 }
