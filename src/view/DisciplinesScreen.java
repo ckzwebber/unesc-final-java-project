@@ -93,7 +93,7 @@ public class DisciplinesScreen {
             List<Subject> subjectList = SubjectController.list();
             for (Subject s : subjectList) {
                 model.addRow(new String[] {
-                        s.getCode(), s.getName(), SubjectUtil.getDayByCode(s.getWeekDay()), s.getPhaseIdAsString(s.getPhaseId())
+                        s.getCode(), s.getName(), SubjectUtil.getDayByCode(s.getWeekDay()), s.getPhaseIdAsString()
                 });
             }
 
@@ -195,7 +195,7 @@ public class DisciplinesScreen {
             List<Subject> subjectList = SubjectController.list();
             for (Subject s : subjectList) {
                 model.addRow(new String[] {
-                        s.getCode(), s.getName(), SubjectUtil.getDayByCode(s.getWeekDay()), s.getPhaseIdAsString(s.getPhaseId())
+                        s.getCode(), s.getName(), SubjectUtil.getDayByCode(s.getWeekDay()), s.getPhaseIdAsString()
                 });
             }
 
@@ -219,7 +219,7 @@ public class DisciplinesScreen {
                         JOptionPane.showMessageDialog(btnConfirm, "Subject with code " + code + " removed.");
                         txfCode.setText(null);
                         TablesUtil.refreshTable(model, SubjectController.list(), s -> new String[] {
-                             s.getCode(), s.getName(), SubjectUtil.getDayByCode(s.getWeekDay()), s.getPhaseIdAsString(s.getPhaseId())
+                             s.getCode(), s.getName(), SubjectUtil.getDayByCode(s.getWeekDay()), s.getPhaseIdAsString()
 
                         });
                     } catch (SQLException ex) {

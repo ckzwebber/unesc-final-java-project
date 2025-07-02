@@ -57,15 +57,15 @@ public class Teacher {
 		this.subjectId = subjectId;
 	}
 
-	public String getIdAsString(int id) {
+	public String getIdAsString() {
 		return String.valueOf(id);
 	}
 
-	public String getTitleAsString(int title) {
+	public String getTitleAsString() {
 		return TeacherUtil.getTitleById(title);
 	}
 
-	public String getSubjectIdAsString(int subjectId) {
+	public String getSubjectIdAsString() {
 		return String.valueOf(subjectId);
 	}
 }

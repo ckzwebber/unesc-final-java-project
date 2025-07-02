@@ -92,7 +92,7 @@ public class PhaseScreen {
             for (Phase p : phaseList) {
             	Course c = CourseController.getById(p.getCourseId());
                 model.addRow(new String[]{
-                        p.getIdAsString(p.getId()), p.getName() + " - " + c.getName(), p.getSubjectCountAsString(p.getSubjectCount()), p.getTeacherCountAsString(p.getTeacherCount())
+                        p.getIdAsString(), p.getName() + " - " + c.getName(), p.getSubjectCountAsString(), p.getTeacherCountAsString()
                 });
             }
 
@@ -184,7 +184,7 @@ public class PhaseScreen {
             for (Phase p : phaseList) {
             	Course c = CourseController.getById(p.getCourseId());
                 model.addRow(new String[]{
-                        p.getIdAsString(p.getId()), p.getName() + " - " + c.getName(), p.getSubjectCountAsString(p.getSubjectCount()), p.getTeacherCountAsString(p.getTeacherCount())
+                        p.getIdAsString(), p.getName() + " - " + c.getName(), p.getSubjectCountAsString(), p.getTeacherCountAsString()
                 });
             }
 
@@ -210,7 +210,7 @@ public class PhaseScreen {
                         Phase phase = new Phase();
                     	Course c = CourseController.getById(phase.getId());
                         TablesUtil.refreshTable(model, PhaseController.list(), p -> new String[]{
-                        		 p.getIdAsString(p.getId()), p.getName() + " - " + c.getName(), p.getSubjectCountAsString(p.getSubjectCount()), p.getTeacherCountAsString(p.getTeacherCount())                        });
+                        		 p.getIdAsString(), p.getName() + " - " + c.getName(), p.getSubjectCountAsString(), p.getTeacherCountAsString()});
                     } catch (SQLException ex) {
                         ex.printStackTrace();
                     }

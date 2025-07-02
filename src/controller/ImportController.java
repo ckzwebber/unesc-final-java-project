@@ -16,4 +16,9 @@ public class ImportController {
         return importData;
     }
 
+    public static ImportData importDataFile(ImportData importData) {
+        ImportData importDataResponse = importService.importDataFile(importData);
+        return importDataResponse;
+    }
+
 }

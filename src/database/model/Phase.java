@@ -66,19 +66,19 @@ public class Phase {
 		this.courseId = courseId;
 	}
 
-	public String getIdAsString(int id) {
+	public String getIdAsString() {
 		return String.valueOf(id);
 	}
 
-	public String getSubjectCountAsString(int subjectCount) {
+	public String getSubjectCountAsString() {
 		return String.valueOf(subjectCount);
 	}
 
-	public String getTeacherCountAsString(int teacherCount) {
+	public String getTeacherCountAsString() {
 		return String.valueOf(teacherCount);
 	}
 
-	public String getCourseIdAsString(int courseId) {
+	public String getCourseIdAsString() {
 		return String.valueOf(courseId);
 	}
 

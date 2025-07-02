@@ -74,7 +74,7 @@ public class UsersScreen {
             List<User> userList = UserController.list();
             for (User u : userList) {
                 model.addRow(new String[]{
-                    u.getIdAsString(), u.getName()
+                    u.getIdAsString(), u.getUsername()
                 });
             }
 
@@ -120,7 +120,7 @@ public class UsersScreen {
            List<User> userList = UserController.list();
             for (User u : userList) {
                 model.addRow(new String[]{
-                    u.getIdAsString(), u.getName()
+                    u.getIdAsString(), u.getUsername()
                 });
             }
 
@@ -144,7 +144,7 @@ public class UsersScreen {
                         JOptionPane.showMessageDialog(btnConfirm, "User with ID " + id + " removed.");
                         txfId.setText(null);
                         TablesUtil.refreshTable(model, UserController.list(), u -> new String[]{
-                            u.getIdAsString(), u.getName()
+                            u.getIdAsString(), u.getUsername()
                         });
                     } catch (SQLException ex) {
                         ex.printStackTrace();

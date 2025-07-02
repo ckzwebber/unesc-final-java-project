@@ -77,11 +77,11 @@ public class Subject {
 		this.phaseId = phaseId;
 	}
 
-	public String getIdAsString(int id) {
+	public String getIdAsString() {
 		return String.valueOf(id);
 	}
 
-	public String getPhaseIdAsString(int phaseId) {
+	public String getPhaseIdAsString() {
 		return String.valueOf(phaseId);
 	}
 

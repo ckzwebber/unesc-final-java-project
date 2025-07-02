@@ -92,7 +92,7 @@ public class CoursesScreen {
 
 			List<Course> courseList = CourseController.list();
 			for (Course c : courseList) {
-				id = c.getIdAsString(c.getId());
+				id = c.getIdAsString();
 				name = c.getName();
 				processingDate = c.getProcessingDate();
 				List<Phase> p = PhaseController.getByCourseId(c.getId());
@@ -173,7 +173,7 @@ public class CoursesScreen {
 			
 			List<Course> courseList = CourseController.list();
 			for (Course c : courseList) {
-				id = c.getIdAsString(c.getId());
+				id = c.getIdAsString();
 				name = c.getName();
 				processingDate = c.getProcessingDate();
 				List<Phase> phases = PhaseController.getByCourseId(c.getId());
@@ -201,7 +201,7 @@ public class CoursesScreen {
 						JOptionPane.showMessageDialog(btnConfirm, "The course with ID " + id + " was removed.");
 						txfId.setText(null);
 						TablesUtil.refreshTable(model, CourseController.list(),
-								c -> new String[] { c.getIdAsString(c.getId()), c.getName() });
+								c -> new String[] { c.getIdAsString(), c.getName() });
 					} catch (SQLException e1) {
 						e1.printStackTrace();
 					}
