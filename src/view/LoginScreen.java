@@ -22,6 +22,7 @@ public class LoginScreen {
     private JTextField txfName;
     private JPasswordField txfPassword;
     private JButton btnLogin, btnCreateAccount;
+    private User userOn;
 
     public JPanel createLoginPanel(MainScreen mainScreen) {
         pnlLogin = new JPanel();
@@ -60,17 +61,18 @@ public class LoginScreen {
                 User user = null;
                 try {
                     user = UserController.login(username, password);
-                } catch (SQLException e1) {
-                    JOptionPane.showMessageDialog(null, "Error creating account.", "Error",
-                            JOptionPane.ERROR_MESSAGE);
-                }
 
                 if (user != null) {
                     MainScreen.setLoggedUser(user);
                     mainScreen.updateButtonVisibility();
                     mainScreen.setWelcomePanel();
                 } else {
-                    JOptionPane.showMessageDialog(null, "Login failed.");
+                    JOptionPane.showMessageDialog(null, "Fill in all fields.");
+                }
+                
+                } catch (Exception e1) {
+                    JOptionPane.showMessageDialog(null, "Error in login.", e1.getMessage(),
+                            JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -83,21 +85,23 @@ public class LoginScreen {
 
                 try {
                     if (name.isEmpty() || password.isEmpty()) {
-                        JOptionPane.showMessageDialog(btnCreateAccount, "Fill in all fields.");
+                        JOptionPane.showMessageDialog(null, "Fill in all fields.");
                         return;
                     }
-                    UserController.login(name, password);
-                    JOptionPane.showMessageDialog(btnCreateAccount, "User created successfully. You can now log in.");
+                    userOn =  UserController.insert(name, password);
+                    MainScreen.setLoggedUser(userOn);
+                    JOptionPane.showMessageDialog(null, "User created successfully. You can now log in.");
                     txfName.setText("");
                     txfPassword.setText("");
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                    JOptionPane.showMessageDialog(btnCreateAccount, "Error creating account.", "Error",
+                } catch (Exception ex) {
+                	JOptionPane.showMessageDialog(null, ex.getMessage(), "Error creating account.",
                             JOptionPane.ERROR_MESSAGE);
+                    
                 }
             }
         });
-
+        
         return pnlLogin;
+        
     }
 }

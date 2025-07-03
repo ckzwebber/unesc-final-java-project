@@ -3,6 +3,8 @@ package service;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import database.dao.UserDAO;
 import database.model.User;
@@ -61,50 +63,48 @@ public class UserService {
 		}
 	}
 
-	public User login(String username, String password) {
-		if (username == null || username.isEmpty() || password == null || password.isEmpty()) {
-			return null;
-		}
-
+	public User login(String username, String password) throws SQLException {
 		try {
+			if (username == null || username.isEmpty() || password == null || password.isEmpty()) {
+				throw new IllegalArgumentException("Either username and password can't be null!");
+			}	
+
 			User user = userOnDatabase(username);
 			if (user == null) {
 				throw new SQLException("User not found");
 			}
+
 			Boolean userVerified = BCrypt.verifyer().verify(password.toCharArray(), user.getPassword()).verified;
 
 			return userVerified ? user : null;
 		} catch (RuntimeException e) {
 			return null;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
 		}
 	}
 
 	public User create(String username, String password) {
-		if (username == null || username.isEmpty() || password == null || password.isEmpty()) {
-			throw new IllegalArgumentException("Username or password cannot be empty");
-		}
-
-		if (username.length() < 3 || password.length() < 8) {
-			throw new IllegalArgumentException("Invalid username or password");
-		}
-
-		User userOnDatabase = userOnDatabase(username);
-
-		if (userOnDatabase != null) {
-			throw new IllegalArgumentException("Username already exists");
-		}
-
-		int saltLength = 12;
-		String hashedPassword = BCrypt.withDefaults().hashToString(saltLength, password.toCharArray());
-
-		User user = new User();
-		user.setUsername(username);
-		user.setPassword(hashedPassword);
-
 		try {
+			if (username == null || username.isEmpty() || password == null || password.isEmpty()) {
+				throw new IllegalArgumentException("Username or password cannot be empty");
+			}
+
+			if (username.length() < 3 || password.length() < 8) {
+				throw new IllegalArgumentException("Invalid username (min 3) or password (min 8)");
+			}
+
+			User userOnDatabase = userOnDatabase(username);
+
+			if (userOnDatabase != null) {
+				throw new IllegalArgumentException("Username already exists");
+			}
+
+			int saltLength = 12;
+			String hashedPassword = BCrypt.withDefaults().hashToString(saltLength, password.toCharArray());
+
+			User user = new User();
+			user.setUsername(username);
+			user.setPassword(hashedPassword);
+
 			userDAO.insert(user);
 			User createdUser = userDAO.selectByUsername(username);
 			return createdUser;

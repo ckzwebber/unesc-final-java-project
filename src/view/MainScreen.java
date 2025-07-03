@@ -8,6 +8,7 @@ import service.ImportService;
 import utils.ImportUtil;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -19,6 +20,8 @@ public class MainScreen extends JFrame {
     private JPanel welcomePanel;
     private static String actionSelected;
     private JFileChooser fileChooser;
+    private User userOn;
+    private JPanel loginPanel;
 
     public static String getActionSelected() {
         return actionSelected;
@@ -40,8 +43,6 @@ public class MainScreen extends JFrame {
     }
 
     public void createComponent() {
-
-        // os botoes nao podem aparecer enquanto o usuario nao logar
         lblSystem = new JLabel("Register system");
         lblSystem.setBounds(20, 20, 150, 40);
         getContentPane().add(lblSystem);
@@ -61,21 +62,14 @@ public class MainScreen extends JFrame {
         btnImportFile = new JButton("Import file");
         btnImportFile.setBounds(750, 200, 100, 100);
         getContentPane().add(btnImportFile);
-
-        /* updateButtonVisibility(); */
-
-        SelectTableScreen screen = new SelectTableScreen();
-        WelcomeScreen welcomeScreen = new WelcomeScreen();
-        welcomePanel = welcomeScreen.createWelcomePanel(MainScreen.this, getName());
-
-        LoginScreen loginScreen = new LoginScreen();
-        welcomePanel = loginScreen.createLoginPanel(MainScreen.this);
-        getContentPane().add(welcomePanel);
-
-        lblSystem = new JLabel("Register system");
-        lblSystem.setBounds(20, 20, 150, 40);
-        getContentPane().add(lblSystem);
-
+        
+        updateButtonVisibility(); 
+        
+        if (getLoggedUser() == null) {
+            setLoginPanel();
+        } else {
+            setWelcomePanel();
+        }
         btnView.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -131,7 +125,6 @@ public class MainScreen extends JFrame {
         });
 
         btnImportFile.addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 btnAdd.setBackground(UIManager.getColor("Button.background"));
@@ -142,7 +135,7 @@ public class MainScreen extends JFrame {
                 fileChooser = new JFileChooser();
 
                 if (e.getSource() == btnImportFile) {
-                    int i = fileChooser.showOpenDialog(screen);
+                    int i = fileChooser.showOpenDialog(MainScreen.this);
                     if (i == JFileChooser.APPROVE_OPTION) {
                         File file = fileChooser.getSelectedFile();
                         ImportService is = new ImportService();
@@ -151,21 +144,21 @@ public class MainScreen extends JFrame {
 
                             String previewImportString = ImportUtil.generatePreviewImportString(importData);
 
-                            int confirmImportOption = JOptionPane.showConfirmDialog(screen, previewImportString,
+                            int confirmImportOption = JOptionPane.showConfirmDialog(MainScreen.this, previewImportString,
                                     "Confirm Import?", JOptionPane.YES_NO_OPTION,
                                     JOptionPane.QUESTION_MESSAGE);
 
                             if (confirmImportOption == JOptionPane.YES_OPTION) {
                                 ImportData importedData = is.importDataFile(importData);
                                 if (importedData != null) {
-                                    JOptionPane.showMessageDialog(screen, "Importação realizada com sucesso!");
+                                    JOptionPane.showMessageDialog(MainScreen.this, "Importação realizada com sucesso!");
                                     setPanel(welcomePanel);
                                 } else {
-                                    JOptionPane.showMessageDialog(screen, "Erro ao importar os dados.",
+                                    JOptionPane.showMessageDialog(MainScreen.this, "Erro ao importar os dados.",
                                             "Erro", JOptionPane.ERROR_MESSAGE);
                                 }
                             } else {
-                                JOptionPane.showMessageDialog(screen, "Importação cancelada pelo usuário.");
+                                JOptionPane.showMessageDialog(MainScreen.this, "Importação cancelada pelo usuário.");
                             }
 
                         } catch (Exception ex) {
@@ -178,21 +171,46 @@ public class MainScreen extends JFrame {
         });
     }
 
+    public void setLoginPanel() {
+        if (welcomePanel != null) {
+            getContentPane().remove(welcomePanel);
+        }
+        
+        LoginScreen loginScreen = new LoginScreen();
+        loginPanel = loginScreen.createLoginPanel(MainScreen.this);
+        getContentPane().add(loginPanel);
+        repaint();
+        revalidate();
+    }
+
     public void setWelcomePanel() {
+        if (loginPanel != null) {
+            getContentPane().remove(loginPanel);
+            loginPanel = null;
+        }
+        
         WelcomeScreen welcomeScreen = new WelcomeScreen();
-        welcomePanel = welcomeScreen.createWelcomePanel(MainScreen.this, getName());
+        welcomePanel = welcomeScreen.createWelcomePanel(MainScreen.this);
         getContentPane().add(welcomePanel);
+        repaint();
+        revalidate();
     }
 
     public void setPanel(JPanel newPanel) {
-        getContentPane().remove(welcomePanel);
+        if (welcomePanel != null) {
+            getContentPane().remove(welcomePanel);
+        }
+        if (loginPanel != null) {
+            getContentPane().remove(loginPanel);
+            loginPanel = null;
+        }
+        
         welcomePanel = newPanel;
         getContentPane().add(welcomePanel);
         repaint();
         revalidate();
     }
 
-    // Dentro da classe MainScreen
     private static User loggedUser;
 
     public static User getLoggedUser() {
@@ -203,7 +221,6 @@ public class MainScreen extends JFrame {
         loggedUser = user;
     }
 
-    // Dentro da classe MainScreen
     void updateButtonVisibility() {
         boolean isLoggedIn = getLoggedUser() != null;
 
@@ -212,5 +229,4 @@ public class MainScreen extends JFrame {
         btnRemove.setVisible(isLoggedIn);
         btnImportFile.setVisible(isLoggedIn);
     }
-
 }

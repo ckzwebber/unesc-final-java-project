@@ -100,7 +100,7 @@ public class SelectTableScreen extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				WelcomeScreen welcomeScreen = new WelcomeScreen();
-				JPanel welcomePanel = welcomeScreen.createWelcomePanel(mainScreen, getName());
+				JPanel welcomePanel = welcomeScreen.createWelcomePanel(mainScreen);
 				mainScreen.setPanel(welcomePanel);
 			}
 		});
