@@ -6,7 +6,6 @@ import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.util.List;
 import javax.swing.*;
-import java.awt.*;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -21,11 +20,9 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 import controller.CourseController;
-import controller.SubjectController;
 import controller.PhaseController;
 import database.model.Course;
 import database.model.Phase;
-import utils.PhaseUtil;
 import utils.TablesUtil;
 
 public class PhaseScreen {
@@ -34,17 +31,16 @@ public class PhaseScreen {
     private JPanel pnlPhases;
     private String action;
     private JPanel panel;
-    private JLabel lblId, lblName, lblCourseId;
-    private JTextField txfId, txfName, txfCourseId;
+    private JLabel lblId;
+    private JTextField txfId;
     private JTable table;
     private JScrollPane scroll;
-    private JButton btnExit, btnConfirmAdd, btnConfirm;
-    private String name, id, courseId;
-    private String disciplinesByPhase;
+    private JButton btnExit, btnConfirm;
+    private String id;
     private JTextField txfLabel;
-	private JTextField txfSubjectCount;
-	private JTextField txfTeacherCount;
-	private JComboBox<Course> cbCourses;
+    private JTextField txfSubjectCount;
+    private JTextField txfTeacherCount;
+    private JComboBox<Course> cbCourses;
 
     private DefaultTableModel model = new DefaultTableModel() {
         @Override
@@ -52,7 +48,6 @@ public class PhaseScreen {
             return false;
         }
     };
-	
 
     public PhaseScreen(MainScreen mainScreen) {
         this.mainScreen = mainScreen;
@@ -90,9 +85,10 @@ public class PhaseScreen {
 
             List<Phase> phaseList = PhaseController.list();
             for (Phase p : phaseList) {
-            	Course c = CourseController.getById(p.getCourseId());
-                model.addRow(new String[]{
-                        p.getIdAsString(), p.getName() + " - " + c.getName(), p.getSubjectCountAsString(), p.getTeacherCountAsString()
+                Course c = CourseController.getById(p.getCourseId());
+                model.addRow(new String[] {
+                        p.getIdAsString(), p.getName() + " - " + c.getName(), p.getSubjectCountAsString(),
+                        p.getTeacherCountAsString()
                 });
             }
 
@@ -102,7 +98,7 @@ public class PhaseScreen {
 
         } else if (action.equals("Add")) {
 
-        	JLabel lblLabel = new JLabel("Name(000-Fase):");
+            JLabel lblLabel = new JLabel("Name(000-Fase):");
             lblLabel.setBounds(50, 50, 100, 20);
             pnlPhases.add(lblLabel);
             txfLabel = new JTextField();
@@ -129,12 +125,12 @@ public class PhaseScreen {
             cbCourses = new JComboBox<>();
             List<Course> courses = CourseController.list();
             for (Course c : courses) {
-                cbCourses.addItem(c); 
+                cbCourses.addItem(c);
             }
             cbCourses.setRenderer(new DefaultListCellRenderer() {
                 @Override
                 public Component getListCellRendererComponent(JList<?> list, Object value, int index,
-                                                              boolean isSelected, boolean cellHasFocus) {
+                        boolean isSelected, boolean cellHasFocus) {
                     super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                     if (value instanceof Course) {
                         setText(((Course) value).getName());
@@ -145,8 +141,6 @@ public class PhaseScreen {
 
             cbCourses.setBounds(160, 140, 200, 20);
             pnlPhases.add(cbCourses);
-
- 
 
             btnConfirm = new JButton("Confirm");
             btnConfirm.setBounds(150, 180, 120, 30);
@@ -163,17 +157,17 @@ public class PhaseScreen {
                         PhaseController.insert(label, subjCount, teachCount, selectedCourse.getId());
                         JOptionPane.showMessageDialog(pnlPhases, "Phase added.");
                     } catch (Exception ex) {
-	                    JOptionPane.showMessageDialog(pnlPhases, "Erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-	                }
+                        JOptionPane.showMessageDialog(pnlPhases, "Erro: " + ex.getMessage(), "Erro",
+                                JOptionPane.ERROR_MESSAGE);
+                    }
                 }
             });
 
             return pnlPhases;
-        
 
         } else if (action.equals("Remove")) {
 
-        	model.addColumn("ID");
+            model.addColumn("ID");
             model.addColumn("Name");
             model.addColumn("Subjects");
             model.addColumn("Teachers");
@@ -182,9 +176,10 @@ public class PhaseScreen {
 
             List<Phase> phaseList = PhaseController.list();
             for (Phase p : phaseList) {
-            	Course c = CourseController.getById(p.getCourseId());
-                model.addRow(new String[]{
-                        p.getIdAsString(), p.getName() + " - " + c.getName(), p.getSubjectCountAsString(), p.getTeacherCountAsString()
+                Course c = CourseController.getById(p.getCourseId());
+                model.addRow(new String[] {
+                        p.getIdAsString(), p.getName() + " - " + c.getName(), p.getSubjectCountAsString(),
+                        p.getTeacherCountAsString()
                 });
             }
 
@@ -207,16 +202,18 @@ public class PhaseScreen {
                         PhaseController.delete(intId);
                         txfId.setText(null);
                         Phase phase = new Phase();
-                    	Course c = CourseController.getById(phase.getId());
-                        TablesUtil.refreshTable(model, PhaseController.list(), p -> new String[]{
-                        		 p.getIdAsString(), p.getName() + " - " + c.getName(), p.getSubjectCountAsString(), p.getTeacherCountAsString()
-                        		 });
-                        
+                        Course c = CourseController.getById(phase.getId());
+                        TablesUtil.refreshTable(model, PhaseController.list(), p -> new String[] {
+                                p.getIdAsString(), p.getName() + " - " + c.getName(), p.getSubjectCountAsString(),
+                                p.getTeacherCountAsString()
+                        });
+
                         JOptionPane.showMessageDialog(btnConfirm, "Phase with ID " + id + " removed.");
-                        
+
                     } catch (Exception ex) {
-	                    JOptionPane.showMessageDialog(pnlPhases, "Erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-	                }
+                        JOptionPane.showMessageDialog(pnlPhases, "Erro: " + ex.getMessage(), "Erro",
+                                JOptionPane.ERROR_MESSAGE);
+                    }
                 }
             });
 

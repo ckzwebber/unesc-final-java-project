@@ -116,7 +116,8 @@ public class CourseService {
 
 		try {
 			courseDAO.insert(course);
-			return course;
+			Course createdCourse = courseDAO.selectByName(name);
+			return createdCourse;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;

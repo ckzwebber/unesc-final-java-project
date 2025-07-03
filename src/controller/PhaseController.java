@@ -23,7 +23,12 @@ public class PhaseController {
 		Phase phase = phaseService.getById(id);
 		return phase;
 	}
-	
+
+	public static Phase getByPhaseLabelAndCourseId(String phaseLabel, int courseId) throws SQLException {
+		Phase phase = phaseService.getByPhaseLabelAndCourseId(phaseLabel, courseId);
+		return phase;
+	}
+
 	public static List<Phase> getByCourseId(int courseId) {
 		List<Phase> phases = phaseService.getByCourseId(courseId);
 		return phases;
@@ -34,7 +39,8 @@ public class PhaseController {
 		return phase;
 	}
 
-	public static Phase update(int id, String name, int subjectCount, int teacherCount, int courseId) throws SQLException {
+	public static Phase update(int id, String name, int subjectCount, int teacherCount, int courseId)
+			throws SQLException {
 		Phase phase = phaseService.update(id, name, subjectCount, teacherCount, courseId);
 		return phase;
 	}

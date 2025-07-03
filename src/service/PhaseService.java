@@ -3,6 +3,7 @@ package service;
 import java.sql.SQLException;
 import java.util.List;
 
+import controller.PhaseController;
 import database.dao.PhaseDAO;
 import database.model.Phase;
 
@@ -61,6 +62,28 @@ public class PhaseService {
 		}
 	}
 
+	public Phase getByPhaseLabelAndCourseId(String phaseLabel, int courseId) {
+		if (phaseLabel == null || phaseLabel.isEmpty()) {
+			throw new IllegalArgumentException("Phase label cannot be null or empty");
+		}
+
+		if (courseId <= 0) {
+			throw new IllegalArgumentException("Course ID must be greater than zero");
+		}
+
+		try {
+			Phase phase = phaseDAO.selectByPhaseLabelAndCourseId(phaseLabel, courseId);
+			if (phase == null) {
+				throw new IllegalArgumentException(
+						"Phase not found for label: " + phaseLabel + " and course ID: " + courseId);
+			}
+			return phase;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	public void delete(int id) {
 		if (id <= 0) {
 			throw new IllegalArgumentException("ID must be greater than zero");
@@ -98,7 +121,8 @@ public class PhaseService {
 
 		try {
 			phaseDAO.insert(phase);
-			return phase;
+			Phase createdPhase = PhaseController.getByPhaseLabelAndCourseId(name, courseId);
+			return createdPhase;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;

@@ -23,182 +23,205 @@ import database.model.Course;
 import database.model.Phase;
 import database.model.Subject;
 import database.model.Teacher;
+import database.model.imports.PhaseImport;
+import database.model.imports.SubjectImport;
 import utils.SubjectUtil;
 
 public class ImportService {
 
 	public ImportData readImportFile(String path) {
 		try {
-			Course course = new Course();
-			List<Phase> phases = new ArrayList<>();
-			List<Subject> subjects = new ArrayList<>();
-			List<Teacher> teachers = new ArrayList<>();
+			Course course = null;
+			List<PhaseImport> phases = new ArrayList<>();
 
 			InputStream inputStream = new FileInputStream(path);
-
 			MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
-
 			DigestInputStream digestInputStream = new DigestInputStream(inputStream, messageDigest);
-
-			InputStreamReader inputStreamReader = new InputStreamReader(digestInputStream);
-			BufferedReader buffer = new BufferedReader(inputStreamReader);
+			BufferedReader buffer = new BufferedReader(new InputStreamReader(digestInputStream));
 
 			String line;
+			PhaseImport currentPhaseImport = null;
+			SubjectImport currentSubjectImport = null;
 
 			while ((line = buffer.readLine()) != null) {
-
 				char recordType = line.charAt(0);
 
 				switch (recordType) {
-				case '0': {
-					String rawCourseName = line.substring(1, 51);
-					String rawProcessingDate = line.substring(51, 59);
-					String rawStartPhase = line.substring(59, 66);
-					String rawEndPhase = line.substring(66, 73);
-					String rawSequence = line.substring(73, 80);
-					String rawLayout = line.substring(80, Math.min(line.length(), 83));
+					case '0': {
+						String rawCourseName = line.substring(1, 51);
+						String rawProcessingDate = line.substring(51, 59);
+						String rawStartPhase = line.substring(59, 66);
+						String rawEndPhase = line.substring(66, 73);
+						String rawSequence = line.substring(73, 80);
+						String rawLayout = line.substring(80, Math.min(line.length(), 83));
 
-					if (rawCourseName.trim().isEmpty()) {
-						throw new IllegalArgumentException("Nome do curso vazio");
-					}
-					if (!rawProcessingDate.matches("\\d{8}")) {
-						throw new Exception("Data de processamento inválida: " + rawProcessingDate);
-					}
-					LocalDate processingDate;
-					try {
-						processingDate = LocalDate.parse(rawProcessingDate.trim(),
-								DateTimeFormatter.ofPattern("yyyyMMdd"));
-					} catch (DateTimeParseException e) {
-						throw new IllegalArgumentException("Formato de data incorreto: " + rawProcessingDate, e);
-					}
-					if (!rawStartPhase.trim().matches("[A-Za-z0-9]{7}")) {
-						throw new IllegalArgumentException(
-								"StartPhase deve ter 7 caracteres alfanuméricos: " + rawStartPhase);
-					}
-					if (!rawEndPhase.trim().matches("[A-Za-z0-9]{7}")) {
-						throw new IllegalArgumentException(
-								"EndPhase deve ter 7 caracteres alfanuméricos: " + rawEndPhase);
-					}
-					int sequence;
-					try {
-						sequence = Integer.parseInt(rawSequence.trim());
-					} catch (NumberFormatException e) {
-						throw new IllegalArgumentException("Sequence não é inteiro: " + rawSequence, e);
-					}
-					if (sequence < 0) {
-						throw new IllegalArgumentException("Sequence negativo: " + sequence);
-					}
-					if (rawLayout.trim().length() != 3) {
-						throw new IllegalArgumentException("Layout deve ter 3 chars: " + rawLayout);
-					}
+						if (rawCourseName.trim().isEmpty()) {
+							throw new IllegalArgumentException("Course name is empty");
+						}
+						if (!rawProcessingDate.matches("\\d{8}")) {
+							throw new Exception("Invalid processing date: " + rawProcessingDate);
+						}
+						LocalDate processingDate;
+						try {
+							processingDate = LocalDate.parse(rawProcessingDate.trim(),
+									DateTimeFormatter.ofPattern("yyyyMMdd"));
+						} catch (DateTimeParseException e) {
+							throw new IllegalArgumentException("Incorrect date format: " + rawProcessingDate, e);
+						}
+						if (!rawStartPhase.trim().matches("[A-Za-z0-9]{7}")) {
+							throw new IllegalArgumentException(
+									"StartPhase must have 7 alphanumeric characters: " + rawStartPhase);
+						}
+						if (!rawEndPhase.trim().matches("[A-Za-z0-9]{7}")) {
+							throw new IllegalArgumentException(
+									"EndPhase must have 7 alphanumeric characters: " + rawEndPhase);
+						}
+						int sequence;
+						try {
+							sequence = Integer.parseInt(rawSequence.trim());
+						} catch (NumberFormatException e) {
+							throw new IllegalArgumentException("Sequence is not an integer: " + rawSequence, e);
+						}
+						if (sequence < 0) {
+							throw new IllegalArgumentException("Negative sequence: " + sequence);
+						}
+						if (rawLayout.trim().length() != 3) {
+							throw new IllegalArgumentException("Layout must have 3 chars: " + rawLayout);
+						}
 
-					course = new Course(rawCourseName.trim(), processingDate, rawStartPhase.trim(), rawEndPhase.trim(),
-							sequence, rawLayout.trim());
-					break;
-				}
-
-				case '1': {
-					String rawPhaseName = line.substring(1, 8);
-					String rawSubjectCount = line.substring(8, 10);
-					String rawTeachersCount = line.substring(10, 12);
-
-					if (rawPhaseName.trim().isEmpty()) {
-						throw new IllegalArgumentException("Nome da fase vazio");
-					}
-					int subjectCount, teachersCount;
-					try {
-						subjectCount = Integer.parseInt(rawSubjectCount.trim());
-						teachersCount = Integer.parseInt(rawTeachersCount.trim());
-					} catch (NumberFormatException e) {
-						throw new IllegalArgumentException(
-								"Contadores da fase inválidos: " + rawSubjectCount + ", " + rawTeachersCount, e);
-					}
-					if (subjectCount < 0 || teachersCount < 0) {
-						throw new IllegalArgumentException("Contadores negativos na fase");
+						course = new Course(rawCourseName.trim(), processingDate, rawStartPhase.trim(),
+								rawEndPhase.trim(),
+								sequence, rawLayout.trim());
+						break;
 					}
 
-					phases.add(new Phase(rawPhaseName.trim(), subjectCount, teachersCount, course.getId()));
-					break;
-				}
+					case '1': {
+						String rawPhaseName = line.substring(1, 8);
+						String rawSubjectCount = line.substring(8, 10);
+						String rawTeachersCount = line.substring(10, 12);
 
-				case '2': {
-					String rawSubjectCode = line.substring(1, 7);
-					String rawDayOfWeek = line.substring(7, 9);
-					String rawTeacherQty = line.substring(9, 11);
+						if (rawPhaseName.trim().isEmpty()) {
+							throw new IllegalArgumentException("Phase name is empty");
+						}
+						int subjectCount, teachersCount;
+						try {
+							subjectCount = Integer.parseInt(rawSubjectCount.trim());
+							teachersCount = Integer.parseInt(rawTeachersCount.trim());
+						} catch (NumberFormatException e) {
+							throw new IllegalArgumentException(
+									"Invalid phase counters: " + rawSubjectCount + ", " + rawTeachersCount, e);
+						}
+						if (subjectCount < 0 || teachersCount < 0) {
+							throw new IllegalArgumentException("Negative counters in phase");
+						}
 
-					if (!rawSubjectCode.trim().matches("\\d{3,6}")) {
-						throw new IllegalArgumentException("SubjectCode inválido: " + rawSubjectCode);
-					}
-					int dayOfWeek, teacherQty;
-					try {
-						dayOfWeek = Integer.parseInt(rawDayOfWeek.trim());
-						teacherQty = Integer.parseInt(rawTeacherQty.trim());
-					} catch (NumberFormatException e) {
-						throw new IllegalArgumentException(
-								"Dia ou qtd de professores inválidos: " + rawDayOfWeek + ", " + rawTeacherQty, e);
-					}
-					if (dayOfWeek < 1 || dayOfWeek > 7) {
-						throw new IllegalArgumentException("DayOfWeek fora do intervalo 1–7: " + dayOfWeek);
-					}
-					if (teacherQty < 0) {
-						throw new IllegalArgumentException("TeacherQuantity negativo: " + teacherQty);
+						Phase phase = new Phase(
+								rawPhaseName.trim(),
+								subjectCount,
+								teachersCount,
+								0);
+
+						currentPhaseImport = new PhaseImport();
+						currentPhaseImport.setPhase(phase);
+						phases.add(currentPhaseImport);
+
+						currentSubjectImport = null;
+						break;
 					}
 
-					String subjectName = SubjectUtil.getSubjectNameByCode(rawSubjectCode.trim());
-					if (subjectName == null) {
-						throw new IllegalArgumentException("Código de disciplina desconhecido: " + rawSubjectCode);
-					}
-					int subjectPhase = phases.getFirst().getId();
+					case '2': {
+						if (currentPhaseImport == null) {
+							throw new IllegalStateException("Subject declared before any phase");
+						}
 
-					subjects.add(new Subject(rawSubjectCode.trim(), subjectName, dayOfWeek, teacherQty, subjectPhase));
-					break;
-				}
+						String rawSubjectCode = line.substring(1, 7);
+						String rawDayOfWeek = line.substring(7, 9);
+						String rawTeacherQty = line.substring(9, 11);
 
-				case '3': {
-					String rawTeacherName = line.substring(1, 41);
-					String rawTitle = line.substring(41, 43);
+						if (!rawSubjectCode.trim().matches("\\d{3,6}")) {
+							throw new IllegalArgumentException("Invalid SubjectCode: " + rawSubjectCode);
+						}
+						int dayOfWeek, teacherQty;
+						try {
+							dayOfWeek = Integer.parseInt(rawDayOfWeek.trim());
+							teacherQty = Integer.parseInt(rawTeacherQty.trim());
+						} catch (NumberFormatException e) {
+							throw new IllegalArgumentException(
+									"Invalid day or teacher quantity: " + rawDayOfWeek + ", " + rawTeacherQty, e);
+						}
+						if (dayOfWeek < 1 || dayOfWeek > 7) {
+							throw new IllegalArgumentException("DayOfWeek out of range 1–7: " + dayOfWeek);
+						}
+						if (teacherQty < 0) {
+							throw new IllegalArgumentException("Negative TeacherQuantity: " + teacherQty);
+						}
 
-					if (rawTeacherName.trim().isEmpty()) {
-						throw new IllegalArgumentException("Nome do professor vazio");
-					}
-					int teacherTitle;
-					try {
-						teacherTitle = Integer.parseInt(rawTitle.trim());
-					} catch (NumberFormatException e) {
-						throw new IllegalArgumentException("Título do professor inválido: " + rawTitle, e);
-					}
-					if (teacherTitle < 0 || teacherTitle > 99) {
-						throw new IllegalArgumentException("Título do prof fora de 0–99: " + teacherTitle);
-					}
-					if (subjects.isEmpty()) {
-						throw new IllegalStateException("Professor declarado antes de qualquer disciplina");
-					}
-					int subjectId = subjects.getFirst().getId();
+						String subjectName = SubjectUtil.getSubjectNameByCode(rawSubjectCode.trim());
+						if (subjectName == null) {
+							throw new IllegalArgumentException("Unknown subject code: " + rawSubjectCode);
+						}
 
-					teachers.add(new Teacher(rawTeacherName.trim(), teacherTitle, subjectId));
-					break;
-				}
+						Subject subject = new Subject(
+								rawSubjectCode.trim(),
+								subjectName,
+								dayOfWeek,
+								teacherQty,
+								0);
+						currentSubjectImport = new SubjectImport();
+						currentSubjectImport.setSubject(subject);
+						currentPhaseImport.getSubjects().add(currentSubjectImport);
 
-				case '9': {
-					String rawImportCount = line.substring(1, 12);
-					int importCount;
-					try {
-						importCount = Integer.parseInt(rawImportCount.trim());
-					} catch (NumberFormatException e) {
-						throw new IllegalArgumentException("ImportCount inválido: " + rawImportCount, e);
+						break;
 					}
-					break;
-				}
 
-				default:
-					throw new IllegalArgumentException("Tipo de registro desconhecido: " + recordType);
+					case '3': {
+						if (currentSubjectImport == null) {
+							throw new IllegalStateException("Teacher declared before any subject");
+						}
+
+						String rawTeacherName = line.substring(1, 41);
+						String rawTitle = line.substring(41, 43);
+
+						if (rawTeacherName.trim().isEmpty()) {
+							throw new IllegalArgumentException("Teacher name is empty");
+						}
+						int teacherTitle;
+						try {
+							teacherTitle = Integer.parseInt(rawTitle.trim());
+						} catch (NumberFormatException e) {
+							throw new IllegalArgumentException("Invalid teacher title: " + rawTitle, e);
+						}
+						if (teacherTitle < 0 || teacherTitle > 99) {
+							throw new IllegalArgumentException("Teacher title out of range 0–99: " + teacherTitle);
+						}
+
+						Teacher teacher = new Teacher(
+								rawTeacherName.trim(),
+								teacherTitle,
+								0);
+						currentSubjectImport.getTeachers().add(teacher);
+						break;
+					}
+
+					case '9': {
+						String rawImportCount = line.substring(1, 12);
+						int importCount;
+						try {
+							importCount = Integer.parseInt(rawImportCount.trim());
+						} catch (NumberFormatException e) {
+							throw new IllegalArgumentException("Invalid ImportCount: " + rawImportCount, e);
+						}
+						break;
+					}
+
+					default:
+						throw new IllegalArgumentException("Unknown record type: " + recordType);
 				}
 			}
 
 			buffer.close();
 
-			ImportData importData = new ImportData(course, phases, subjects, teachers, messageDigest);
-
+			ImportData importData = new ImportData(course, phases, messageDigest);
 			return importData;
 
 		} catch (Exception e) {
@@ -219,40 +242,48 @@ public class ImportService {
 			throw new IllegalArgumentException("Phases cannot be null or empty");
 		}
 
-		if (importData.getSubjects() == null || importData.getSubjects().isEmpty()) {
-			throw new IllegalArgumentException("Subjects cannot be null or empty");
-		}
-
-		if (importData.getTeachers() == null || importData.getTeachers().isEmpty()) {
-			throw new IllegalArgumentException("Teachers cannot be null or empty");
-		}
-
 		if (importData.getMessageDigest() == null) {
 			throw new IllegalArgumentException("Message digest cannot be null");
 		}
 
 		try {
-			Course course = importData.getCourse();
-			CourseController.insert(course.getName(), course.getProcessingDate(), course.getStartPhase(),
-					course.getEndPhase(), course.getSequence(), course.getLayout());
+			FileHashController.insert(importData.getMessageDigest(), 9);
 
-			for (Phase phase : importData.getPhases()) {
-				PhaseController.insert(phase.getName(), phase.getSubjectCount(), phase.getTeacherCount(),
-						phase.getCourseId());
+			Course createdCourse = CourseController.insert(
+					importData.getCourse().getName(),
+					importData.getCourse().getProcessingDate(),
+					importData.getCourse().getStartPhase(),
+					importData.getCourse().getEndPhase(),
+					importData.getCourse().getSequence(),
+					importData.getCourse().getLayout());
+
+			for (PhaseImport pi : importData.getPhases()) {
+				Phase createdPhase = PhaseController.insert(
+						pi.getPhase().getName(),
+						pi.getPhase().getSubjectCount(),
+						pi.getPhase().getTeacherCount(),
+						createdCourse.getId());
+
+				pi.getPhase().setId(createdPhase.getId());
+
+				for (SubjectImport si : pi.getSubjects()) {
+					Subject createdSubject = SubjectController.insert(
+							si.getSubject().getCode(),
+							si.getSubject().getName(),
+							si.getSubject().getWeekDay(),
+							si.getSubject().getTeacherQuantity(),
+							createdPhase.getId());
+					si.getSubject().setId(createdSubject.getId());
+
+					for (Teacher t : si.getTeachers()) {
+						Teacher createdTeacher = TeacherController.insert(
+								t.getName(),
+								t.getTitle(),
+								createdSubject.getId());
+						t.setId(createdTeacher.getId());
+					}
+				}
 			}
-
-			for (Subject subject : importData.getSubjects()) {
-				SubjectController.insert(subject.getCode(), subject.getName(), subject.getWeekDay(),
-						subject.getTeacherQuantity(), subject.getPhaseId());
-			}
-
-			for (Teacher teacher : importData.getTeachers()) {
-				TeacherController.insert(teacher.getName(), teacher.getTitle(), teacher.getSubjectId());
-			}
-
-			int importType = 9;
-			MessageDigest messageDigest = importData.getMessageDigest();
-			FileHashController.insert(messageDigest, importType);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.HexFormat;
 import java.util.List;
 
+import controller.FileHashController;
 import database.dao.FileHashDAO;
 import database.model.FileHash;
 
@@ -85,7 +86,8 @@ public class FileHashService {
 		FileHash newFileHash = new FileHash(fileHash, importType);
 		try {
 			fileHashDAO.insert(newFileHash);
-			return newFileHash;
+			FileHash createdFileHash = FileHashController.getByFileHash(newFileHash.getFileHash());
+			return createdFileHash;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
