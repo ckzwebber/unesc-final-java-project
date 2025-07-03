@@ -143,7 +143,7 @@ public class CoursesScreen {
 						LocalDate today = LocalDate.now();
 
 						if (name.isEmpty() || start.isEmpty() || end.isEmpty() || seqText.isEmpty()) {
-							JOptionPane.showMessageDialog(pnlCourses, "Todos os campos devem ser preenchidos.", "Aviso",
+							JOptionPane.showMessageDialog(pnlCourses, "All fields must be filled.", "Warning",
 									JOptionPane.WARNING_MESSAGE);
 							return;
 						}
@@ -154,10 +154,10 @@ public class CoursesScreen {
 						JOptionPane.showMessageDialog(pnlCourses, "Course added.");
 
 					} catch (NumberFormatException nfe) {
-						JOptionPane.showMessageDialog(pnlCourses, "Sequência deve ser um número inteiro.", "Erro",
+						JOptionPane.showMessageDialog(pnlCourses, "Sequence must be an integer number.", "Error",
 								JOptionPane.ERROR_MESSAGE);
 					} catch (Exception ex) {
-						JOptionPane.showMessageDialog(pnlCourses, "Erro: " + ex.getMessage(), "Erro",
+						JOptionPane.showMessageDialog(pnlCourses, "Error: " + ex.getMessage(), "Error",
 								JOptionPane.ERROR_MESSAGE);
 					}
 				}
@@ -210,7 +210,7 @@ public class CoursesScreen {
 
 					} catch (Exception ex) {
 						txfId.setText(null);
-						JOptionPane.showMessageDialog(pnlCourses, "Erro: " + ex.getMessage(), "Erro",
+						JOptionPane.showMessageDialog(pnlCourses, "Error: " + ex.getMessage(), "Error",
 								JOptionPane.ERROR_MESSAGE);
 					}
 				}

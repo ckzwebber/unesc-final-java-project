@@ -29,6 +29,18 @@ import utils.SubjectUtil;
 
 public class ImportService {
 
+	private static String stripPadding(String string) {
+		if (string == null)
+			return null;
+		return string.replaceAll("[\\p{Pd}]+$", "").trim();
+	}
+
+	private static void validateName(String name) {
+		if (!name.trim().matches("^[\\p{L}0-9\\-\\s]+$")) {
+			throw new IllegalArgumentException("This name contains invalid characters: " + name);
+		}
+	}
+
 	public ImportData readImportFile(String path) {
 		try {
 			Course course = null;
@@ -58,6 +70,7 @@ public class ImportService {
 						if (rawCourseName.trim().isEmpty()) {
 							throw new IllegalArgumentException("Course name is empty");
 						}
+						validateName(rawCourseName.trim());
 						if (!rawProcessingDate.matches("\\d{8}")) {
 							throw new Exception("Invalid processing date: " + rawProcessingDate);
 						}
@@ -72,10 +85,12 @@ public class ImportService {
 							throw new IllegalArgumentException(
 									"StartPhase must have 7 alphanumeric characters: " + rawStartPhase);
 						}
+						validateName(rawStartPhase.trim());
 						if (!rawEndPhase.trim().matches("[A-Za-z0-9]{7}")) {
 							throw new IllegalArgumentException(
 									"EndPhase must have 7 alphanumeric characters: " + rawEndPhase);
 						}
+						validateName(rawEndPhase.trim());
 						int sequence;
 						try {
 							sequence = Integer.parseInt(rawSequence.trim());
@@ -88,10 +103,14 @@ public class ImportService {
 						if (rawLayout.trim().length() != 3) {
 							throw new IllegalArgumentException("Layout must have 3 chars: " + rawLayout);
 						}
+						validateName(rawLayout.trim());
 
-						course = new Course(rawCourseName.trim(), processingDate, rawStartPhase.trim(),
-								rawEndPhase.trim(),
-								sequence, rawLayout.trim());
+						course = new Course(stripPadding(rawCourseName),
+								processingDate,
+								stripPadding(rawStartPhase),
+								stripPadding(rawEndPhase),
+								sequence,
+								stripPadding(rawLayout));
 						break;
 					}
 
@@ -103,6 +122,7 @@ public class ImportService {
 						if (rawPhaseName.trim().isEmpty()) {
 							throw new IllegalArgumentException("Phase name is empty");
 						}
+						validateName(rawPhaseName.trim());
 						int subjectCount, teachersCount;
 						try {
 							subjectCount = Integer.parseInt(rawSubjectCount.trim());
@@ -116,7 +136,7 @@ public class ImportService {
 						}
 
 						Phase phase = new Phase(
-								rawPhaseName.trim(),
+								stripPadding(rawPhaseName),
 								subjectCount,
 								teachersCount,
 								0);
@@ -141,6 +161,7 @@ public class ImportService {
 						if (!rawSubjectCode.trim().matches("\\d{3,6}")) {
 							throw new IllegalArgumentException("Invalid SubjectCode: " + rawSubjectCode);
 						}
+						validateName(rawSubjectCode.trim());
 						int dayOfWeek, teacherQty;
 						try {
 							dayOfWeek = Integer.parseInt(rawDayOfWeek.trim());
@@ -162,8 +183,8 @@ public class ImportService {
 						}
 
 						Subject subject = new Subject(
-								rawSubjectCode.trim(),
-								subjectName,
+								stripPadding(rawSubjectCode),
+								stripPadding(subjectName),
 								dayOfWeek,
 								teacherQty,
 								0);
@@ -185,6 +206,7 @@ public class ImportService {
 						if (rawTeacherName.trim().isEmpty()) {
 							throw new IllegalArgumentException("Teacher name is empty");
 						}
+						validateName(rawTeacherName.trim());
 						int teacherTitle;
 						try {
 							teacherTitle = Integer.parseInt(rawTitle.trim());
@@ -196,7 +218,7 @@ public class ImportService {
 						}
 
 						Teacher teacher = new Teacher(
-								rawTeacherName.trim(),
+								stripPadding(rawTeacherName),
 								teacherTitle,
 								0);
 						currentSubjectImport.getTeachers().add(teacher);

@@ -62,16 +62,14 @@ public class LoginScreen {
                 try {
                     user = UserController.login(username, password);
 
-                if (user != null) {
-                    MainScreen.setLoggedUser(user);
-                    mainScreen.updateButtonVisibility();
-                    mainScreen.setWelcomePanel();
-                } else {
-                    JOptionPane.showMessageDialog(null, "Fill in all fields.");
-                }
-                
+                    if (user != null) {
+                        MainScreen.setLoggedUser(user);
+                        mainScreen.updateButtonVisibility();
+                        mainScreen.setWelcomePanel();
+                    }
+
                 } catch (Exception e1) {
-                    JOptionPane.showMessageDialog(null, "Error in login.", e1.getMessage(),
+                    JOptionPane.showMessageDialog(null, e1.getMessage(), "Error in login.",
                             JOptionPane.ERROR_MESSAGE);
                 }
             }
@@ -88,20 +86,20 @@ public class LoginScreen {
                         JOptionPane.showMessageDialog(null, "Fill in all fields.");
                         return;
                     }
-                    userOn =  UserController.insert(name, password);
+                    userOn = UserController.insert(name, password);
                     MainScreen.setLoggedUser(userOn);
                     JOptionPane.showMessageDialog(null, "User created successfully. You can now log in.");
                     txfName.setText("");
                     txfPassword.setText("");
                 } catch (Exception ex) {
-                	JOptionPane.showMessageDialog(null, ex.getMessage(), "Error creating account.",
+                    JOptionPane.showMessageDialog(null, ex.getMessage(), "Error creating account.",
                             JOptionPane.ERROR_MESSAGE);
-                    
+
                 }
             }
         });
-        
+
         return pnlLogin;
-        
+
     }
 }

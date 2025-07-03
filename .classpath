@@ -9,6 +9,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/postgresql-42.7.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/dotenv-java-3.2.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/bcrypt-0.10.2.jar"/>
-	<classpathentry kind="lib" path="lib/bytes-1.6.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/bytes-1.6.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -66,8 +66,8 @@ public class UserService {
 	public User login(String username, String password) throws SQLException {
 		try {
 			if (username == null || username.isEmpty() || password == null || password.isEmpty()) {
-				throw new IllegalArgumentException("Either username and password can't be null!");
-			}	
+				throw new IllegalArgumentException("Username and password can't be null!");
+			}
 
 			User user = userOnDatabase(username);
 			if (user == null) {
@@ -76,7 +76,11 @@ public class UserService {
 
 			Boolean userVerified = BCrypt.verifyer().verify(password.toCharArray(), user.getPassword()).verified;
 
-			return userVerified ? user : null;
+			if (userVerified) {
+				return user;
+			} else {
+				throw new SQLException("Invalid password");
+			}
 		} catch (RuntimeException e) {
 			return null;
 		}

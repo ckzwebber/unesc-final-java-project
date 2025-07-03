@@ -157,7 +157,7 @@ public class PhaseScreen {
                         PhaseController.insert(label, subjCount, teachCount, selectedCourse.getId());
                         JOptionPane.showMessageDialog(pnlPhases, "Phase added.");
                     } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(pnlPhases, "Erro: " + ex.getMessage(), "Erro",
+                        JOptionPane.showMessageDialog(pnlPhases, "Error: " + ex.getMessage(), "Error",
                                 JOptionPane.ERROR_MESSAGE);
                     }
                 }
@@ -211,7 +211,7 @@ public class PhaseScreen {
                         JOptionPane.showMessageDialog(btnConfirm, "Phase with ID " + id + " removed.");
 
                     } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(pnlPhases, "Erro: " + ex.getMessage(), "Erro",
+                        JOptionPane.showMessageDialog(pnlPhases, "Error: " + ex.getMessage(), "Error",
                                 JOptionPane.ERROR_MESSAGE);
                     }
                 }

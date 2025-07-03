@@ -29,21 +29,10 @@ public class UserController {
 		return user;
 	}
 
-	public static User login(String username, String password) throws SQLException {  
-	try {
-	    User user = userService.login(username, password);
-	    
-	    if (user != null) {
-	        System.out.println("UserService retornou user: " + user.getUsername());
-	    } else {
-	        System.out.println("UserService retornou null");
-	    }
-	    
-	    return user;
-	} catch (Exception e) {
-	    System.out.println("Erro no UserController.login(): " + e.getMessage());
-	    throw e;
-	}
+	public static User login(String username, String password) throws SQLException {
+		User user = userService.login(username, password);
+
+		return user;
 	}
 
 	public static void delete(int id) throws SQLException {

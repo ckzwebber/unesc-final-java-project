@@ -62,9 +62,9 @@ public class MainScreen extends JFrame {
         btnImportFile = new JButton("Import file");
         btnImportFile.setBounds(750, 200, 100, 100);
         getContentPane().add(btnImportFile);
-        
-        updateButtonVisibility(); 
-        
+
+        updateButtonVisibility();
+
         if (getLoggedUser() == null) {
             setLoginPanel();
         } else {
@@ -144,25 +144,26 @@ public class MainScreen extends JFrame {
 
                             String previewImportString = ImportUtil.generatePreviewImportString(importData);
 
-                            int confirmImportOption = JOptionPane.showConfirmDialog(MainScreen.this, previewImportString,
+                            int confirmImportOption = JOptionPane.showConfirmDialog(MainScreen.this,
+                                    previewImportString,
                                     "Confirm Import?", JOptionPane.YES_NO_OPTION,
                                     JOptionPane.QUESTION_MESSAGE);
 
                             if (confirmImportOption == JOptionPane.YES_OPTION) {
                                 ImportData importedData = is.importDataFile(importData);
                                 if (importedData != null) {
-                                    JOptionPane.showMessageDialog(MainScreen.this, "Importação realizada com sucesso!");
+                                    JOptionPane.showMessageDialog(MainScreen.this, "Import completed successfully!");
                                     setPanel(welcomePanel);
                                 } else {
-                                    JOptionPane.showMessageDialog(MainScreen.this, "Erro ao importar os dados.",
-                                            "Erro", JOptionPane.ERROR_MESSAGE);
+                                    JOptionPane.showMessageDialog(MainScreen.this, "Error importing data.",
+                                            "Error", JOptionPane.ERROR_MESSAGE);
                                 }
                             } else {
-                                JOptionPane.showMessageDialog(MainScreen.this, "Importação cancelada pelo usuário.");
+                                JOptionPane.showMessageDialog(MainScreen.this, "Import cancelled by user.");
                             }
 
                         } catch (Exception ex) {
-                            JOptionPane.showMessageDialog(MainScreen.this, "Erro: " + ex.getMessage(), "Erro",
+                            JOptionPane.showMessageDialog(MainScreen.this, "Error: " + ex.getMessage(), "Error",
                                     JOptionPane.ERROR_MESSAGE);
                         }
                     }
@@ -175,7 +176,7 @@ public class MainScreen extends JFrame {
         if (welcomePanel != null) {
             getContentPane().remove(welcomePanel);
         }
-        
+
         LoginScreen loginScreen = new LoginScreen();
         loginPanel = loginScreen.createLoginPanel(MainScreen.this);
         getContentPane().add(loginPanel);
@@ -188,7 +189,7 @@ public class MainScreen extends JFrame {
             getContentPane().remove(loginPanel);
             loginPanel = null;
         }
-        
+
         WelcomeScreen welcomeScreen = new WelcomeScreen();
         welcomePanel = welcomeScreen.createWelcomePanel(MainScreen.this);
         getContentPane().add(welcomePanel);
@@ -204,7 +205,7 @@ public class MainScreen extends JFrame {
             getContentPane().remove(loginPanel);
             loginPanel = null;
         }
-        
+
         welcomePanel = newPanel;
         getContentPane().add(welcomePanel);
         repaint();

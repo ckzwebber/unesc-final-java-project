@@ -169,7 +169,7 @@ public class DisciplinesScreen {
                         SubjectController.insert(code, name, weekDay, 1, selectedPhase.getId());
                         JOptionPane.showMessageDialog(pnlDisciplines, "Subject added.");
                     } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(pnlDisciplines, "Erro: " + ex.getMessage(), "Erro",
+                        JOptionPane.showMessageDialog(pnlDisciplines, "Error: " + ex.getMessage(), "Error",
                                 JOptionPane.ERROR_MESSAGE);
                     }
                 }
@@ -217,7 +217,7 @@ public class DisciplinesScreen {
                         JOptionPane.showMessageDialog(btnConfirm, "Subject with ID " + id + " removed.");
 
                     } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(pnlDisciplines, "Erro: " + ex.getMessage(), "Erro",
+                        JOptionPane.showMessageDialog(pnlDisciplines, "Error: " + ex.getMessage(), "Error",
                                 JOptionPane.ERROR_MESSAGE);
                     }
                 }
