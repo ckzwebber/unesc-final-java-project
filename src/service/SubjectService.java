@@ -120,7 +120,8 @@ public class SubjectService {
 
 		try {
 			subjectDAO.insert(subject);
-			return subject;
+			Subject createdSubject = subjectDAO.selectByName(name);
+			return createdSubject;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;

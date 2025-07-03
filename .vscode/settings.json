@@ -1,3 +1,4 @@
 {
-  "codetogether.virtualCursorJoin": "sharedVirtualCursor"
+  "codetogether.virtualCursorJoin": "sharedVirtualCursor",
+  "java.debug.settings.onBuildFailureProceed": true
 }

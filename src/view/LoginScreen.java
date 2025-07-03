@@ -12,7 +12,6 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import controller.LoginController;
 import controller.UserController;
 import database.model.User;
 
@@ -58,18 +57,23 @@ public class LoginScreen {
                 String username = txfName.getText();
                 String password = new String(txfPassword.getPassword());
 
-                User user = LoginController.authenticate(username, password);
+                User user = null;
+                try {
+                    user = UserController.login(username, password);
+                } catch (SQLException e1) {
+                    JOptionPane.showMessageDialog(null, "Error creating account.", "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                }
 
                 if (user != null) {
                     MainScreen.setLoggedUser(user);
                     mainScreen.updateButtonVisibility();
                     mainScreen.setWelcomePanel();
                 } else {
-                    JOptionPane.showMessageDialog(null, "Login inválido.");
+                    JOptionPane.showMessageDialog(null, "Login failed.");
                 }
             }
         });
-
 
         btnCreateAccount.addActionListener(new ActionListener() {
             @Override
@@ -88,7 +92,8 @@ public class LoginScreen {
                     txfPassword.setText("");
                 } catch (SQLException ex) {
                     ex.printStackTrace();
-                    JOptionPane.showMessageDialog(btnCreateAccount, "Error creating account.", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(btnCreateAccount, "Error creating account.", "Error",
+                            JOptionPane.ERROR_MESSAGE);
                 }
             }
         });

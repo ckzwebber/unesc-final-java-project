@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
@@ -22,10 +21,8 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
-import controller.PhaseController;
 import controller.SubjectController;
 import controller.TeacherController;
-import database.model.Phase;
 import database.model.Subject;
 import database.model.Teacher;
 import utils.TablesUtil;
@@ -37,12 +34,12 @@ public class TeacherScreen {
     private JPanel pnlTeachers;
     private String action;
     private JPanel panel;
-    private JLabel lblId, lblName, lblTitle;
-    private JTextField txfId, txfName, txfTitle;
+    private JLabel lblId;
+    private JTextField txfId, txfName;
     private JTable table;
     private JScrollPane scroll;
-    private JButton btnExit, btnConfirmAdd, btnConfirm;
-    private String name, title, id;
+    private JButton btnExit, btnConfirm;
+    private String id;
     private JComboBox<Map.Entry<Integer, String>> cbTitles;
     private JComboBox<String> cbSubjects;
 
@@ -165,8 +162,9 @@ public class TeacherScreen {
                         TeacherController.insert(name, title, selectedSubject.getId());
                         JOptionPane.showMessageDialog(pnlTeachers, "Teacher added.");
                     } catch (Exception ex) {
-	                    JOptionPane.showMessageDialog(pnlTeachers, "Erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-	                }
+                        JOptionPane.showMessageDialog(pnlTeachers, "Erro: " + ex.getMessage(), "Erro",
+                                JOptionPane.ERROR_MESSAGE);
+                    }
                 }
             });
 
@@ -214,8 +212,9 @@ public class TeacherScreen {
                         JOptionPane.showMessageDialog(btnConfirm, "Teacher with ID " + id + " removed.");
 
                     } catch (Exception ex) {
-	                    JOptionPane.showMessageDialog(pnlTeachers, "Erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-	                }
+                        JOptionPane.showMessageDialog(pnlTeachers, "Erro: " + ex.getMessage(), "Erro",
+                                JOptionPane.ERROR_MESSAGE);
+                    }
                 }
             });
 

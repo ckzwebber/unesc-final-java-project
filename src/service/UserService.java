@@ -106,7 +106,8 @@ public class UserService {
 
 		try {
 			userDAO.insert(user);
-			return user;
+			User createdUser = userDAO.selectByUsername(username);
+			return createdUser;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;

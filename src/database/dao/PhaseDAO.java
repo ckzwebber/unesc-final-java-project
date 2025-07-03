@@ -10,26 +10,29 @@ public class PhaseDAO {
 
 	private static final String SELECT_ALL_QUERY = "SELECT id, phase_label, subject_count, teacher_count, course_id FROM phases";
 	private static final String SELECT_BY_ID_QUERY = "SELECT id, phase_label, subject_count, teacher_count, course_id FROM phases WHERE id = ?";
+	private static final String SELECT_BY_COURSE_ID = "SELECT * FROM phases WHERE course_id = ?";
+	private static final String SELECT_BY_PHASE_LABEL_AND_COURSE_ID = "SELECT * FROM phases WHERE phase_label = ? AND course_id = ?";
 	private static final String INSERT_QUERY = "INSERT INTO phases(phase_label, subject_count, teacher_count, course_id) VALUES (?, ?, ?, ?)";
 	private static final String UPDATE_QUERY = "UPDATE phases SET phase_label = ?, subject_count = ?, teacher_count = ?, course_id = ? WHERE id = ?";
 	private static final String DELETE_QUERY = "DELETE FROM phases WHERE id = ?";
-	private static final String SELECT_BY_COURSE_ID = "SELECT * FROM phases WHERE course_id = ?";
 
 	private final PreparedStatement selectAllStatement;
 	private final PreparedStatement selectByIdStatement;
+	private final PreparedStatement selectByCourseIdStatement;
+	private final PreparedStatement selectByPhaseLabelAndCourseIdStatement;
 	private final PreparedStatement insertStatement;
 	private final PreparedStatement updateStatement;
 	private final PreparedStatement deleteStatement;
-	private final PreparedStatement selectByCourseIdStatement;
 
 	public PhaseDAO() throws SQLException {
 		Connection connection = ConnectionFactory.getConnection();
 		selectAllStatement = connection.prepareStatement(SELECT_ALL_QUERY);
 		selectByIdStatement = connection.prepareStatement(SELECT_BY_ID_QUERY);
+		selectByCourseIdStatement = connection.prepareStatement(SELECT_BY_COURSE_ID);
+		selectByPhaseLabelAndCourseIdStatement = connection.prepareStatement(SELECT_BY_PHASE_LABEL_AND_COURSE_ID);
 		insertStatement = connection.prepareStatement(INSERT_QUERY);
 		updateStatement = connection.prepareStatement(UPDATE_QUERY);
 		deleteStatement = connection.prepareStatement(DELETE_QUERY);
-		selectByCourseIdStatement = connection.prepareStatement(SELECT_BY_COURSE_ID);
 	}
 
 	public void insert(Phase phase) throws SQLException {
@@ -65,6 +68,17 @@ public class PhaseDAO {
 			}
 		}
 		return phaseList;
+	}
+
+	public Phase selectByPhaseLabelAndCourseId(String phaseLabel, int courseId) throws SQLException {
+		selectByPhaseLabelAndCourseIdStatement.setString(1, phaseLabel);
+		selectByPhaseLabelAndCourseIdStatement.setInt(2, courseId);
+		try (ResultSet resultSet = selectByPhaseLabelAndCourseIdStatement.executeQuery()) {
+			if (resultSet.next()) {
+				return buildPhaseFromResultSet(resultSet);
+			}
+		}
+		return null;
 	}
 
 	public ArrayList<Phase> selectAll() throws SQLException {

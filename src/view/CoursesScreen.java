@@ -1,11 +1,9 @@
 package view;
 
-import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -15,7 +13,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
@@ -23,7 +20,6 @@ import controller.CourseController;
 import controller.PhaseController;
 import database.model.Course;
 import database.model.Phase;
-import service.CourseService;
 import utils.CourseUtil;
 import utils.TablesUtil;
 
@@ -33,15 +29,13 @@ public class CoursesScreen {
 	private JPanel pnlCourses;
 	private String action;
 	private JPanel panel;
-	private JLabel lblId, lblName;
+	private JLabel lblId;
 	private JTextField txfId, txfName;
 	private JTable tabel;
 	private JScrollPane scroll;
-	private JButton btnExit, btnConfirmAdd, btnConfirm;
-	private String name, id, endPhase, startPhase;
+	private JButton btnExit, btnConfirm;
+	private String name, id;
 	private LocalDate processingDate;
-	private JLabel lblDate;
-	private JTextField txfDate;
 
 	private DefaultTableModel model = new DefaultTableModel() {
 		@Override
@@ -53,7 +47,6 @@ public class CoursesScreen {
 	private JTextField txfStartPhase;
 	private JTextField txfSequence;
 	private JTextField txfEndPhase;
-	private JTextArea txaLayout;
 
 	public CoursesScreen(MainScreen mainScreen) {
 		this.mainScreen = mainScreen;
@@ -195,7 +188,7 @@ public class CoursesScreen {
 			lblId.setBounds(100, 210, 200, 20);
 			pnlCourses.add(lblId);
 			txfId = new JTextField();
-			txfId.setBounds(250, 210, 100, 20);
+			txfId.setBounds(280, 210, 100, 20);
 			pnlCourses.add(txfId);
 			btnConfirm = new JButton("Confirm");
 			btnConfirm.setBounds(150, 240, 150, 30);

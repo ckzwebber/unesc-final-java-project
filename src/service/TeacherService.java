@@ -101,7 +101,8 @@ public class TeacherService {
 
 		try {
 			teacherDAO.insert(teacher);
-			return teacher;
+			Teacher createdTeacher = teacherDAO.selectByName(name);
+			return createdTeacher;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;

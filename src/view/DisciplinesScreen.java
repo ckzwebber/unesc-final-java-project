@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
@@ -20,14 +19,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.plaf.ComboBoxUI;
 import javax.swing.table.DefaultTableModel;
-
-import org.postgresql.core.Utils;
 
 import controller.SubjectController;
 import controller.PhaseController;
-import database.model.Course;
 import database.model.Phase;
 import database.model.Subject;
 import utils.SubjectUtil;
@@ -39,17 +34,13 @@ public class DisciplinesScreen {
     private JPanel pnlDisciplines;
     private String action;
     private JPanel panel;
-    private JLabel lblCode, lblName, lblWeekDay, lblPhase;
-    private JTextField txfCode, txfName, txfWeekDay, txfPhaseId;
+    private JTextField txfCode, txfName;
     private JTable table;
     private JScrollPane scroll;
-    private JButton btnExit, btnConfirmAdd, btnConfirm;
-    private String code, name, weekDay, day;
+    private JButton btnExit, btnConfirm;
     private JComboBox<Map.Entry<Integer, String>> cbWeekdays;
-    private JComboBox<Phase> cbPhases;
-    private Phase selectedPhase;
-	private JLabel lblId;
-	private JTextField txfId;
+    private JLabel lblId;
+    private JTextField txfId;
 
     private DefaultTableModel model = new DefaultTableModel() {
         @Override
@@ -88,14 +79,15 @@ public class DisciplinesScreen {
             model.addColumn("Code");
             model.addColumn("Name");
             model.addColumn("Week Day");
-            model.addColumn("Phase ID");
+            model.addColumn("Phase");
             table = new JTable(model);
             scroll = new JScrollPane(table);
 
             List<Subject> subjectList = SubjectController.list();
             for (Subject s : subjectList) {
+                Phase subjectPhase = PhaseController.getById(s.getPhaseId());
                 model.addRow(new String[] {
-                        s.getCode(), s.getName(), SubjectUtil.getDayByCode(s.getWeekDay()), s.getPhaseIdAsString()
+                        s.getCode(), s.getName(), SubjectUtil.getDayByCode(s.getWeekDay()), subjectPhase.getName(),
                 });
             }
 
@@ -132,7 +124,9 @@ public class DisciplinesScreen {
                         boolean isSelected, boolean cellHasFocus) {
                     super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                     if (value instanceof Map.Entry) {
+                        @SuppressWarnings("unchecked")
                         Map.Entry<Integer, String> entry = (Map.Entry<Integer, String>) value;
+                        @SuppressWarnings("unchecked")
                         Map.Entry<Integer, String> selectedEntry = (Map.Entry<Integer, String>) cbWeekdays
                                 .getSelectedItem();
                         int selectedDay = selectedEntry.getKey();
@@ -175,8 +169,9 @@ public class DisciplinesScreen {
                         SubjectController.insert(code, name, weekDay, 1, selectedPhase.getId());
                         JOptionPane.showMessageDialog(pnlDisciplines, "Subject added.");
                     } catch (Exception ex) {
-	                    JOptionPane.showMessageDialog(pnlDisciplines, "Erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-	                }
+                        JOptionPane.showMessageDialog(pnlDisciplines, "Erro: " + ex.getMessage(), "Erro",
+                                JOptionPane.ERROR_MESSAGE);
+                    }
                 }
             });
 
@@ -194,8 +189,8 @@ public class DisciplinesScreen {
             List<Subject> subjectList = SubjectController.list();
             for (Subject s : subjectList) {
                 model.addRow(new String[] {
-                		s.getIdAsString(), s.getName(), s.getCode(), SubjectUtil.getDayByCode(s.getWeekDay()),
-                                         });
+                        s.getIdAsString(), s.getName(), s.getCode(), SubjectUtil.getDayByCode(s.getWeekDay()),
+                });
             }
 
             lblId = new JLabel("Select ID to remove:");
@@ -216,14 +211,15 @@ public class DisciplinesScreen {
                         SubjectController.delete(id);
                         txfCode.setText(null);
                         TablesUtil.refreshTable(model, SubjectController.list(), s -> new String[] {
-                        		s.getIdAsString(), s.getName(), s.getCode(), SubjectUtil.getDayByCode(s.getWeekDay()),
+                                s.getIdAsString(), s.getName(), s.getCode(), SubjectUtil.getDayByCode(s.getWeekDay()),
 
                         });
                         JOptionPane.showMessageDialog(btnConfirm, "Subject with ID " + id + " removed.");
 
                     } catch (Exception ex) {
-	                    JOptionPane.showMessageDialog(pnlDisciplines, "Erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-	                }
+                        JOptionPane.showMessageDialog(pnlDisciplines, "Erro: " + ex.getMessage(), "Erro",
+                                JOptionPane.ERROR_MESSAGE);
+                    }
                 }
             });
 
