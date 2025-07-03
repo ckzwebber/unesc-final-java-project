@@ -34,7 +34,11 @@ public class CourseService {
 		}
 
 		try {
-			return courseDAO.selectById(id);
+			Course course = courseDAO.selectById(id);
+			if (course == null) {
+				throw new IllegalArgumentException("Course not found");
+			}
+			return course;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
@@ -47,7 +51,11 @@ public class CourseService {
 		}
 
 		try {
-			return courseDAO.selectByName(name);
+			Course course = courseDAO.selectByName(name);
+			if (course == null) {
+				throw new IllegalArgumentException("Course not found");
+			}
+			return course;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
@@ -60,6 +68,10 @@ public class CourseService {
 		}
 
 		try {
+			Course course = courseOnDatabase(id);
+			if (course == null) {
+				throw new IllegalArgumentException("Course not found");
+			}
 			courseDAO.delete(id);
 		} catch (SQLException e) {
 			e.printStackTrace();

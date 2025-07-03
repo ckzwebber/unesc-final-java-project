@@ -33,7 +33,11 @@ public class PhaseService {
 		}
 
 		try {
-			return phaseDAO.selectById(id);
+			Phase phase = phaseDAO.selectById(id);
+			if (phase == null) {
+				throw new IllegalArgumentException("Phase not found");
+			}
+			return phase;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
@@ -46,7 +50,11 @@ public class PhaseService {
 		}
 
 		try {
-			return phaseDAO.selectByCourseId(courseId);
+			List<Phase> phases = phaseDAO.selectByCourseId(courseId);
+			if (phases == null) {
+				throw new IllegalArgumentException("Phase not found for course ID: " + courseId);
+			}
+			return phases;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
@@ -59,6 +67,10 @@ public class PhaseService {
 		}
 
 		try {
+			Phase phase = phaseOnDatabase(id);
+			if (phase == null) {
+				throw new IllegalArgumentException("Phase not found");
+			}
 			phaseDAO.delete(id);
 		} catch (SQLException e) {
 			e.printStackTrace();

@@ -163,8 +163,8 @@ public class PhaseScreen {
                         PhaseController.insert(label, subjCount, teachCount, selectedCourse.getId());
                         JOptionPane.showMessageDialog(pnlPhases, "Phase added.");
                     } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(pnlPhases, "Error: " + ex.getMessage());
-                    }
+	                    JOptionPane.showMessageDialog(pnlPhases, "Erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+	                }
                 }
             });
 
@@ -205,15 +205,18 @@ public class PhaseScreen {
                         id = txfId.getText();
                         int intId = Integer.parseInt(id);
                         PhaseController.delete(intId);
-                        JOptionPane.showMessageDialog(btnConfirm, "Phase with ID " + id + " removed.");
                         txfId.setText(null);
                         Phase phase = new Phase();
                     	Course c = CourseController.getById(phase.getId());
                         TablesUtil.refreshTable(model, PhaseController.list(), p -> new String[]{
-                        		 p.getIdAsString(), p.getName() + " - " + c.getName(), p.getSubjectCountAsString(), p.getTeacherCountAsString()});
-                    } catch (SQLException ex) {
-                        ex.printStackTrace();
-                    }
+                        		 p.getIdAsString(), p.getName() + " - " + c.getName(), p.getSubjectCountAsString(), p.getTeacherCountAsString()
+                        		 });
+                        
+                        JOptionPane.showMessageDialog(btnConfirm, "Phase with ID " + id + " removed.");
+                        
+                    } catch (Exception ex) {
+	                    JOptionPane.showMessageDialog(pnlPhases, "Erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+	                }
                 }
             });
 

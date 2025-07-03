@@ -14,6 +14,7 @@ public class CourseUtil {
 		        sb.append(", ");
 		    }
 		}
+		if(sb.toString().isEmpty()) return "No databse";
 	    return sb.toString();
 	}
 

@@ -33,7 +33,11 @@ public class TeacherService {
 		}
 
 		try {
-			return teacherDAO.selectById(id);
+			Teacher teacher = teacherDAO.selectById(id);
+			if (teacher == null) {
+				throw new IllegalArgumentException("No teacher found with ID: " + id);
+			}
+			return teacher;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
@@ -46,7 +50,11 @@ public class TeacherService {
 		}
 
 		try {
-			return teacherDAO.selectByName(name);
+			Teacher teacher = teacherDAO.selectByName(name);
+			if (teacher == null) {
+				throw new IllegalArgumentException("No teacher found with name: " + name);
+			}
+			return teacher;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
@@ -59,6 +67,10 @@ public class TeacherService {
 		}
 
 		try {
+			Teacher teacher = teacherDAO.selectById(id);
+			if (teacher == null) {
+				throw new IllegalArgumentException("Teacher not found");
+			}
 			teacherDAO.delete(id);
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -115,8 +127,8 @@ public class TeacherService {
 
 		Teacher teacherOnDatabase = teacherOnDatabase(name);
 
-		if (teacherOnDatabase != null && teacherOnDatabase.getId() != id) {
-			throw new IllegalArgumentException("Another teacher with this name already exists");
+		if (teacherOnDatabase == null) {
+			throw new IllegalArgumentException("Teacher not found");
 		}
 
 		Teacher teacher = new Teacher(id, name, title, subjectId);

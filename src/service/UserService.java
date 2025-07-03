@@ -34,7 +34,11 @@ public class UserService {
 		}
 
 		try {
-			return userDAO.selectByUsername(username);
+			User user = userDAO.selectByUsername(username);
+			if (user == null) {
+				throw new SQLException("User not found");
+			}
+			return user;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
@@ -47,6 +51,10 @@ public class UserService {
 		}
 
 		try {
+			User user = userDAO.selectById(id);
+			if (user == null) {
+				throw new SQLException("User not found");
+			}
 			userDAO.delete(id);
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -74,18 +82,13 @@ public class UserService {
 		}
 	}
 
-	public User create(String username, String password, String confirmPassword) {
-		if (username == null || username.isEmpty() || password == null || password.isEmpty() || confirmPassword == null
-				|| confirmPassword.isEmpty()) {
-			throw new IllegalArgumentException("Username, password or confirm password cannot be empty");
+	public User create(String username, String password) {
+		if (username == null || username.isEmpty() || password == null || password.isEmpty()) {
+			throw new IllegalArgumentException("Username or password cannot be empty");
 		}
 
 		if (username.length() < 3 || password.length() < 8) {
 			throw new IllegalArgumentException("Invalid username or password");
-		}
-
-		if (!password.equals(confirmPassword)) {
-			throw new IllegalArgumentException("Passwords do not match");
 		}
 
 		User userOnDatabase = userOnDatabase(username);

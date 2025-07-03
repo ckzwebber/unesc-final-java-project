@@ -24,8 +24,8 @@ public class UserController {
 		return user;
 	}
 
-	public static User insert(String username, String password, String confirmPassword) throws SQLException {
-		User user = userService.create(username, password, confirmPassword);
+	public static User insert(String username, String password) throws SQLException {
+		User user = userService.create(username, password);
 		return user;
 	}
 

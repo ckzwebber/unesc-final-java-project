@@ -1,3 +1,4 @@
+/*
 package view;
 
 import java.awt.event.ActionEvent;
@@ -84,30 +85,9 @@ public class UsersScreen {
 
         } else if (action.equals("Add")) {
 
-            lblName = new JLabel("Name:");
-            lblName.setBounds(50, 100, 100, 20);
-            pnlUsers.add(lblName);
-            txfName = new JTextField();
-            txfName.setBounds(160, 100, 200, 20);
-            pnlUsers.add(txfName);
-
-            btnConfirmAdd = new JButton("Confirm");
-            btnConfirmAdd.setBounds(150, 180, 150, 30);
-            pnlUsers.add(btnConfirmAdd);
-            btnConfirmAdd.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    try {
-                        name = txfName.getText();
-                        UserController.insert(name);
-                        JOptionPane.showMessageDialog(btnConfirmAdd, "User: " + name + " added.");
-                        txfName.setText("");
-                    } catch (SQLException ex) {
-                        ex.printStackTrace();
-                    }
-                }
-            });
-
+            LoginScreen loginScreen = new LoginScreen();
+            loginScreen.createLoginPanel(mainScreen);
+            
             return pnlUsers;
 
         } else if (action.equals("Remove")) {
@@ -162,3 +142,4 @@ public class UsersScreen {
         }
     }
 }
+*/

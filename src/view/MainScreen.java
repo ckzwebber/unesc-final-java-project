@@ -2,7 +2,9 @@ package view;
 
 import javax.swing.*;
 
+import controller.PhaseController;
 import database.model.ImportData;
+import database.model.Phase;
 import database.model.User;
 import service.ImportService;
 import utils.SubjectUtil;
@@ -12,6 +14,7 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.sql.SQLException;
 
 public class MainScreen extends JFrame {
 
@@ -44,6 +47,27 @@ public class MainScreen extends JFrame {
     public void createComponent() {
     	
     	//os botoes nao podem aparecer enquanto o usuario nao logar
+    	 lblSystem = new JLabel("Register system");
+    	    lblSystem.setBounds(20, 20, 150, 40);
+    	    getContentPane().add(lblSystem);
+
+    	    btnView = new JButton("View");
+    	    btnView.setBounds(20, 180, 100, 40);
+    	    getContentPane().add(btnView);
+
+    	    btnAdd = new JButton("Add");
+    	    btnAdd.setBounds(20, 230, 100, 40);
+    	    getContentPane().add(btnAdd);
+
+    	    btnRemove = new JButton("Remove");
+    	    btnRemove.setBounds(20, 280, 100, 40);
+    	    getContentPane().add(btnRemove);
+
+    	    btnImportFile = new JButton("Import file");
+    	    btnImportFile.setBounds(750, 200, 100, 100);
+    	    getContentPane().add(btnImportFile);
+
+ /*   	    updateButtonVisibility();   */
     	
         
         SelectTableScreen screen = new SelectTableScreen();
@@ -58,9 +82,7 @@ public class MainScreen extends JFrame {
         lblSystem.setBounds(20, 20, 150, 40);
         getContentPane().add(lblSystem);
 
-        btnView = new JButton("View");
-        btnView.setBounds(20, 180, 100, 40);
-        getContentPane().add(btnView);
+        
         btnView.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -79,9 +101,7 @@ public class MainScreen extends JFrame {
             }
         });
 
-        btnAdd = new JButton("Add");
-        btnAdd.setBounds(20, 230, 100, 40);
-        getContentPane().add(btnAdd);
+    
         btnAdd.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -100,9 +120,7 @@ public class MainScreen extends JFrame {
             }
         });
 
-        btnRemove = new JButton("Remove");
-        btnRemove.setBounds(20, 280, 100, 40);
-        getContentPane().add(btnRemove);
+       
         btnRemove.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -121,9 +139,7 @@ public class MainScreen extends JFrame {
             }
         });
 
-        btnImportFile = new JButton("Import file");
-        btnImportFile.setBounds(750, 200, 100, 100);
-        getContentPane().add(btnImportFile);
+       
         btnImportFile.addActionListener( new ActionListener() {
 			
 			@Override
@@ -138,30 +154,34 @@ public class MainScreen extends JFrame {
 				if( e.getSource() == btnImportFile) {
 					int i = fileChooser.showOpenDialog(screen);
 					if( i == JFileChooser.APPROVE_OPTION) {
-						File file = fileChooser.getSelectedFile(); 
-						//JOptionPane.showMessageDialog(screen, file.getPath().toString());
+						File file = fileChooser.getSelectedFile();
 						ImportService is = new ImportService();
+						try {
 						ImportData importData = is.readImportFile(file.getPath().toString());
-						
 						JOptionPane.showConfirmDialog(screen, "Data in the file:\n" +
-						"Course name: " + importData.getCourse().getName() + "\n" +
-						"Process date: " + importData.getCourse().getProcessingDate() + "\n" +
-						importData.getCourse().getStartPhase() + " until " + importData.getCourse().getEndPhase() + "\n" +
-						"File sequence: " + importData.getCourse().getSequence() + "\n" +
-						"File layout: " + importData.getCourse().getLayout() + "\n" +
-						"Phase: " + importData.getPhases().getFirst().getName() + "\n" +
-						"Quantity of Disciplines: " + importData.getPhases().getFirst().getSubjectCount() + "\n" +
-						"Quantity of Teachers: " + importData.getPhases().getFirst().getTeacherCount() + "\n" +
-						"Discipline: " + importData.getSubjects().getFirst().getCode() + "-" 
-						+ importData.getSubjects().getFirst().getName() + "\n" +
-						"Week day: " + SubjectUtil.getDayByCode(importData.getSubjects().getFirst().getWeekDay()) + "\n" +
-						"Phase of discipline: " + importData.getSubjects().getFirst()/*fase da disciplina*/ + "\n" +
-						"Discipline teachers: " + importData.getSubjects().getFirst().getTeacherQuantity() + "\n" +
-						"Teacher name: " + importData.getTeachers().getFirst().getName() + "\n" +
-						"Teacher title: " + TeacherUtil.getTitleById(importData.getTeachers().getFirst().getTitle()) + "\n" +
-						"Type of import: 9\n" 
-						
-						);
+								"Course name: " + importData.getCourse().getName() + "\n" +
+								"Process date: " + importData.getCourse().getProcessingDate() + "\n" +
+								importData.getCourse().getStartPhase() + " until " + importData.getCourse().getEndPhase() + "\n" +
+								"File sequence: " + importData.getCourse().getSequence() + "\n" +
+								"File layout: " + importData.getCourse().getLayout() + "\n" +
+								"Phase: " + importData.getPhases().getFirst().getName() + "\n" +
+								"Quantity of Disciplines: " + importData.getPhases().getFirst().getSubjectCount() + "\n" +
+								"Quantity of Teachers: " + importData.getPhases().getFirst().getTeacherCount() + "\n" +
+								"Discipline: " + importData.getSubjects().getFirst().getCode() + "-" 
+								+ importData.getSubjects().getFirst().getName() + "\n" +
+								"Week day: " + SubjectUtil.getDayByCode(importData.getSubjects().getFirst().getWeekDay()) + "\n" +
+								"Phase of discipline: " + importData.getPhases().getFirst().getName() + "\n" +
+								"Discipline teachers: " + importData.getSubjects().getFirst().getTeacherQuantity() + "\n" +
+								"Teacher name: " + importData.getTeachers().getFirst().getName() + "\n" +
+								"Teacher title: " + TeacherUtil.getTitleById(importData.getTeachers().getFirst().getTitle()) + "\n" +
+								"Type of import: 9\n" 
+								
+								);
+						}
+						catch(Exception ex) {
+		                    JOptionPane.showMessageDialog(MainScreen.this, "Erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+						}
+
 						
 						
 						//primeira linha
@@ -212,5 +232,28 @@ public class MainScreen extends JFrame {
         repaint();
         revalidate();
     }
+    
+ // Dentro da classe MainScreen
+    private static User loggedUser;
+
+    public static User getLoggedUser() {
+        return loggedUser;
+    }
+
+    public static void setLoggedUser(User user) {
+        loggedUser = user;
+    }
+
+    
+ // Dentro da classe MainScreen
+    void updateButtonVisibility() {
+        boolean isLoggedIn = getLoggedUser() != null;
+
+        btnView.setVisible(isLoggedIn);
+        btnAdd.setVisible(isLoggedIn);
+        btnRemove.setVisible(isLoggedIn);
+        btnImportFile.setVisible(isLoggedIn);
+    }
+
 
 }

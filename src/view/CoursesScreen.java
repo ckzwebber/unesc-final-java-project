@@ -50,12 +50,11 @@ public class CoursesScreen {
 		}
 	};
 
-
 	private JTextField txfStartPhase;
 	private JTextField txfSequence;
 	private JTextField txfEndPhase;
-	private JTextArea txaLayout;	
-	
+	private JTextArea txaLayout;
+
 	public CoursesScreen(MainScreen mainScreen) {
 		this.mainScreen = mainScreen;
 	}
@@ -97,8 +96,7 @@ public class CoursesScreen {
 				processingDate = c.getProcessingDate();
 				List<Phase> p = PhaseController.getByCourseId(c.getId());
 
-					model.addRow(new String[] { id, name, processingDate.toString(), CourseUtil.groupPhaseByCourseId(p)
-							});
+				model.addRow(new String[] { id, name, processingDate.toString(), CourseUtil.groupPhaseByCourseId(p) });
 			}
 
 			scroll.setBounds(50, 50, 350, 200);
@@ -108,59 +106,71 @@ public class CoursesScreen {
 
 		} else if (action.equals("Add")) {
 
-	        JLabel lblName = new JLabel("Name:");
-	        lblName.setBounds(50, 50, 100, 20);
-	        pnlCourses.add(lblName);
-	        txfName = new JTextField();
-	        txfName.setBounds(160, 50, 200, 20);
-	        pnlCourses.add(txfName);
+			JLabel lblName = new JLabel("Name:");
+			lblName.setBounds(50, 50, 100, 20);
+			pnlCourses.add(lblName);
+			txfName = new JTextField();
+			txfName.setBounds(160, 50, 200, 20);
+			pnlCourses.add(txfName);
 
-	        JLabel lblStart = new JLabel("Start Phase:");
-	        lblStart.setBounds(50, 80, 100, 20);
-	        pnlCourses.add(lblStart);
-	        txfStartPhase = new JTextField();
-	        txfStartPhase.setBounds(160, 80, 200, 20);
-	        pnlCourses.add(txfStartPhase);
+			JLabel lblStart = new JLabel("Start Phase:");
+			lblStart.setBounds(50, 80, 100, 20);
+			pnlCourses.add(lblStart);
+			txfStartPhase = new JTextField();
+			txfStartPhase.setBounds(160, 80, 200, 20);
+			pnlCourses.add(txfStartPhase);
 
-	        JLabel lblEnd = new JLabel("End Phase:");
-	        lblEnd.setBounds(50, 110, 100, 20);
-	        pnlCourses.add(lblEnd);
-	        txfEndPhase = new JTextField();
-	        txfEndPhase.setBounds(160, 110, 200, 20);
-	        pnlCourses.add(txfEndPhase);
+			JLabel lblEnd = new JLabel("End Phase:");
+			lblEnd.setBounds(50, 110, 100, 20);
+			pnlCourses.add(lblEnd);
+			txfEndPhase = new JTextField();
+			txfEndPhase.setBounds(160, 110, 200, 20);
+			pnlCourses.add(txfEndPhase);
 
-	        JLabel lblSeq = new JLabel("Sequence:");
-	        lblSeq.setBounds(50, 140, 100, 20);
-	        pnlCourses.add(lblSeq);
-	        txfSequence = new JTextField();
-	        txfSequence.setBounds(160, 140, 200, 20);
-	        pnlCourses.add(txfSequence);
+			JLabel lblSeq = new JLabel("Sequence:");
+			lblSeq.setBounds(50, 140, 100, 20);
+			pnlCourses.add(lblSeq);
+			txfSequence = new JTextField();
+			txfSequence.setBounds(160, 140, 200, 20);
+			pnlCourses.add(txfSequence);
 
-	        btnConfirm = new JButton("Confirm");
-	        btnConfirm.setBounds(150, 200, 120, 30);
-	        pnlCourses.add(btnConfirm);
+			btnConfirm = new JButton("Confirm");
+			btnConfirm.setBounds(150, 200, 120, 30);
+			pnlCourses.add(btnConfirm);
 
-	        btnConfirm.addActionListener(new ActionListener() {
-	            @Override
-	            public void actionPerformed(ActionEvent e) {
-	                try {
-	                    String name = txfName.getText();
-	                    String start = txfStartPhase.getText();
-	                    String end = txfEndPhase.getText();
-	                    int seq = Integer.parseInt(txfSequence.getText());
-	                    String layout = "9";
-	                    LocalDate today = LocalDate.now();
+			btnConfirm.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					try {
+						String name = txfName.getText().trim();
+						String start = txfStartPhase.getText().trim();
+						String end = txfEndPhase.getText().trim();
+						String seqText = txfSequence.getText().trim();
+						String layout = "9";
+						LocalDate today = LocalDate.now();
 
-	                    CourseController.insert(name, today, start, end, seq, layout);
-	                    JOptionPane.showMessageDialog(pnlCourses, "Course added.");
-	                } catch (Exception ex) {
-	                    JOptionPane.showMessageDialog(pnlCourses, "Error: " + ex.getMessage());
-	                }
-	            }
-	        });
+						if (name.isEmpty() || start.isEmpty() || end.isEmpty() || seqText.isEmpty()) {
+							JOptionPane.showMessageDialog(pnlCourses, "Todos os campos devem ser preenchidos.", "Aviso",
+									JOptionPane.WARNING_MESSAGE);
+							return;
+						}
 
-	        return pnlCourses;
-	    
+						int seq = Integer.parseInt(seqText);
+
+						CourseController.insert(name, today, start, end, seq, layout);
+						JOptionPane.showMessageDialog(pnlCourses, "Course added.");
+
+					} catch (NumberFormatException nfe) {
+						JOptionPane.showMessageDialog(pnlCourses, "Sequência deve ser um número inteiro.", "Erro",
+								JOptionPane.ERROR_MESSAGE);
+					} catch (Exception ex) {
+						JOptionPane.showMessageDialog(pnlCourses, "Erro: " + ex.getMessage(), "Erro",
+								JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			});
+
+			return pnlCourses;
 
 		} else if (action.equals("Remove")) {
 
@@ -170,15 +180,15 @@ public class CoursesScreen {
 			model.addColumn("Phases");
 			tabel = new JTable(model);
 			scroll = new JScrollPane(tabel);
-			
+
 			List<Course> courseList = CourseController.list();
 			for (Course c : courseList) {
 				id = c.getIdAsString();
 				name = c.getName();
 				processingDate = c.getProcessingDate();
 				List<Phase> phases = PhaseController.getByCourseId(c.getId());
-					model.addRow(new String[] { id, name, processingDate.toString(), CourseUtil.groupPhaseByCourseId(phases)
-							});
+				model.addRow(
+						new String[] { id, name, processingDate.toString(), CourseUtil.groupPhaseByCourseId(phases) });
 			}
 
 			lblId = new JLabel("Select ID to be removed:");
@@ -198,14 +208,18 @@ public class CoursesScreen {
 						id = txfId.getText();
 						int intId = Integer.parseInt(id);
 						CourseController.delete(intId);
-						JOptionPane.showMessageDialog(btnConfirm, "The course with ID " + id + " was removed.");
 						txfId.setText(null);
-						TablesUtil.refreshTable(model, CourseController.list(),
-								c -> new String[] { c.getIdAsString(), c.getName() });
-					} catch (SQLException e1) {
-						e1.printStackTrace();
-					}
+						Course course = new Course();
+						List<Phase> phases = PhaseController.getByCourseId(course.getId());
+						TablesUtil.refreshTable(model, CourseController.list(), c -> new String[] { id, name,
+								processingDate.toString(), CourseUtil.groupPhaseByCourseId(phases) });
+						JOptionPane.showMessageDialog(btnConfirm, "The course with ID " + id + " was removed.");
 
+					} catch (Exception ex) {
+						txfId.setText(null);
+						JOptionPane.showMessageDialog(pnlCourses, "Erro: " + ex.getMessage(), "Erro",
+								JOptionPane.ERROR_MESSAGE);
+					}
 				}
 			});
 

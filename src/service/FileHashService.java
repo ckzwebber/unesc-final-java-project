@@ -35,7 +35,11 @@ public class FileHashService {
 		}
 
 		try {
-			return fileHashDAO.selectByHash(fileHash);
+			FileHash fileHashDb = fileHashDAO.selectByHash(fileHash);
+			if (fileHashDb == null) {
+				throw new IllegalArgumentException("File hash not found");
+			}
+			return fileHashDb;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
@@ -48,6 +52,10 @@ public class FileHashService {
 		}
 
 		try {
+			FileHash fileHashDb = fileHashDAO.selectByHash(fileHash);
+			if (fileHashDb == null) {
+				throw new IllegalArgumentException("File hash not found");
+			}
 			fileHashDAO.delete(fileHash);
 		} catch (SQLException e) {
 			e.printStackTrace();

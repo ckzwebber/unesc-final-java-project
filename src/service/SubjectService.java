@@ -33,7 +33,11 @@ public class SubjectService {
 		}
 
 		try {
-			return subjectDAO.selectById(id);
+			Subject subject = subjectDAO.selectById(id);
+			if (subject == null) {
+				throw new IllegalArgumentException("Subject not found with the given ID");
+			}
+			return subject;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
@@ -46,7 +50,11 @@ public class SubjectService {
 		}
 
 		try {
-			return subjectDAO.selectByName(name);
+			Subject subject = subjectDAO.selectByName(name);
+			if (subject == null) {
+				throw new IllegalArgumentException("Subject not found with the given name");
+			}
+			return subject;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
@@ -59,7 +67,11 @@ public class SubjectService {
 		}
 
 		try {
-			return subjectDAO.selectByPhaseId(phaseId);
+			List<Subject> subjects = subjectDAO.selectByPhaseId(phaseId);
+			if (subjects == null) {
+				throw new IllegalArgumentException("No subjects found for the given phase ID");
+			}
+			return subjects;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
@@ -72,6 +84,10 @@ public class SubjectService {
 		}
 
 		try {
+			Subject subject = subjectDAO.selectById(id);
+			if (subject == null) {
+				throw new IllegalArgumentException("Subject not found");
+			}
 			subjectDAO.delete(id);
 		} catch (SQLException e) {
 			e.printStackTrace();

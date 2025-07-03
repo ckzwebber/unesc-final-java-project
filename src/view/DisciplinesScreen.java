@@ -48,6 +48,8 @@ public class DisciplinesScreen {
     private JComboBox<Map.Entry<Integer, String>> cbWeekdays;
     private JComboBox<Phase> cbPhases;
     private Phase selectedPhase;
+	private JLabel lblId;
+	private JTextField txfId;
 
     private DefaultTableModel model = new DefaultTableModel() {
         @Override
@@ -148,7 +150,6 @@ public class DisciplinesScreen {
             pnlDisciplines.add(lblPhase);
 
             JComboBox<String> cbPhases = new JComboBox<>();
-            // Map para relacionar nome -> objeto Phase
             Map<String, Phase> mapPhaseByName = new HashMap<>();
             List<Phase> phases = PhaseController.list();
             for (Phase p : phases) {
@@ -174,8 +175,8 @@ public class DisciplinesScreen {
                         SubjectController.insert(code, name, weekDay, 1, selectedPhase.getId());
                         JOptionPane.showMessageDialog(pnlDisciplines, "Subject added.");
                     } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(pnlDisciplines, "Error: " + ex.getMessage());
-                    }
+	                    JOptionPane.showMessageDialog(pnlDisciplines, "Erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+	                }
                 }
             });
 
@@ -183,26 +184,26 @@ public class DisciplinesScreen {
 
         } else if (action.equals("Remove")) {
 
-            model.addColumn("Code");
+            model.addColumn("ID");
             model.addColumn("Name");
-            model.addColumn("Week Day");
-            model.addColumn("Phase ID");
+            model.addColumn("Code");
+            model.addColumn("Week day");
             table = new JTable(model);
             scroll = new JScrollPane(table);
 
             List<Subject> subjectList = SubjectController.list();
             for (Subject s : subjectList) {
                 model.addRow(new String[] {
-                        s.getCode(), s.getName(), SubjectUtil.getDayByCode(s.getWeekDay()), s.getPhaseIdAsString()
-                });
+                		s.getIdAsString(), s.getName(), s.getCode(), SubjectUtil.getDayByCode(s.getWeekDay()),
+                                         });
             }
 
-            lblCode = new JLabel("Select Code to remove:");
-            lblCode.setBounds(100, 210, 200, 20);
-            pnlDisciplines.add(lblCode);
-            txfCode = new JTextField();
-            txfCode.setBounds(250, 210, 100, 20);
-            pnlDisciplines.add(txfCode);
+            lblId = new JLabel("Select ID to remove:");
+            lblId.setBounds(100, 210, 200, 20);
+            pnlDisciplines.add(lblId);
+            txfId = new JTextField();
+            txfId.setBounds(250, 210, 100, 20);
+            pnlDisciplines.add(txfId);
 
             btnConfirm = new JButton("Confirm");
             btnConfirm.setBounds(150, 240, 150, 30);
@@ -211,19 +212,18 @@ public class DisciplinesScreen {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     try {
-                        code = txfCode.getText();
-                        int intCode = Integer.parseInt(code);
-                        SubjectController.delete(intCode);
-                        JOptionPane.showMessageDialog(btnConfirm, "Subject with code " + code + " removed.");
+                        int id = Integer.parseInt(txfId.getText());
+                        SubjectController.delete(id);
                         txfCode.setText(null);
                         TablesUtil.refreshTable(model, SubjectController.list(), s -> new String[] {
-                                s.getCode(), s.getName(), SubjectUtil.getDayByCode(s.getWeekDay()),
-                                s.getPhaseIdAsString()
+                        		s.getIdAsString(), s.getName(), s.getCode(), SubjectUtil.getDayByCode(s.getWeekDay()),
 
                         });
-                    } catch (SQLException ex) {
-                        ex.printStackTrace();
-                    }
+                        JOptionPane.showMessageDialog(btnConfirm, "Subject with ID " + id + " removed.");
+
+                    } catch (Exception ex) {
+	                    JOptionPane.showMessageDialog(pnlDisciplines, "Erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+	                }
                 }
             });
 

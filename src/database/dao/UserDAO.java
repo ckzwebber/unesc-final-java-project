@@ -13,12 +13,14 @@ public class UserDAO {
 
 	private static final String SELECT_ALL_QUERY = "SELECT id, username FROM users";
 	private static final String SELECT_BY_USERNAME_QUERY = "SELECT id, username, password FROM users WHERE username = ?";
+	private static final String SELECT_BY_ID_QUERY = "SELECT id, username, password FROM users WHERE id = ?";
 	private static final String INSERT_QUERY = "INSERT INTO users(username, password) VALUES (?, ?)";
 	private static final String UPDATE_QUERY = "UPDATE users SET password = ? WHERE id = ?";
 	private static final String DELETE_QUERY = "DELETE FROM users WHERE id = ?";
 
 	private final PreparedStatement selectAllStatement;
 	private final PreparedStatement selectByUsernameStatement;
+	private final PreparedStatement selectByIdStatement;
 	private final PreparedStatement insertStatement;
 	private final PreparedStatement updateStatement;
 	private final PreparedStatement deleteStatement;
@@ -27,6 +29,7 @@ public class UserDAO {
 		Connection connection = ConnectionFactory.getConnection();
 		selectAllStatement = connection.prepareStatement(SELECT_ALL_QUERY);
 		selectByUsernameStatement = connection.prepareStatement(SELECT_BY_USERNAME_QUERY);
+		selectByIdStatement = connection.prepareStatement(SELECT_BY_ID_QUERY);
 		insertStatement = connection.prepareStatement(INSERT_QUERY);
 		updateStatement = connection.prepareStatement(UPDATE_QUERY);
 		deleteStatement = connection.prepareStatement(DELETE_QUERY);
@@ -63,6 +66,17 @@ public class UserDAO {
 	public User selectByUsername(String username) throws SQLException {
 		selectByUsernameStatement.setString(1, username);
 		try (ResultSet resultSet = selectByUsernameStatement.executeQuery()) {
+			if (resultSet.next()) {
+				User user = buildUserFromResultSet(resultSet);
+				return user;
+			}
+		}
+		return null;
+	}
+
+	public User selectById(int id) throws SQLException {
+		selectByIdStatement.setInt(1, id);
+		try (ResultSet resultSet = selectByIdStatement.executeQuery()) {
 			if (resultSet.next()) {
 				User user = buildUserFromResultSet(resultSet);
 				return user;

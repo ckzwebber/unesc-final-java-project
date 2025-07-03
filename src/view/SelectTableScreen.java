@@ -62,7 +62,7 @@ public class SelectTableScreen extends JFrame{
 		});
 
         btnPhases = new JButton("Phases");
-        btnPhases.setBounds(70, 180, 120, 30);
+        btnPhases.setBounds(250, 130, 120, 30);
         pnlScreen.add(btnPhases);
         btnPhases.addActionListener( new ActionListener() {
 			
@@ -92,24 +92,6 @@ public class SelectTableScreen extends JFrame{
 					e1.printStackTrace();
 				}
 				mainScreen.setPanel(pnlScreen);
-			}
-		});
-
-        btnUsers = new JButton("Users");
-        btnUsers.setBounds(250, 130, 120, 30);
-        pnlScreen.add(btnUsers);
-        btnUsers.addActionListener( new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				UsersScreen usersScreen = new UsersScreen(mainScreen);
-				try {
-					pnlScreen = usersScreen.createPanel();
-				} catch (SQLException e1) {
-					e1.printStackTrace();
-				}
-				mainScreen.setPanel(pnlScreen);
-				
 			}
 		});
 

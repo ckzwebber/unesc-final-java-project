@@ -12,7 +12,9 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import controller.LoginController;
 import controller.UserController;
+import database.model.User;
 
 public class LoginScreen {
 
@@ -51,28 +53,23 @@ public class LoginScreen {
         btnCreateAccount.setBounds(220, 170, 140, 30);
         pnlLogin.add(btnCreateAccount);
 
-      /*  btnLogin.addActionListener(new ActionListener() {
-            @Override
+        btnLogin.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String name = txfName.getText();
+                String username = txfName.getText();
                 String password = new String(txfPassword.getPassword());
 
-                try {
-                    boolean success = UserController.login(name, password);
-                    if (success) {
-                        JOptionPane.showMessageDialog(btnLogin, "Welcome, " + name + "!");
-                        // Aqui você pode trocar a tela para o painel principal:
-                        SelectTableScreen selectScreen = new SelectTableScreen();
-                        JPanel panel = selectScreen.createComponentsSelectTable(mainScreen);
-                        mainScreen.setPanel(panel);
-                    } else {
-                        JOptionPane.showMessageDialog(btnLogin, "Invalid username or password.", "Login Failed", JOptionPane.ERROR_MESSAGE);
-                    }
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
+                User user = LoginController.authenticate(username, password);
+
+                if (user != null) {
+                    MainScreen.setLoggedUser(user);
+                    mainScreen.updateButtonVisibility();
+                    mainScreen.setWelcomePanel();
+                } else {
+                    JOptionPane.showMessageDialog(null, "Login inválido.");
                 }
             }
-        }); */
+        });
+
 
         btnCreateAccount.addActionListener(new ActionListener() {
             @Override

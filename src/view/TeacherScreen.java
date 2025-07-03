@@ -89,8 +89,10 @@ public class TeacherScreen {
 
             List<Teacher> teacherList = TeacherController.list();
             for (Teacher t : teacherList) {
+                Subject teacherSubject = SubjectController.getById(t.getSubjectId());
+                String teacherSubjectName = teacherSubject.getName();
                 model.addRow(new String[] {
-                        t.getIdAsString(), t.getName(), t.getTitleAsString(), t.getSubjectIdAsString()
+                        t.getIdAsString(), t.getName(), t.getTitleAsString(), teacherSubjectName
                 });
             }
 
@@ -163,8 +165,8 @@ public class TeacherScreen {
                         TeacherController.insert(name, title, selectedSubject.getId());
                         JOptionPane.showMessageDialog(pnlTeachers, "Teacher added.");
                     } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(pnlTeachers, "Error: " + ex.getMessage());
-                    }
+	                    JOptionPane.showMessageDialog(pnlTeachers, "Erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+	                }
                 }
             });
 
@@ -205,14 +207,15 @@ public class TeacherScreen {
                         id = txfId.getText();
                         int intId = Integer.parseInt(id);
                         TeacherController.delete(intId);
-                        JOptionPane.showMessageDialog(btnConfirm, "Teacher with ID " + id + " removed.");
                         txfId.setText(null);
                         TablesUtil.refreshTable(model, TeacherController.list(), t -> new String[] {
                                 t.getIdAsString(), t.getName(), t.getTitleAsString(), t.getSubjectIdAsString()
                         });
-                    } catch (SQLException ex) {
-                        ex.printStackTrace();
-                    }
+                        JOptionPane.showMessageDialog(btnConfirm, "Teacher with ID " + id + " removed.");
+
+                    } catch (Exception ex) {
+	                    JOptionPane.showMessageDialog(pnlTeachers, "Erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+	                }
                 }
             });
 
