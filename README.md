@@ -6,7 +6,7 @@ Este repositório contém o projeto final em Java, desenvolvido como parte da av
 
 ## 🚧 Status do Projeto
 
-🔧 Em desenvolvimento
+🔧 Finalizado
 
 ## 📌 Objetivo
 
@@ -46,18 +46,15 @@ src/
 ## 📅 Etapas do Projeto
 
 - ✅ Definição do escopo
-- 🚧 Leitura e parser do arquivo `.txt`
-- ⏳ Interface para pré-visualização e confirmação
-- ⏳ Integração com PostgreSQL
-- ⏳ Operações CRUD
-- ⏳ Validação de arquivos duplicados
-- ⏳ Testes e ajustes finais
-- ⏳ Entrega e apresentação
+- ✅ Leitura e parser do arquivo `.txt`
+- ✅ Interface para pré-visualização e confirmação
+- ✅ Integração com PostgreSQL
+- ✅ Operações CRUD
+- ✅ Validação de arquivos duplicados
+- ✅ Testes e ajustes finais
+- ✅ Entrega e apresentação
 
 ## 📄 Licença
 
 Este projeto é acadêmico e não possui licença comercial.
 
----
-
-> Este repositório será atualizado com mais informações assim que o desenvolvimento avançar.
